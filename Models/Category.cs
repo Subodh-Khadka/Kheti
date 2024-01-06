@@ -5,9 +5,8 @@ namespace Kheti.Models
     public class Category
     {
         [Key]
-        public Guid CategoryId { get; set; }
+        public int Id { get; set; }
         [Required]
-        public string CategoryName { get; set; }
-
+        public string? Name { get; set; }
     }
 }

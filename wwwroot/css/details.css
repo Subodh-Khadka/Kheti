@@ -1,0 +1,19 @@
+.signup_btn {
+    color: green;
+    background-color: #ffffff;
+    padding: 0.3rem 1.5rem;
+    border: 1px solid green;
+    border-radius: 5px;
+    text-decoration:none;
+}
+
+.small_grey_text_css {
+    font-size: small;
+    margin: 0;
+    color: grey;
+}
+
+.signup_btn:hover {
+background-color: rgb(7, 123, 7);
+color: white;
+}

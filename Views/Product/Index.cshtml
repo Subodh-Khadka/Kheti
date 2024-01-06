@@ -1,0 +1,64 @@
+﻿@model IEnumerable<Kheti.Models.Product>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+@* <h1>Index</h1> *@
+
+<p>
+    <a class="btn btn-info text-white" asp-action="Create">Create New Product</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ProductName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ProductDescription)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Price)
+            </th>
+         @*    <th>
+                @Html.DisplayNameFor(model => model.PrdouctImageUrl)
+            </th> *@
+            <th>
+                @Html.DisplayNameFor(model => model.Category)
+            </th>
+          @*   <th>
+                @Html.DisplayNameFor(model => model.User)
+            </th> *@
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ProductName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ProductDescription)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Price)
+            </td>
+          @*   <td>
+                @Html.DisplayFor(modelItem => item.PrdouctImageUrl)
+            </td> *@
+            <td>
+                @Html.DisplayFor(modelItem => item.Category.Name)
+            </td>
+          @*   <td>
+                @Html.DisplayFor(modelItem => item.User.Id)
+            </td> *@
+            <td>
+                <a class="btn btn-primary" asp-controller="Product" asp-action="Edit" asp-route-id="@item.ProductId">Edit</a>
+                    <a class="btn btn-danger" asp-action="Delete" asp-controller="Product" asp-route-id="@item.ProductId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

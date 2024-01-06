@@ -1,0 +1,31 @@
+﻿@model Kheti.Models.Product
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<style>
+
+</style>
+
+<link rel="stylesheet" href="~/css/details.css" asp-append-version="true" />
+
+<div class="container mt-4 mb-4 justify-content-center align-items-center">
+    <a asp-action="Index" class="signup_btn mt-4 mb-4 text-md-start">Back To Home</a>
+    <div class="row mt-4">
+        <div class="col-sm-12 col-md-5">
+            <img src="~/@Model.PrdouctImageUrl" alt="@Model.ProductName" height="375px" width="100%">
+        </div>
+        <div class="col-sm-12 col-md-5 text d-flex flex-column justify-content-center">
+            <h2>@Model.ProductName</h2>
+            <p class="small_grey_text_css mb-2">Category: @Model.ProductName</p>
+            <p class="small_grey_text_css mb-2">Price: Rs @Model.Price</p>
+            <p class="small_grey_text_css mb-2">Enter Quantity</p>
+            <p class="small_grey_text_css mb-2">SellerId: @Model.UserId</p>
+            <p class="small_grey_text_css mb-2">@Model.ProductDescription</p>
+
+            <button class="btn btn-success w-100 mt-5">Add To Cart</button>
+            <a asp-action="Index" class="signup_btn continue mt-2 text-center">Continue Shopping</a>
+        </div>
+    </div>
+</div>
