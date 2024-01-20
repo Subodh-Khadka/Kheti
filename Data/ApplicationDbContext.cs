@@ -14,5 +14,27 @@ namespace Kheti.Data
 
         public DbSet<KhetiApplicationUser> KhetiApplicationUsers { get; set; }
         public DbSet<Product> Products { get; set; }
+        public DbSet<ShoppingCart> ShoppingCarts { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<ShoppingCart>()
+                .HasOne(s => s.Product)
+                .WithMany()
+                .HasForeignKey(s => s.ProductId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<ShoppingCart>()
+                .HasOne(s => s.User)
+                .WithMany()
+                .HasForeignKey(s => s.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            // Other configurations...
+
+            base.OnModelCreating(modelBuilder);
+        }
     }
+
+
 }

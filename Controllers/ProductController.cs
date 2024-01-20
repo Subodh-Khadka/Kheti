@@ -20,7 +20,13 @@ namespace Kheti.Controllers
         }
         public IActionResult Index()
         {
-            var products = _db.Products.Include(p => p.Category).ToList();
+            //Retrieving the userId from the current user's claims
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            //filtering the products based on the userId
+            var products = _db.Products.Include(p => p.Category)
+                .Where(p => p.UserId == userId);
             return View(products);
         }
 
@@ -62,7 +68,7 @@ namespace Kheti.Controllers
                         imageFile.CopyTo(stream);
                     }
 
-                    product.PrdouctImageUrl = Path.Combine("Images", "ProductImages", uniqueFileName);
+                    product.ProductImageUrl = Path.Combine("Images", "ProductImages", uniqueFileName);
                 }
 
                 _db.Products.Add(product);
@@ -90,7 +96,7 @@ namespace Kheti.Controllers
         {
            
                 // Retrieve the userId from the current user's Claims
-                var claimsIdentity = (ClaimsIdentity)User.Identity;
+                var claimsIdentity = (ClaimsIdentity)User.Identity;                
                 product.UserId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
                 if (imageFile != null && imageFile.Length > 0)
@@ -106,7 +112,7 @@ namespace Kheti.Controllers
                         imageFile.CopyTo(stream);
                     }
 
-                    product.PrdouctImageUrl = Path.Combine("Images", "ProductImages", uniqueFileName);
+                    product.ProductImageUrl = Path.Combine("Images", "ProductImages", uniqueFileName);
                 }
                 _db.Products.Update(product);
                 _db.SaveChanges();

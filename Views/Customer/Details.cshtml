@@ -1,4 +1,4 @@
-﻿@model Kheti.Models.Product
+﻿@model ShoppingCart
 
 @{
     ViewData["Title"] = "Details";
@@ -10,22 +10,34 @@
 
 <link rel="stylesheet" href="~/css/details.css" asp-append-version="true" />
 
-<div class="container mt-4 mb-4 justify-content-center align-items-center">
-    <a asp-action="Index" class="signup_btn mt-4 mb-4 text-md-start">Back To Home</a>
-    <div class="row mt-4">
-        <div class="col-sm-12 col-md-5">
-            <img src="~/@Model.PrdouctImageUrl" alt="@Model.ProductName" height="375px" width="100%">
-        </div>
-        <div class="col-sm-12 col-md-5 text d-flex flex-column justify-content-center">
-            <h2>@Model.ProductName</h2>
-            <p class="small_grey_text_css mb-2">Category: @Model.ProductName</p>
-            <p class="small_grey_text_css mb-2">Price: Rs @Model.Price</p>
-            <p class="small_grey_text_css mb-2">Enter Quantity</p>
-            <p class="small_grey_text_css mb-2">SellerId: @Model.UserId</p>
-            <p class="small_grey_text_css mb-2">@Model.ProductDescription</p>
+<form method="post">
 
-            <button class="btn btn-success w-100 mt-5">Add To Cart</button>
-            <a asp-action="Index" class="signup_btn continue mt-2 text-center">Continue Shopping</a>
+    <input hidden asp-for="ProductId" />
+
+    <div class="container mt-4 mb-4 justify-content-center align-items-center">
+        <a asp-action="Index" class="signup_btn mt-4 mb-4 text-md-start">Back To Home</a>
+        <div class="row mt-4">
+            <div class="col-sm-12 col-md-5">
+                <img src="~/@Model.Product.ProductImageUrl" alt="@Model.Product.ProductName" height="375px" width="100%">
+            </div>
+            <div class="col-sm-12 col-md-5 text d-flex flex-column justify-content-center">
+                <h2>@Model.Product.ProductName</h2>
+                <p class="small_grey_text_css mb-2">Category: @Model.Product.Category.Name</p>
+                <p class="small_grey_text_css mb-2">Price: Rs @Model.Product.Price</p>
+                <p class="small_grey_text_css mb-2">Enter Quantity</p>
+                <p class="small_grey_text_css mb-2">SellerId: @Model.Product.UserId</p>
+                <p class="small_grey_text_css mb-2">@Model.Product.ProductDescription</p>
+
+                <div>
+                    <label class="small_grey_text_css" for="quanitty">Add Quantity</label>
+                    @* <input type="number" id="quantity" class="count" name="quantity" min="1" value="1" /> *@
+                    <input asp-for="Quantity" type="number" min="1" value="1" />
+                </div>
+
+               
+                <button type="submit" class="btn btn-success w-100 mt-5">Add To Cart</button>
+                <a asp-action="Index" class="signup_btn continue mt-2 text-center">Continue Shopping</a>
+            </div>
         </div>
     </div>
-</div>
+</form>

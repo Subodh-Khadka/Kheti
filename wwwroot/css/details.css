@@ -17,3 +17,23 @@
 background-color: rgb(7, 123, 7);
 color: white;
 }
+
+.count{
+    border: 0.5px solid green;
+    border-radius: 5px;
+    padding: 2px;
+    margin: 5px;
+    width: 100px;
+}
+
+
+input[type="number"] {
+    /* Your styling here */
+    width: 15%;
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    color: green
+}
