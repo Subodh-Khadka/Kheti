@@ -26,12 +26,12 @@
                 {
                     <div class="col pb-0 mb-0">
                         <div class="card h-100 border-0 pb-0 mb-0">
-                            <img src="@product.ProductImageUrl" class="img-fluid pimage" alt="Product 1">
+                            <img src="@product.ProductImageUrl" class="img-fluid pimage" alt="Product 1"/>
                             <div class="card-body text-center pb-0 mb-0">
                                 <p class="mb-0 small_grey_text_css">@product.ProductName</p>
                                 @* <p class="card-text mb-0"> @product.ProductDescription</p> *@
                                 <p class="small_grey_text_css mb-2">Rs: @product.Price</p>
-                                <a class="btn btn-success w-100" asp-controller="Customer" asp-action="Details" asp-route-id="@product.ProductId">View Details</a>
+                                <a class="btn btn-success w-100" asp-controller="Customer" asp-action="Details" asp-route-id="@product.ProductId">View Details</a>                        
                             </div>
                         </div>
                     </div>

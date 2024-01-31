@@ -1,4 +1,5 @@
 ﻿using Kheti.Data;
+using Kheti.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -20,9 +21,9 @@ namespace Kheti.Controllers
             return View(allProducts);
         }
         public IActionResult Details(Guid id)
-        {
-           /* var claimsIdentity = (ClaimsIdentity)User.Identity;
-            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;*/
+        {            
+            /* var claimsIdentity = (ClaimsIdentity)User.Identity;
+             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;*/
 
             ShoppingCart cart = new()
             {
@@ -37,6 +38,8 @@ namespace Kheti.Controllers
         [Authorize]
         public IActionResult Details(ShoppingCart shoppingCart)
         {
+
+
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
             shoppingCart.UserId = userId;

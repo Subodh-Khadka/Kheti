@@ -15,7 +15,9 @@
     <input hidden asp-for="ProductId" />
 
     <div class="container mt-4 mb-4 justify-content-center align-items-center">
-        <a asp-action="Index" class="signup_btn mt-4 mb-4 text-md-start">Back To Home</a>
+        <a asp-action="Index" class="mt-4 mb-4 text-md-start"><i class="bi bi-arrow-left"></i>Back To Home</a>
+        
+
         <div class="row mt-4">
             <div class="col-sm-12 col-md-5">
                 <img src="~/@Model.Product.ProductImageUrl" alt="@Model.Product.ProductName" height="375px" width="100%">

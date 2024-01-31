@@ -17,6 +17,12 @@ namespace Kheti.Controllers
             return View(categories);
         }
 
+        public IActionResult Indexa()
+        {
+            var categories = _db.Categories.ToList();
+            return View(categories);
+        }
+
         public IActionResult Create()
         {
             return View();

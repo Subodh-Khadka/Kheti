@@ -1,0 +1,79 @@
+﻿@model Kheti.ViewModels.ShoppingCartVM
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Summary</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/summary.css" />
+    <style>
+     
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1 class="text-center m-4 p-2">Order Summary</h1>
+
+        <div class="row">
+            <!-- Customer Details Section -->
+            <div class="col-md-6">
+                <div class="customer-details">
+                    <h2>Customer Details</h2>
+                    <input asp-for="@Model.ShoppingCartList" type="text" class="editable-field mb-2" value="John Doe" placeholder="Name">
+                    @* <input asp-for="@Model.ShoppingCartList"  /> *@
+                    <input type="email" class="editable-field mb-2" value="john@example.com" placeholder="Email">
+                    <textarea class="editable-field mb-2" placeholder="Address">123 Main St, Cityville, ABC</textarea>
+                </div>
+
+                <!-- Shipping Details Section -->
+                <div class="shipping-details mt-4">
+                    <h2>Shipping Details</h2>
+                    <textarea class="editable-field"
+                              placeholder="Shipping Address">123 Main St, Cityville, ABC</textarea>
+                </div>
+            </div>
+
+            <!-- Order Details Section -->
+            <div class="col-md-6">
+                <div class="order-details">
+                    <h2>Order Details</h2>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Quantity</th>
+                                <th>Price</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Product 1</td>
+                                <td>2</td>
+                                <td>$20.00</td>
+                                <td>$40.00</td>
+                            </tr>
+                            <!-- Add more rows for each product in the order -->
+                        </tbody>
+                    </table>
+                    <p>Total: Rs @Model.OrderTotal</p>
+        <div class="payment-details mt-4">
+            <h2>Payment Details</h2>
+            <p>Payment Method: Credit Card</p>
+            <p>Card Number: **** **** **** 1234</p>
+        </div>
+
+        <!-- Place Order Button -->
+        <button class="button btn-block mt-4">Place Order</button>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>
