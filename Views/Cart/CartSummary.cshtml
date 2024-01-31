@@ -35,11 +35,14 @@
                     <input asp-for="@Model.Order.Address" value="@Model.Order.Address" class="editable-field" placeholder="Shipping Address">
                     <input asp-for="@Model.Order.phoneNumber" value="@Model.Order.phoneNumber" class="editable-field" placeholder="Phone Number">
                 </div>
+                <div class="shipping-details mt-4">
+                    <h6 class="text-success" style="font-size:small">You can edit your details above!</h6>                   
+                </div>
             </div>
 
             <!-- Order Details Section -->
             <div class="col-md-6">
-                <div class="order-details">
+                <div class="">
                     <h5>Order Details</h5>
                     <table class="table">
                         <thead>
@@ -49,7 +52,7 @@
                                 <th>Price</th>
                                 <th>Total</th>
                             </tr>
-                        </thead>
+                        </thead>    
                         <tbody>                           
                             @foreach (var item in Model.ShoppingCartList)
                             {                                

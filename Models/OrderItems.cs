@@ -12,6 +12,10 @@ namespace Kheti.Models
         [ForeignKey("OrderId")]
         [ValidateNever]
         public Order Order { get; set; }
+        [ForeignKey("ProductId")]
+        public Guid ProductId { get; set; }
+        [ValidateNever]
+        public Product Product { get; set; }
         public int Quantity { get; set; }
         public double Price { get; set; }
 

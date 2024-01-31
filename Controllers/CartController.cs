@@ -10,6 +10,7 @@ namespace Kheti.Controllers
     public class CartController : Controller
     {
         private readonly ApplicationDbContext _db;
+        /*[BindProperty]*/
         public ShoppingCartVM ShoppingCartVm { get; set; }
 
         public CartController(ApplicationDbContext db)
@@ -123,6 +124,61 @@ namespace Kheti.Controllers
                 ShoppingCartVm.Order.OrderTotal += (decimal)item.Product.Price * item.Quantity;
             }
 
+            return View(ShoppingCartVm);
+        }
+
+        [HttpPost]
+        public IActionResult CartSummary(ShoppingCartVM shoppingCartVM)
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            ShoppingCartVm = new ShoppingCartVM
+            {
+                ShoppingCartList = _db.ShoppingCarts
+                    .Where(u => u.UserId == userId)
+                    .Include(p => p.Product)
+                    .ToList(),
+                Order = new Order()
+            };
+
+            // Retrieve user from the database
+            var user = _db.KhetiApplicationUsers.FirstOrDefault(u => u.Id == userId);
+
+            if (user != null)
+            {
+                // Populate order properties from user
+                ShoppingCartVm.Order.User = user;
+                ShoppingCartVm.Order.CustomerName = user.FirstName + " " + user.LastName;
+                ShoppingCartVm.Order.Address = user.Address;
+                ShoppingCartVm.Order.phoneNumber = user.PhoneNumber;
+
+                shoppingCartVM.Order.OrderCreatedDate = DateTime.UtcNow;
+                shoppingCartVM.Order.UserId = userId;
+            }
+
+            // Calculate order total
+            foreach (var item in ShoppingCartVm.ShoppingCartList)
+            {
+                ShoppingCartVm.Order.OrderTotal += (decimal)item.Product.Price * item.Quantity;
+            }
+
+            if(user.Id!=null)
+            {
+                shoppingCartVM.Order.OrderStatus = KhetiUtils.StaticDetail.OrderStatusPending;
+                shoppingCartVM.Order.PaymentStatus = KhetiUtils.StaticDetail.PaymentStatusPending;
+            }
+
+            _db.Orders.Add(shoppingCartVM.Order);
+            _db.SaveChanges();
+
+            foreach(var cartItems in shoppingCartVM.ShoppingCartList)
+            {
+                OrderItem item = new OrderItem()
+                {
+                    
+                };
+            }
             return View(ShoppingCartVm);
         }
 

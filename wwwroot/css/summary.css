@@ -1,7 +1,12 @@
 body {
     font-family: Arial, sans-serif;
     background-color: #f7f7f7;
-    font-size: smaller;
+    font-size: small;
+    /*color:lightgrey;*/
+}
+
+input[type=text], input[type=email],td {
+    color: green;
 }
 
 .container {
@@ -43,6 +48,7 @@ p {
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s;
+    width:100%;
 }
 
     .button:hover {
