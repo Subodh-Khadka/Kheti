@@ -1,15 +1,19 @@
 body {
     font-family: Arial, sans-serif;
     background-color: #f7f7f7;
-    font-size: x-small;
+    font-size: smaller;
 }
 
 .container {
-    background-color: #fff;
+    /*background-color: #fff;*/
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);    
+    /*box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);    */
 }
-
+.rows {
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.1);
+    background-color: white;
+    border-radius: 10px;
+}
 h1 {
     color: #333;
     margin-bottom: 20px;
@@ -52,3 +56,11 @@ p {
     margin-bottom: 10px;
     width: 100%;
 }
+
+.truncate {
+    max-width: 100px; /* Adjust the maximum width as needed */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+

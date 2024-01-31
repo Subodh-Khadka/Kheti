@@ -31,10 +31,14 @@ namespace Kheti.Controllers
             ShoppingCartVm = new()
             {
                 ShoppingCartList = _db.ShoppingCarts.Where(u => u.UserId == userId).Include(p => p.Product).ToList(),
+                Order = new()
                 
             };
 
-            ShoppingCartVm.OrderTotal = CalculateOrderTotal(ShoppingCartVm.ShoppingCartList);
+            foreach (var item in ShoppingCartVm.ShoppingCartList)
+            {
+                ShoppingCartVm.Order.OrderTotal += (decimal)item.Product.Price * item.Quantity;
+            }
 
             return View(ShoppingCartVm);
         }
@@ -87,12 +91,67 @@ namespace Kheti.Controllers
 
         }
 
-        public IActionResult CartSummary() 
+        public IActionResult CartSummary()
         {
-            
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
 
-            return View();
+            ShoppingCartVm = new ShoppingCartVM
+            {
+                ShoppingCartList = _db.ShoppingCarts
+                    .Where(u => u.UserId == userId)
+                    .Include(p => p.Product)
+                    .ToList(),
+                Order = new Order()
+            };
+
+            // Retrieve user from the database
+            var user = _db.KhetiApplicationUsers.FirstOrDefault(u => u.Id == userId);
+
+            if (user != null)
+            {
+                // Populate order properties from user
+                ShoppingCartVm.Order.User = user;
+                ShoppingCartVm.Order.CustomerName = user.FirstName + " " + user.LastName;
+                ShoppingCartVm.Order.Address = user.Address;
+                ShoppingCartVm.Order.phoneNumber = user.PhoneNumber;
+            }
+
+            // Calculate order total
+            foreach (var item in ShoppingCartVm.ShoppingCartList)
+            {
+                ShoppingCartVm.Order.OrderTotal += (decimal)item.Product.Price * item.Quantity;
+            }
+
+            return View(ShoppingCartVm);
         }
+
+
+        /* public IActionResult CartSummary() 
+         {
+             var claimsIdentity = (ClaimsIdentity)User.Identity;
+             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+             ShoppingCartVm = new()
+             {
+                 ShoppingCartList = _db.ShoppingCarts.Where(u => u.UserId == userId).Include(p => p.Product).ToList(),
+                 Order = new()
+
+             };
+
+             ShoppingCartVm.Order.User = _db.KhetiApplicationUsers.FirstOrDefault(u => u.Id ==  userId);
+
+             ShoppingCartVm.Order.CustomerName = ShoppingCartVm.Order.User.FirstName;
+             ShoppingCartVm.Order.Address = ShoppingCartVm.Order.User.Address;
+
+             foreach (var item in ShoppingCartVm.ShoppingCartList)
+             {
+                 ShoppingCartVm.Order.OrderTotal += (decimal)item.Product.Price * item.Quantity;
+             }
+
+             return View(ShoppingCartVm);
+
+         }*/
 
     }
 }
