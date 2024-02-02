@@ -2,7 +2,7 @@
 
 * {
     font-family: "Poppins", sans-serif;
-    font-size:small;
+    /*font-size:smaller;*/
 }
 
 .text1 {
@@ -31,8 +31,22 @@
     border: 0.1px solid grey;
 }
 
-.card img {
-        object-fit: cover;
-        width: 100%; /* Ensure the image takes the full width of its container */
-        height: 50%; /* Ensure the image takes the full height of its container */
+.product-image {
+    width: 245px;
+    /* Set the desired width */
+    height: 180px;
+    /* Set the desired height */
+    /* overflow: hidden; */
+    /* Ensure the image is clipped to the fixed-size container */
 }
+
+    .product-image img {
+        width: 100%;
+        /* Fill the entire width of the container */
+        height: 100%;
+        /* Fill the entire height of the container */
+        object-fit: fill;
+        /* Maintain the aspect ratio and cover the entire container */
+    }
+
+

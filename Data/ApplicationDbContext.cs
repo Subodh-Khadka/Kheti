@@ -33,6 +33,12 @@ namespace Kheti.Data
                 .OnDelete(DeleteBehavior.NoAction);
 
             // Other configurations...
+            modelBuilder.Entity<OrderItem>()
+    .HasOne(s => s.Product)
+    .WithMany()
+    .HasForeignKey(s => s.ProductId)
+    .OnDelete(DeleteBehavior.NoAction); // Specify ON DELETE NO ACTION
+
 
             base.OnModelCreating(modelBuilder);
         }

@@ -33,7 +33,7 @@ namespace Kheti.Controllers
             {
                 ShoppingCartList = _db.ShoppingCarts.Where(u => u.UserId == userId).Include(p => p.Product).ToList(),
                 Order = new()
-                
+
             };
 
             foreach (var item in ShoppingCartVm.ShoppingCartList)
@@ -97,117 +97,123 @@ namespace Kheti.Controllers
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
 
-            ShoppingCartVm = new ShoppingCartVM
+            ShoppingCartVm = new()
             {
                 ShoppingCartList = _db.ShoppingCarts
                     .Where(u => u.UserId == userId)
                     .Include(p => p.Product)
                     .ToList(),
-                Order = new Order()
+                Order = new()
             };
 
-            // Retrieve user from the database
-            var user = _db.KhetiApplicationUsers.FirstOrDefault(u => u.Id == userId);
+            ShoppingCartVm.Order.User = _db.KhetiApplicationUsers.FirstOrDefault(u => u.Id == userId);
 
-            if (user != null)
-            {
-                // Populate order properties from user
-                ShoppingCartVm.Order.User = user;
-                ShoppingCartVm.Order.CustomerName = user.FirstName + " " + user.LastName;
-                ShoppingCartVm.Order.Address = user.Address;
-                ShoppingCartVm.Order.phoneNumber = user.PhoneNumber;
-            }
+            ShoppingCartVm.Order.CustomerName = ShoppingCartVm.Order.User.FirstName + " " + ShoppingCartVm.Order.User.LastName;
+            ShoppingCartVm.Order.Address = ShoppingCartVm.Order.User.Address;
+            ShoppingCartVm.Order.phoneNumber = ShoppingCartVm.Order.User.PhoneNumber;
+            ShoppingCartVm.Order.Address = ShoppingCartVm.Order.User.Address;
 
-            // Calculate order total
-            foreach (var item in ShoppingCartVm.ShoppingCartList)
+            foreach (var cart in ShoppingCartVm.ShoppingCartList)
             {
-                ShoppingCartVm.Order.OrderTotal += (decimal)item.Product.Price * item.Quantity;
+                ShoppingCartVm.Order.OrderTotal += (decimal)cart.Product.Price * cart.Quantity;
             }
 
             return View(ShoppingCartVm);
+
         }
 
         [HttpPost]
-        public IActionResult CartSummary(ShoppingCartVM shoppingCartVM)
+        [ActionName("CartSummary")]
+        public IActionResult CartSummaryPOST(ShoppingCartVM shoppingCartVM)
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
 
-            ShoppingCartVm = new ShoppingCartVM
+            ShoppingCartVm = new ShoppingCartVM()
             {
                 ShoppingCartList = _db.ShoppingCarts
                     .Where(u => u.UserId == userId)
                     .Include(p => p.Product)
                     .ToList(),
                 Order = new Order()
+
             };
 
-            // Retrieve user from the database
-            var user = _db.KhetiApplicationUsers.FirstOrDefault(u => u.Id == userId);
+            shoppingCartVM.Order.OrderCreatedDate = DateTime.Now;
+            shoppingCartVM.Order.UserId = userId;
 
-            if (user != null)
+            ShoppingCartVm.Order.User = _db.KhetiApplicationUsers.FirstOrDefault(u => u.Id == userId);
+
+            ShoppingCartVm.Order.CustomerName = ShoppingCartVm.Order.User.FirstName + " " + ShoppingCartVm.Order.User.LastName;
+            ShoppingCartVm.Order.Address = ShoppingCartVm.Order.User.Address;
+            ShoppingCartVm.Order.phoneNumber = ShoppingCartVm.Order.User.PhoneNumber;
+            ShoppingCartVm.Order.Address = ShoppingCartVm.Order.User.Address;
+            shoppingCartVM.Order.OrderTotal = 0;
+
+
+            foreach (var cart in ShoppingCartVm.ShoppingCartList)
             {
-                // Populate order properties from user
-                ShoppingCartVm.Order.User = user;
-                ShoppingCartVm.Order.CustomerName = user.FirstName + " " + user.LastName;
-                ShoppingCartVm.Order.Address = user.Address;
-                ShoppingCartVm.Order.phoneNumber = user.PhoneNumber;
-
-                shoppingCartVM.Order.OrderCreatedDate = DateTime.UtcNow;
-                shoppingCartVM.Order.UserId = userId;
+                ShoppingCartVm.Order.OrderTotal += (decimal)cart.Product.Price * cart.Quantity;
             }
 
-            // Calculate order total
-            foreach (var item in ShoppingCartVm.ShoppingCartList)
-            {
-                ShoppingCartVm.Order.OrderTotal += (decimal)item.Product.Price * item.Quantity;
-            }
+            shoppingCartVM.Order.PaymentStatus = KhetiUtils.StaticDetail.PaymentStatusPending;
+            shoppingCartVM.Order.OrderStatus = KhetiUtils.StaticDetail.OrderStatusPending;
 
-            if(user.Id!=null)
-            {
-                shoppingCartVM.Order.OrderStatus = KhetiUtils.StaticDetail.OrderStatusPending;
-                shoppingCartVM.Order.PaymentStatus = KhetiUtils.StaticDetail.PaymentStatusPending;
-            }
 
             _db.Orders.Add(shoppingCartVM.Order);
             _db.SaveChanges();
 
-            foreach(var cartItems in shoppingCartVM.ShoppingCartList)
+            foreach (var cart in ShoppingCartVm.ShoppingCartList)
             {
-                OrderItem item = new OrderItem()
+                OrderItem orderItem = new OrderItem()
                 {
-                    
+                    ProductId = cart.ProductId,
+                    OrderId = shoppingCartVM.Order.OrderId,
+                    Price = (decimal)cart.Product.Price,
+                    Quantity = cart.Quantity,
                 };
+                _db.OrderItems.Add(orderItem);
+                _db.SaveChanges();
             }
-            return View(ShoppingCartVm);
+            var shoppingCartItems = _db.ShoppingCarts
+           .Where(u => u.UserId == userId)
+           .ToList();
+
+            // Remove all items from the shopping cart
+            _db.ShoppingCarts.RemoveRange(shoppingCartItems);
+            _db.SaveChanges();
+            // Clear the fields by creating a new empty ShoppingCartVM object
+            ShoppingCartVm = new ShoppingCartVM()
+            {
+                ShoppingCartList = new List<ShoppingCart>(), // Clear the shopping cart list
+                Order = new Order() // Create a new empty order
+            };
+
+            return RedirectToAction(nameof(OrderConformation), new { orderId = shoppingCartVM.Order.OrderId });
+            /*return View(ShoppingCartVm);*/
+
         }
 
+        public IActionResult OrderConformation(int orderID)
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
 
-        /* public IActionResult CartSummary() 
-         {
-             var claimsIdentity = (ClaimsIdentity)User.Identity;
-             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var shoppingCartItems = _db.ShoppingCarts
+            .Where(u => u.UserId == userId)
+            .ToList();
 
-             ShoppingCartVm = new()
-             {
-                 ShoppingCartList = _db.ShoppingCarts.Where(u => u.UserId == userId).Include(p => p.Product).ToList(),
-                 Order = new()
+            // Remove all items from the shopping cart
+            _db.ShoppingCarts.RemoveRange(shoppingCartItems);
+            // Clear the fields by creating a new empty ShoppingCartVM object
+            ShoppingCartVm = new ShoppingCartVM()
+            {
+                ShoppingCartList = new List<ShoppingCart>(), // Clear the shopping cart list
+                Order = new Order() // Create a new empty order
+            };
+            return View(orderID);
+        }
 
-             };
-
-             ShoppingCartVm.Order.User = _db.KhetiApplicationUsers.FirstOrDefault(u => u.Id ==  userId);
-
-             ShoppingCartVm.Order.CustomerName = ShoppingCartVm.Order.User.FirstName;
-             ShoppingCartVm.Order.Address = ShoppingCartVm.Order.User.Address;
-
-             foreach (var item in ShoppingCartVm.ShoppingCartList)
-             {
-                 ShoppingCartVm.Order.OrderTotal += (decimal)item.Product.Price * item.Quantity;
-             }
-
-             return View(ShoppingCartVm);
-
-         }*/
 
     }
 }

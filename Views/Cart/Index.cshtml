@@ -1,12 +1,19 @@
 ﻿@model Kheti.ViewModels.ShoppingCartVM
 
-<link rel="stylesheet" href="~/css/cart.css" />
-<style>
-    body {
-        color: grey;
-    }
 
-</style>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Summary</title>    
+    <link rel="stylesheet" href="~/css/cart.css" asp-append-version="true" />
+    <style>
+
+    </style>
+</head>
+
 <body>
 
     <h5 class="text-center mt-2">My Shopping Cart</h5>
@@ -17,17 +24,14 @@
                 {
                     <div class="d-flex justify-content-around align-items-center">
                         <div class="m-0 d-flex flex-column">
-                            <img src="@item.Product.ProductImageUrl" class="m-2" />                           
+                            <img src="@item.Product.ProductImageUrl" class="product-image m-2" />
                             <p class="title d-flex justify-content-center align-items-center fw-bold">@item.Product.ProductName</p>
                         </div>
-
-                      @*   <div>
-                        </div> *@
 
                         <div class=" mb-md-2 quantity-container">
                             <a asp-action="DecreaseCount" asp-controller="Cart" asp-route-itemid="@item.ShoppingCartId" data-ajax="true" data-ajax-complete="count" class="quantity-btn"><i class="bi bi-dash"></i></a>
                             <input type="number" id="quantity-Input" class="p-0 m-0" value="1" min="1" />
-                         <a asp-action="AddCount" asp-controller="Cart" asp-route-itemid="@item.ShoppingCartId" data-ajax="true" data-ajax-complete="count" class="quantity-btn"><i class="bi bi-plus"></i></a>
+                            <a asp-action="AddCount" asp-controller="Cart" asp-route-itemid="@item.ShoppingCartId" data-ajax="true" data-ajax-complete="count" class="quantity-btn"><i class="bi bi-plus"></i></a>
                         </div>
                         <div class="">
                             <p class="m-0">@item.Product.Price</p>
@@ -37,7 +41,7 @@
                             <a asp-controller="Cart" asp-action="RemoveCart" asp-route-cartId="@item.ShoppingCartId" data-ajax="true" data-ajax-complete="deletepage">
                                 <i class="fs-4 bi bi-trash-fill"></i>
                             </a>
-                          
+
                         </div>
                     </div>
                     <hr class="m-0 p-0" />
@@ -47,12 +51,12 @@
                 <p>Total: Rs @Model.Order.OrderTotal</p>
                 <a class="btn checkout-btn" asp-action="CartSummary">Checkout</a>
             </div>
-            
+
         </div>
     </div>
 
 
-    <script>      
+    <script>
 
         deletepage = function () {
             location.reload();
@@ -72,3 +76,4 @@
             crossorigin="anonymous"></script>
 
 </body>
+</html>

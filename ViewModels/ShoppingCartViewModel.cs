@@ -6,6 +6,8 @@ namespace Kheti.ViewModels
     {
         public IEnumerable<ShoppingCart> ShoppingCartList { get; set; }
         public Order Order { get; set; }
+
+        public decimal Price { get; set; } 
         /*public decimal OrderTotal { get; set; }*/
     }
 }

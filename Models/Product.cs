@@ -21,6 +21,9 @@ namespace Kheti.Models
         public decimal? Price { get; set; }
 
         [Required]
+        public DateTime? CreatedDate { get; set; } = DateTime.Now;
+
+        [Required]
         public string ProductImageUrl { get; set; }
 
         [ForeignKey("Category")]

@@ -17,7 +17,7 @@ namespace Kheti.Models
 
         public int Quantity { get; set; }
 
-        public string UserId { get; set; }
+        public string UserId { get; set; }  
         [ForeignKey("UserId")]
         [ValidateNever]
         public KhetiApplicationUser User { get; set; }

@@ -71,6 +71,8 @@ namespace Kheti.Controllers
                     product.ProductImageUrl = Path.Combine("Images", "ProductImages", uniqueFileName);
                 }
 
+                product.CreatedDate = DateTime.Now;
+
                 _db.Products.Add(product);
                 _db.SaveChanges();
                 return RedirectToAction("Index");

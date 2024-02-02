@@ -1,5 +1,6 @@
 ﻿using Kheti.Data;
 using Kheti.Models;
+using Kheti.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -56,9 +57,9 @@ namespace Kheti.Controllers
                 //if no such cart exists, add the cart to Database
                 _db.Add(shoppingCart);
             }
-            
             _db.SaveChanges();
-            return RedirectToAction(nameof(Index));
+
+            return RedirectToAction("Index","Cart");
         }
 
 

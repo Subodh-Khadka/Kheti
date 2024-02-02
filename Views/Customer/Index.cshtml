@@ -1,15 +1,20 @@
 ﻿@model IEnumerable<Kheti.Models.Product>
 
-@* @{
+@{
     ViewData["Title"] = "Index";
-} *@
+}
 
 <link rel="stylesheet" href="~/css/product.css" asp-append-version="true" />
 @* <link rel="stylesheet" href="~/css/index.css" asp-append-version="true" /> *@
 
 <style>
-    .pimage{        
+    .pimage {
+        width: 100%; 
+        height: 150px; 
+        object-fit: fill; 
     }
+
+   
 </style>
 
 <body>
@@ -24,9 +29,12 @@
             <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4 mt-3">                
                 @foreach (var product in Model)
                 {
-                    <div class="col pb-0 mb-0">
-                        <div class="card h-100 border-0 pb-0 mb-0">
-                            <img src="@product.ProductImageUrl" class="img-fluid pimage" alt="Product 1"/>
+                    <div class="col pb-4 mb-0">
+                        <div class="card border-0 pb-0 mb-0">
+                            <div class="">
+                                <img class="pimage" src="@product.ProductImageUrl" alt="@product.ProductId" />
+                             </div>
+                            
                             <div class="card-body text-center pb-0 mb-0">
                                 <p class="mb-0 small_grey_text_css">@product.ProductName</p>
                                 @* <p class="card-text mb-0"> @product.ProductDescription</p> *@
@@ -40,12 +48,6 @@
         </div>
 
     </div>
-
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2023 - KhetiWebApp - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
