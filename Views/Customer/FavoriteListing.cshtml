@@ -1,0 +1,56 @@
+﻿
+@model List<Kheti.Models.Favorite>
+
+@{
+    ViewData["Title"] = "Favorite Listing";
+}
+
+<style>
+    .product-image {
+        width: 100px;
+        height: 80px;
+        object-fit: cover;
+    }
+</style>
+
+<h1>Favorite Products</h1>
+
+@if (Model.Count == 0)
+{
+    <p>No favorite products found.</p>
+}
+else
+{
+    <div class="row">
+        @foreach (var favorite in Model)
+        {
+            <div class="col-md-4">
+                <div class="card mb-4 shadow-sm">
+                    <img src="~/@favorite.Product.ProductImageUrl" class="product-image m-2" />
+                    <div class="card-body">
+                        <h5 class="card-title">@favorite.Product.ProductName</h5>
+                        <p class="card-text">@favorite.Product.ProductDescription</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="btn-group d-flex gap-4">
+                               @*  <a class="btn purple-background text-white" asp-action="Details" asp-controller="Customer" asp-route-id="@favorite.ProductId">Details</a> *@
+
+                                <!-- Form to add product to cart -->
+                                <form method="post" action="@Url.Action("Details", "Customer")">
+                                    <input type="hidden" name="productId" value="@favorite.ProductId" />
+                                    <input type="hidden" name="quantity" value="1" /> <!-- Set the quantity to 1 -->
+                                    <button type="submit" class="btn btn-sm btn-outline-secondary"><i class="bi bi-cart-dash fs-5"></i></button>
+                                </form>
+
+                                <!-- Form to remove product from favorites -->
+                                <form method="post" action="@Url.Action("RemoveFromFavorites", "Customer")">
+                                    <input type="hidden" name="productId" value="@favorite.ProductId" />
+                                    <button type="submit" class="btn btn-sm btn-outline-secondary"><i class="bi bi-trash3-fill fs-5"></i></button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

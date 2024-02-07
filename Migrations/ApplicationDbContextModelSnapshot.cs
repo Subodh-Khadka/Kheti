@@ -39,6 +39,33 @@ namespace Kheti.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("Kheti.Models.Favorite", b =>
+                {
+                    b.Property<int>("FavoriteId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FavoriteId"));
+
+                    b.Property<DateTime>("AddedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("FavoriteId");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Favorites");
+                });
+
             modelBuilder.Entity("Kheti.Models.Order", b =>
                 {
                     b.Property<int>("OrderId")
@@ -431,6 +458,25 @@ namespace Kheti.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasDiscriminator().HasValue("KhetiApplicationUser");
+                });
+
+            modelBuilder.Entity("Kheti.Models.Favorite", b =>
+                {
+                    b.HasOne("Kheti.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Kheti.Models.KhetiApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Kheti.Models.Order", b =>

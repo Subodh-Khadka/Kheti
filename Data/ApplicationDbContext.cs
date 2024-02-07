@@ -18,6 +18,8 @@ namespace Kheti.Data
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
 
+        public DbSet<Favorite> Favorites { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<ShoppingCart>()
@@ -34,11 +36,15 @@ namespace Kheti.Data
 
             // Other configurations...
             modelBuilder.Entity<OrderItem>()
-    .HasOne(s => s.Product)
-    .WithMany()
-    .HasForeignKey(s => s.ProductId)
-    .OnDelete(DeleteBehavior.NoAction); // Specify ON DELETE NO ACTION
+            .HasOne(s => s.Product)
+            .WithMany()
+            .HasForeignKey(s => s.ProductId)
+            .OnDelete(DeleteBehavior.NoAction); // Specify ON DELETE NO ACTION
 
+            modelBuilder.Entity<Favorite>()
+                .HasOne(s => s.Product).WithMany()
+                .HasForeignKey(s => s.ProductId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             base.OnModelCreating(modelBuilder);
         }

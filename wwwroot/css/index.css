@@ -67,7 +67,8 @@
 
 /* explore now button */
 .explore_btn {
-    background-color: #007acc;
+    /*background-color: #593196;*/
+    background-color:#5b62f4;
     color: white;
     padding: 0.5rem 1.5rem;
     border: 1px solid #eaf4f4;

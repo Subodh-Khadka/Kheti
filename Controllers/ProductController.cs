@@ -68,10 +68,9 @@ namespace Kheti.Controllers
                         imageFile.CopyTo(stream);
                     }
 
+                    product.CreatedDate = DateTime.Now;
                     product.ProductImageUrl = Path.Combine("Images", "ProductImages", uniqueFileName);
                 }
-
-                product.CreatedDate = DateTime.Now;
 
                 _db.Products.Add(product);
                 _db.SaveChanges();
@@ -128,5 +127,44 @@ namespace Kheti.Controllers
             _db.SaveChanges();
             return RedirectToAction("Index");
         }
+
+       /* public IActionResult Favorite()
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            var favoriteList = _db.Favorites.Where(u => u.UserId == userId).Include(p => p.Product).ToList();
+
+
+            return View(favoriteList);
+        }
+
+        [HttpPost]
+        public IActionResult Favorite(Guid productId)
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            //checking if the product is already been present in the user's favorite
+            var existingFavorite = _db.Favorites.FirstOrDefault(f => f.UserId == userId && f.ProductId == productId);
+            if (existingFavorite != null)
+            {
+                TempData["Message"] = "Product already exists in your wishlist!";
+                return RedirectToAction("Details", "Customer", new { id = productId });
+            }
+
+            var favorite = new Favorite 
+            {
+                UserId = userId,
+                ProductId = productId,
+                AddedDate = DateTime.Now,
+            };
+
+            _db.Favorites.Add(favorite);
+            _db.SaveChanges();
+
+
+            return RedirectToAction("Favorite","Product");
+        }*/
     }
 }

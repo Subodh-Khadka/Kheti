@@ -28,3 +28,16 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.purple-background{
+    background-color:#5b62f4;
+}
+
+.purple-text {
+    color: #5b62f4;
+}
+
+.white-text {
+    color: white;
+}
+

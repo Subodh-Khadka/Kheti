@@ -40,20 +40,14 @@ p {
     font-weight: bold;
 }
 
-.button {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    width:100%;
+.order-btn {
+    /*background-color: #593196;*/
+    /*background-color: #009cdc;*/
+    /*background-color: #378dfc;*/
+    background-color: #5b62f4;
+    width: 100%;
+    color: white
 }
-
-    .button:hover {
-        background-color: #45a049;
-    }
 
 .editable-field {
     border: 1px solid #ccc;

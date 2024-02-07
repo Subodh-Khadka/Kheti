@@ -4,7 +4,7 @@
     padding: 0.3rem 1.5rem;
     border: 1px solid green;
     border-radius: 5px;
-    text-decoration:none;
+    text-decoration: none;
 }
 
 .small_grey_text_css {
@@ -14,11 +14,11 @@
 }
 
 .signup_btn:hover {
-background-color: rgb(7, 123, 7);
-color: white;
+    background-color: rgb(7, 123, 7);
+    color: white;
 }
 
-.count{
+.count {
     border: 0.5px solid green;
     border-radius: 5px;
     padding: 2px;
@@ -36,4 +36,29 @@ input[type="number"] {
     border-radius: 4px;
     box-sizing: border-box;
     color: green
+}
+
+.back-btn a {
+    /*background-color:red;*/
+    color: #007ACC;
+}
+
+.back-btn {
+    /*background-color:red;*/
+    color: #007ACC;
+}
+
+.back-icon {
+    font-size: larger;
+    width: 100px;
+}
+
+.favorite-icon {
+    color:seagreen;
+    border:0px;
+}
+
+.favorite-btn{
+    border:0;
+    background-color:white;
 }

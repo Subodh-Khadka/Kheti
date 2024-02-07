@@ -16,12 +16,7 @@ namespace Kheti.Controllers
         public CartController(ApplicationDbContext db)
         {
             _db = db;
-        }
-
-        public IActionResult New()
-        {
-            return View();
-        }
+        }      
 
 
         public IActionResult Index()
@@ -212,7 +207,7 @@ namespace Kheti.Controllers
                 Order = new Order() // Create a new empty order
             };
             return View(orderID);
-        }
+        }        
 
 
     }
