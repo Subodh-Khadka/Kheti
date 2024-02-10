@@ -115,6 +115,7 @@ namespace Kheti.Controllers
         }
 
 
+            return RedirectToAction("Details", new { id = comment.ProductId, fragment = "comment-section" });
 
     }
 }
