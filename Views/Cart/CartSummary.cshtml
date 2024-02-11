@@ -28,9 +28,7 @@
                     <div class="customer-details">
                         <h5>Customer Details</h5>
                         <input asp-for="@Model.Order.CustomerName" type="text" class="editable-field mb-2" placeholder="Name">
-                        <span asp-validation-for="Order.CustomerName"></span>
-                        @* <input type="email" class="editable-field mb-2" placeholder="Email"> *@
-                        @* <input asp-for="@Model.Order.Address" class="editable-field mb-2" placeholder="Address"> *@
+                        <span asp-validation-for="Order.CustomerName"></span>                       
                         <input asp-for="@Model.Order.phoneNumber" class="editable-field" placeholder="Phone Number">
                         <span asp-validation-for="Order.phoneNumber"></span>
 

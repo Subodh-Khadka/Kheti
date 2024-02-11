@@ -3,6 +3,7 @@ using Kheti.Models;
 using Kheti.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
@@ -16,26 +17,65 @@ namespace Kheti.Controllers
         {
             _db = db;
         }
-        public IActionResult Index()
+
+        /*[Authorize(Roles = "Seller,Customer")]*/
+        public IActionResult Index(string searchInput)
         {
-            var allProducts = _db.Products.Include(p => p.Category).ToList().OrderByDescending(p => p.CreatedDate);
-            return View(allProducts);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userRole = User.FindFirstValue(ClaimTypes.Role);
+
+            IEnumerable<Product> products;
+
+            if (userRole == "Seller")
+            {
+                // Filter products to include only those listed by the logged-in seller
+                products = _db.Products
+                    .Include(p => p.Category)
+                    .Include(p => p.User)
+                    .Where(p => p.UserId == userId);
+            }
+            else // Customer role
+            {
+                // Display all products
+                products = _db.Products
+                    .Include(p => p.Category)
+                    .Include(p => p.User);
+            }
+
+            if (!string.IsNullOrEmpty(searchInput))
+            {
+                var lowerCaseSearchInput = searchInput.ToLower();
+                products = products.Where(p => p.ProductName.ToLower().Contains(lowerCaseSearchInput));
+            }
+
+            var sortedProducts = products.OrderByDescending(p => p.CreatedDate).ToList();
+            return View(sortedProducts);
         }
+
         public IActionResult Details(Guid id)
-        {            
-            /* var claimsIdentity = (ClaimsIdentity)User.Identity;
-             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;*/
+        {                      
+            var product = _db.Products
+                .Include(p => p.Category)
+                .Include(p => p.User)
+                .Include(p => p.ProductComments)
+                    .ThenInclude(c => c.User) // Include the user who posted the comment
+                .Include(p => p.ProductComments)
+                    .ThenInclude(c => c.Replies) // Include replies for each comment
+                        .ThenInclude(r => r.User) // Include the user who posted the reply
+                .FirstOrDefault(p => p.ProductId == id);
 
             ShoppingCart cart = new()
             {
-                Product = _db.Products.Include(c => c.Category).FirstOrDefault(p => p.ProductId == id),
+                Product = product,
                 Quantity = 1,
-                ProductId = id                
+                ProductId = id
             };
+
             if (TempData["Message"] != null)
             {
                 ViewBag.Message = TempData["Message"];
             }
+
             return View(cart);
         }
 
@@ -46,7 +86,7 @@ namespace Kheti.Controllers
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
             shoppingCart.UserId = userId;
-            
+
             ShoppingCart existingCartInDb = _db.ShoppingCarts.
                 FirstOrDefault(u => u.UserId == userId && u.ProductId == shoppingCart.ProductId);
 
@@ -63,7 +103,7 @@ namespace Kheti.Controllers
             }
             _db.SaveChanges();
 
-            return RedirectToAction("Index","Cart");
+            return RedirectToAction("Index", "Cart");
         }
 
         public IActionResult FavoriteListing()
@@ -80,11 +120,8 @@ namespace Kheti.Controllers
 
         }
 
-
-
-
         [HttpPost]
-        [Authorize] // Ensure user is logged in to add to favorites
+        [Authorize]
         public IActionResult AddToFavorite(Guid productId)
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
@@ -114,8 +151,75 @@ namespace Kheti.Controllers
             return RedirectToAction("FavoriteListing");
         }
 
+        public IActionResult SubmitProductComment(Guid productId, string commentText)
+        {
 
-            return RedirectToAction("Details", new { id = comment.ProductId, fragment = "comment-section" });
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            // Retrieve the product
+            var product = _db.Products
+                .Include(p => p.ProductComments.OrderByDescending(pc => pc.CommentDate)) // Retrieve comments in reverse order
+                .Include(p => p.User)
+                .FirstOrDefault(p => p.ProductId == productId);
+
+            // Create a new comment
+            var comment = new ProductComment
+            {
+                ProductId = productId,
+                CommentText = commentText,
+                UserId = userId,
+                CommentDate = DateTime.Now,                
+                };
+
+            // Add the comment to the product
+            product.ProductComments.Add(comment);
+
+            // Save changes
+            _db.SaveChanges();
+
+            // Return the partial view with the updated comments section
+            var updatedProduct = _db.Products
+                .Include(p => p.ProductComments) // Include comments
+                    .ThenInclude(p => p.User)
+                    .Include(p => p.ProductComments)
+                    .ThenInclude(c => c.Replies) // Include replies for each comment
+                    .ThenInclude(r => r.User) // Include user for each reply
+                .FirstOrDefault(p => p.ProductId == productId);
+
+            return PartialView("_CommentsPartial", updatedProduct.ProductComments);
+            
+        }
+
+        public IActionResult SubmitProductReply(int commentId, string replyText)
+        {
+            // Retrieve the comment
+            var comment = _db.ProductComments.Include(c => c.Replies).FirstOrDefault(c => c.Id == commentId);
+
+            // Create a new reply
+            var reply = new ProductReply
+            {
+                ProductCommentId = commentId,
+                ReplyText = replyText,
+                UserId = User.FindFirstValue(ClaimTypes.NameIdentifier),
+                ReplyDate = DateTime.Now
+            };
+
+            // Add the reply to the comment
+            comment.Replies.Add(reply);
+
+            // Save changes
+            _db.SaveChanges();
+
+            //Return the list of replies for the comment
+            var replies = _db.ProductReplies
+                .Where(r => r.ProductCommentId == commentId)
+                .Include(r => r.User)
+                .ToList();
+
+            return PartialView("_RepliesPartial", replies);
+
+        }
 
     }
 }

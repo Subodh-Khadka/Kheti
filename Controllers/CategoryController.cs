@@ -1,5 +1,6 @@
 ﻿using Kheti.Data;
 using Kheti.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Kheti.Controllers
@@ -11,17 +12,19 @@ namespace Kheti.Controllers
         {
             _db = db;
         }
+
+        [Authorize (Roles ="Admin")]
         public IActionResult Index()
         {
             var categories = _db.Categories.ToList();
             return View(categories);
         }
 
-        public IActionResult Indexa()
+      /*  public IActionResult Indexa()
         {
             var categories = _db.Categories.ToList();
             return View(categories);
-        }
+        }*/
 
         public IActionResult Create()
         {

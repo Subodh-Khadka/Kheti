@@ -14,6 +14,9 @@ namespace Kheti.Models
 
         public string ProfilePictureURL { get; set; }
 
+        public ICollection<ProductComment> ProductComments { get; set; } // Navigation property for comments
+        public ICollection<ProductReply> Replies { get; set; } // Navigation property for replies
 
+            
     }
 }

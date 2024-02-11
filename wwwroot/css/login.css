@@ -32,12 +32,16 @@ body {
 }
 
 .login_container {
-    height: 50vh;
+    height: 100vh;
 }
 
 img {
     border-top-left-radius: 20px;
     border-bottom-left-radius: 20px;
+}
+
+.text-danger {
+    font-size: 12px; /* Adjust font size */        
 }
 
 /* .img-fluid {

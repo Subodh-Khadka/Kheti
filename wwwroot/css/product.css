@@ -49,4 +49,12 @@
         /* Maintain the aspect ratio and cover the entire container */
     }
 
-
+.search-input {
+    margin:0;
+    padding: 0.3rem 1rem;
+    margin-right: 0;
+}
+.search-btn {
+    padding: 0.4rem 1.2rem;
+    margin:0;
+}

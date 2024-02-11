@@ -2,6 +2,11 @@
 {
     public class StaticDetail
     {
+        public const string CustomerRole = "Customer";
+        public const string SellerRole = "Seller";
+        public const string AdminRole = "Admin";
+        public const string ExpertRole = "Expert";
+
         public const string OrderStatusPending = "Pending";
         public const string OrderStatusApproved = "Approved";
         public const string OrderStatusInProcess = "Processing";

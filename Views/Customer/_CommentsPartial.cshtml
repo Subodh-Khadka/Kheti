@@ -1,0 +1,30 @@
+﻿@model IEnumerable<ProductComment>
+
+@foreach (var comment in Model)
+{
+    <div class="comment">
+        <div class="d-flex gap-4">
+            <p>@comment.CommentText</p>
+            <p>Posted by: @comment.User.FirstName on @comment.CommentDate</p>
+        </div>
+
+        <!-- Display Replies -->
+        <div id="replies_@comment.Id" class="repliesSection">
+            <!-- Render replies for this comment -->
+            @Html.Partial("_RepliesPartial", comment.Replies)
+        </div>
+
+        @if (User.IsInRole(StaticDetail.SellerRole))
+        {
+        <!-- Form for adding reply -->
+        <form class="replyForm">
+            <input type="hidden" class="commentId" value="@comment.Id" />
+            <textarea class="replyText" rows="2" cols="50" placeholder="Write a reply"></textarea><br />
+            <button type="button" class="submitReply btn btn-sm purple-background text-white">Reply</button>
+        </form>
+            
+        }
+
+        <hr />
+    </div>
+}

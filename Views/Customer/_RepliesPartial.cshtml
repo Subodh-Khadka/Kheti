@@ -1,0 +1,12 @@
+﻿@model IEnumerable<ProductReply>
+
+@if (Model != null)
+{
+    @foreach (var reply in Model)
+    {
+        <div class="reply">
+            <p>@reply.ReplyText </p>
+            <p>Posted by: @reply.User.FirstName on @reply.ReplyDate</p>
+        </div>
+    }
+}

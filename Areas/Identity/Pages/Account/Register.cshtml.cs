@@ -10,13 +10,16 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
+using Kheti.KhetiUtils;
 using Kheti.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 
@@ -25,6 +28,7 @@ namespace Kheti.Areas.Identity.Pages.Account
     public class RegisterModel : PageModel
     {
         private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IUserStore<IdentityUser> _userStore;
         private readonly IUserEmailStore<IdentityUser> _emailStore;
@@ -33,12 +37,14 @@ namespace Kheti.Areas.Identity.Pages.Account
 
         public RegisterModel(
             UserManager<IdentityUser> userManager,
+            RoleManager<IdentityRole> roleManager,
             IUserStore<IdentityUser> userStore,
             SignInManager<IdentityUser> signInManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender)
         {
             _userManager = userManager;
+            _roleManager = roleManager;
             _userStore = userStore;
             _emailStore = GetEmailStore();
             _signInManager = signInManager;
@@ -99,6 +105,10 @@ namespace Kheti.Areas.Identity.Pages.Account
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
 
+            public string? Role { get; set; }
+            [ValidateNever]
+            public IEnumerable<SelectListItem> KhetiRoleList { get; set; }
+
             public string FirstName { get; set; }
             public string LastName { get; set; }
             public string District { get; set; }
@@ -112,6 +122,25 @@ namespace Kheti.Areas.Identity.Pages.Account
 
         public async Task OnGetAsync(string returnUrl = null)
         {
+            //functionalities of creating roles
+            if (!_roleManager.RoleExistsAsync(StaticDetail.CustomerRole).GetAwaiter().GetResult())
+            {
+                _roleManager.CreateAsync(new IdentityRole(StaticDetail.CustomerRole)).GetAwaiter().GetResult();
+                _roleManager.CreateAsync(new IdentityRole(StaticDetail.AdminRole)).GetAwaiter().GetResult();
+                _roleManager.CreateAsync(new IdentityRole(StaticDetail.ExpertRole)).GetAwaiter().GetResult();
+                _roleManager.CreateAsync(new IdentityRole(StaticDetail.SellerRole)).GetAwaiter().GetResult();
+            }
+
+            Input = new()
+            {
+                KhetiRoleList = _roleManager.Roles.Select(x => x.Name).Select(s => new SelectListItem
+                {
+                    Text = s,
+                    Value = s
+                })
+            };
+
+
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
@@ -136,6 +165,15 @@ namespace Kheti.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
+
+                    //add for role
+                    if (!string.IsNullOrEmpty(Input.Role)){
+                        await _userManager.AddToRoleAsync(user, Input.Role);
+                    }
+                    else
+                    {
+                        await _userManager.AddToRoleAsync(user, StaticDetail.CustomerRole);
+                    }
 
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);

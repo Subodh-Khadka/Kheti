@@ -34,5 +34,12 @@ namespace Kheti.Models
         [ValidateNever]
         public string UserId { get; set; }
         public KhetiApplicationUser User { get; set; }
+
+        // Navigation property for product comments
+        public ICollection<ProductComment> ProductComments { get; set; }
+
+
+        // Navigation property for replies
+        public ICollection<ProductReply> Replies { get; set; }
     }
 }
