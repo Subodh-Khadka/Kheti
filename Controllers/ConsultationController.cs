@@ -83,11 +83,15 @@ namespace Kheti.Controllers
             return View();
         }
 
-    public IActionResult ViewQuery()
+    public IActionResult QueryList()
         {
-            var allQuery = _db.QueryForms.ToList();
+            var allQuery = _db.QueryForms
+              /*  .OrderByDescending(p => p.UrgencyLevel == "High")
+                .ThenByDescending(x => x.UrgencyLevel == "Medium")
+                .ThenByDescending(p => p.UrgencyLevel == "Low")*/
+                .OrderByDescending(p => p.DateCreated).ToList();
 
-            return View();
+            return View(allQuery);
         }
     }
 }

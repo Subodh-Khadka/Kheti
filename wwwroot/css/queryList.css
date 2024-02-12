@@ -1,0 +1,10 @@
+
+/*rebeccapurple;*/
+
+.overflow {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: rebeccapurple;
+}
+    

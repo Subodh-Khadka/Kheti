@@ -29,15 +29,18 @@ body {
   margin-bottom: 60px;
 }
 
-.purple-background{
-    background-color:#5b62f4;
+.purple-background {
+    /*background-color: #5b62f4;*/
+    background-color: #8b3dff;
 }
 
 .purple-text {
-    color: #5b62f4;
+    color: #5b62f4;    
 }
 
 .white-text {
     color: white;
+    font-size:small;
+    padding:0.6rem 1.5rem;
 }
 
