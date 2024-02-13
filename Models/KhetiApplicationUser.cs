@@ -13,10 +13,14 @@ namespace Kheti.Models
         public DateTime RegistrationDate { get; set; }
 
         public string ProfilePictureURL { get; set; }
+        
+        // Navigation property for comments
+        public ICollection<ProductComment> ProductComments { get; set; }
 
-        public ICollection<ProductComment> ProductComments { get; set; } // Navigation property for comments
-        public ICollection<ProductReply> Replies { get; set; } // Navigation property for replies
+        // Navigation property for replies
+        public ICollection<ProductReply> Replies { get; set; } 
 
-            
+        //Navigation Property to link to ExpertProfile
+        public ExpertProfile ExpertProfile { get; set; }
     }
 }

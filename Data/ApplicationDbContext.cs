@@ -16,6 +16,7 @@ namespace Kheti.Data
         public DbSet<ProductComment> ProductComments {  get; set; }
         public DbSet<ProductReply> ProductReplies  { get; set; }
         public DbSet<QueryForm> QueryForms { get; set; }
+        public DbSet<ExpertProfile> ExpertProfiles { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

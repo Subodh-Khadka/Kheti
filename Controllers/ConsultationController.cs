@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Linq;
 using Kheti.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Kheti.Controllers
 {
@@ -16,6 +17,51 @@ namespace Kheti.Controllers
         {
             _db = db;
             _webHostEnvironment = webHostEnvironment;
+        }
+
+        [Authorize(Roles = "Seller,Expert")]
+        public IActionResult QueryList()
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var userRole = User.FindFirstValue(ClaimTypes.Role);
+
+            IEnumerable<QueryForm> queries;
+            
+
+            if (userRole == "Expert")
+            {
+                //retrieve the expertProfile for the current User
+                var expertProfile = _db.ExpertProfiles.FirstOrDefault(u => u.UserId == userId);
+
+                if(expertProfile != null)
+                {
+                    var expertise = expertProfile.FieldOfExpertise;
+
+                    queries = _db.QueryForms
+                        .OrderByDescending(q => q.UrgencyLevel == "High")
+                        .Where(q => q.ProblemCategory == expertise).ToList();
+                }
+                else
+                {
+                    //if expertProfile is null
+                    return RedirectToAction("Erro","Home");
+                }
+
+            }
+            else
+            //if user is of role:seller
+            {
+
+                queries = _db.QueryForms
+                /*  .OrderByDescending(p => p.UrgencyLevel == "High")
+                  .ThenByDescending(x => x.UrgencyLevel == "Medium")
+                  .ThenByDescending(p => p.UrgencyLevel == "Low")*/
+                .Where(p => p.UserId == userId)
+                .OrderByDescending(p => p.DateCreated).ToList();
+            }                       
+
+            return View(queries);
         }
 
         public IActionResult CreateQuery()
@@ -72,6 +118,8 @@ namespace Kheti.Controllers
                     queryForm.UserId = userId;
                     queryForm.DateCreated = DateTime.Now;
                     queryForm.ImageUrl = Path.Combine("Images", "QueryImages", uniqueFileName);
+
+                    queryForm.QueryStatus = KhetiUtils.StaticDetail.QueryStatusPending;
                 }
 
                 _db.QueryForms.Add(queryForm);
@@ -83,15 +131,11 @@ namespace Kheti.Controllers
             return View();
         }
 
-    public IActionResult QueryList()
+        public IActionResult QueryDetails()
         {
-            var allQuery = _db.QueryForms
-              /*  .OrderByDescending(p => p.UrgencyLevel == "High")
-                .ThenByDescending(x => x.UrgencyLevel == "Medium")
-                .ThenByDescending(p => p.UrgencyLevel == "Low")*/
-                .OrderByDescending(p => p.DateCreated).ToList();
-
-            return View(allQuery);
+            return View();
         }
+
+
     }
 }

@@ -1,4 +1,6 @@
-﻿@model List<QueryForm>
+﻿@model List<Kheti.Models.QueryForm>
+
+
 
     <link rel="stylesheet" href="~/css/queryList.css" />
 
@@ -17,6 +19,7 @@
                     <div class="card-body">
                         <h5 class="card-title overflow" data-toggle="tooltip" data-placement="top" title="@query.Title">@query.Title</h5>
                         <p class="card-text">Email: @query.Email</p>
+                        <p class="card-text">Problem Category: @query.ProblemCategory</p>
                         <p class="card-text">Location: @query.Location</p>
                         <p class="card-text overflow" data-toggle="tooltip" data-placement="top" title="@query.Description">Description: @query.Description</p>
 
@@ -37,9 +40,10 @@
                         }
                         
                         <div class="d-flex justify-content-between align-items-center">
-                            <div class="btn-group">
+                            <div class="btn-group d-flex gap-2">
                                 <!-- Add a button/link to view details or comments -->
                                 <a href="@Url.Action("Details", "Query", new { id = query.Id })" class="btn btn-sm purple-background white-text">View Details</a>
+                                <a href="@Url.Action("Details", "Query", new { id = query.Id })" class="btn btn-sm btn-secondary white-text">Select Query</a>
                             </div>
                         </div>
                     </div>

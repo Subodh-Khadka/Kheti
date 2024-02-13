@@ -15,6 +15,7 @@
         <form asp-action="CreateQuery" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input asp-for="DateCreated" hidden />            
+            <input asp-for="QueryStatus" hidden />            
             <div class="row query-box">
 
                 <div class="col-md-6">
@@ -36,8 +37,12 @@
                         <span asp-validation-for="Location" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                      <select asp-for="ProblemCategory" class="form-control" asp-items="ViewBag.CategoryList">
-                            <option disabled selected value="">Select problem Category--></option>
+                    <label asp-for="ProblemCategory">select Query Category <i class="bi bi-caret-down-fill"></i></label>
+                      @* <select asp-for="ProblemCategory" class="form-control" asp-items="ViewBag.CategoryList"> *@
+                      <select asp-for="ProblemCategory" class="form-control">                        
+                        <option>Crop</option>
+                        <option>Fertilizer</option>
+                        <option>Equipment</option>
                       </select>
                         <span asp-validation-for="ProblemCategory" class="text-danger"></span>
                     </div>  

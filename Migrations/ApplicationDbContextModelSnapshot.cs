@@ -39,6 +39,33 @@ namespace Kheti.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("Kheti.Models.ExpertProfile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("FieldOfExpertise")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("YearsOfExperience")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("ExpertProfiles");
+                });
+
             modelBuilder.Entity("Kheti.Models.Favorite", b =>
                 {
                     b.Property<int>("FavoriteId")
@@ -293,11 +320,18 @@ namespace Kheti.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsSelected")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Location")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ProblemCategory")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("QueryStatus")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -584,6 +618,17 @@ namespace Kheti.Migrations
                     b.HasDiscriminator().HasValue("KhetiApplicationUser");
                 });
 
+            modelBuilder.Entity("Kheti.Models.ExpertProfile", b =>
+                {
+                    b.HasOne("Kheti.Models.KhetiApplicationUser", "User")
+                        .WithOne("ExpertProfile")
+                        .HasForeignKey("Kheti.Models.ExpertProfile", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Kheti.Models.Favorite", b =>
                 {
                     b.HasOne("Kheti.Models.Product", "Product")
@@ -797,6 +842,9 @@ namespace Kheti.Migrations
 
             modelBuilder.Entity("Kheti.Models.KhetiApplicationUser", b =>
                 {
+                    b.Navigation("ExpertProfile")
+                        .IsRequired();
+
                     b.Navigation("ProductComments");
 
                     b.Navigation("Replies");

@@ -12,7 +12,6 @@ namespace Kheti.Models
     {
         [Key]
         public int Id { get; set; }
-
         [Required]
         public string Email {  get; set; }
         [Required]
@@ -35,6 +34,8 @@ namespace Kheti.Models
         [ForeignKey("UserId")]
         [ValidateNever]
         public KhetiApplicationUser User { get; set; }
+        public string QueryStatus { get; set; }
+        public bool IsSelected { get; set; }
 
     }
 }

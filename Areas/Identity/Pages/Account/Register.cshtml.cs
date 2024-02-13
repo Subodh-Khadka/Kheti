@@ -10,6 +10,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
+using Kheti.Data;
 using Kheti.KhetiUtils;
 using Kheti.Models;
 using Microsoft.AspNetCore.Authentication;
@@ -27,6 +28,8 @@ namespace Kheti.Areas.Identity.Pages.Account
 {
     public class RegisterModel : PageModel
     {
+        private readonly ApplicationDbContext _db;
+        
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly UserManager<IdentityUser> _userManager;
@@ -38,13 +41,15 @@ namespace Kheti.Areas.Identity.Pages.Account
         public RegisterModel(
             UserManager<IdentityUser> userManager,
             RoleManager<IdentityRole> roleManager,
+            ApplicationDbContext db,
             IUserStore<IdentityUser> userStore,
             SignInManager<IdentityUser> signInManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender)
         {
             _userManager = userManager;
-            _roleManager = roleManager;
+            _roleManager = roleManager;   
+            _db = db;
             _userStore = userStore;
             _emailStore = GetEmailStore();
             _signInManager = signInManager;
@@ -117,6 +122,11 @@ namespace Kheti.Areas.Identity.Pages.Account
 
             public string ProfilePictureURL { get; set; }
             public string PhoneNumber { get; set; }
+
+            //input properties for Expert
+            public string FieldOfExpertise { get; set; }
+            public string YearsOfExperience { get; set; }
+
         }
 
 
@@ -167,7 +177,8 @@ namespace Kheti.Areas.Identity.Pages.Account
                     _logger.LogInformation("User created a new account with password.");
 
                     //add for role
-                    if (!string.IsNullOrEmpty(Input.Role)){
+                    if (!string.IsNullOrEmpty(Input.Role))
+                    {
                         await _userManager.AddToRoleAsync(user, Input.Role);
                     }
                     else
@@ -175,6 +186,23 @@ namespace Kheti.Areas.Identity.Pages.Account
                         await _userManager.AddToRoleAsync(user, StaticDetail.CustomerRole);
                     }
 
+                    //for expert
+                    if (Input.Role == "Expert")
+                    {
+                        var fieldOfExpertise = Input.FieldOfExpertise;
+                        var yearsOfExperience = Input.YearsOfExperience;
+                        var yearsOfExperienceInNum = Convert.ToInt32(yearsOfExperience);
+
+                        var expertProfile = new ExpertProfile
+                        {
+                            FieldOfExpertise = fieldOfExpertise,
+                            YearsOfExperience = yearsOfExperienceInNum,
+                            UserId = user.Id,
+                        };                       
+                        
+                        _db.ExpertProfiles.Add(expertProfile);
+                        await _db.SaveChangesAsync();
+                    }
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));

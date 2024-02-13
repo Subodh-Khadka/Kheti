@@ -53,7 +53,7 @@ namespace Kheti.Controllers
         }
 
         public IActionResult Details(Guid id)
-        {                      
+        {
             var product = _db.Products
                 .Include(p => p.Category)
                 .Include(p => p.User)
@@ -169,8 +169,8 @@ namespace Kheti.Controllers
                 ProductId = productId,
                 CommentText = commentText,
                 UserId = userId,
-                CommentDate = DateTime.Now,                
-                };
+                CommentDate = DateTime.Now,
+            };
 
             // Add the comment to the product
             product.ProductComments.Add(comment);
@@ -188,7 +188,7 @@ namespace Kheti.Controllers
                 .FirstOrDefault(p => p.ProductId == productId);
 
             return PartialView("_CommentsPartial", updatedProduct.ProductComments);
-            
+
         }
 
         public IActionResult SubmitProductReply(int commentId, string replyText)

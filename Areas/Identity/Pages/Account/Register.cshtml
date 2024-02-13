@@ -58,22 +58,48 @@
                             <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
                         </div>
                         <div class="form-group pb-3 col-lg-12 col-md-12 col-sm-6">
-                            <select asp-for="Input.Role" asp-items="@Model.Input.KhetiRoleList" class="form-select" >
+                            <select asp-for="Input.Role" asp-items="@Model.Input.KhetiRoleList" class="form-select">
                                 <option disabled selected>Choose a role</option>
                             </select>
                         </div>
-                       
-    
+
+                        @* Additional Fields for expert information *@
+                        <div class="form-group pb-3 col-lg-12 col-md-12 col-sm-6" style="display:none" id="expertField">
+                            <select asp-for="Input.FieldOfExpertise" class="form-select">
+                                <option disabled selected>Choose Field Of Expertise</option>
+                                <option>Crop</option>
+                                <option>Fertilizer</option>
+                                <option>Equipment</option>
+                            </select>
+                            <span asp-validation-for="Input.FieldOfExpertise"></span>
+                        </div>
+
+                        <div class="form-group pb-3 col-lg-12 col-md-12 col-sm-6" style="display:none" id="ExperienceField">
+                            <input asp-for="Input.YearsOfExperience" class="form-control" aria-required="true" id=""
+                                   aria-describedby="emailHelp" placeholder="Enter Experience in years">
+                            <span asp-validation-for="Input.YearsOfExperience" class="text-danger"></span>
+                        </div>
                         <button cid="registerSubmit" type="submit" class="w-100 btn btn-lg btn-success">Create Account</button>
                     </form>
-
                 </div>
             </div>
         </div>
     </div>
-
 </div>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+    <partial name="_ValidationScriptsPartial" />    
 }
+
+<script>
+    $('#Input_Role').change(function () {
+        if ($(this).val() === "Expert") {
+            $('#expertField').show();
+            $('#ExperienceField').show();
+        }
+        else {
+            $('#expertField').hide();
+            $('#ExperienceField').hide();
+        }
+    });
+</script>
