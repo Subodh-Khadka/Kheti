@@ -17,6 +17,8 @@ namespace Kheti.Data
         public DbSet<ProductReply> ProductReplies  { get; set; }
         public DbSet<QueryForm> QueryForms { get; set; }
         public DbSet<ExpertProfile> ExpertProfiles { get; set; }
+        public DbSet<QueryComment> QueryComments { get; set; }
+        public DbSet<QueryReply> QueryReplies { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -54,6 +56,15 @@ namespace Kheti.Data
               .HasOne(s => s.ProductComment).WithMany()
               .HasForeignKey(s => s.ProductCommentId)
               .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<QueryComment>()
+              .HasOne(s => s.Form).WithMany()              
+              .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<QueryReply>()
+              .HasOne(s => s.Comment).WithMany()
+              .OnDelete(DeleteBehavior.NoAction);
+
 
 
             base.OnModelCreating(modelBuilder);

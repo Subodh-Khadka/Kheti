@@ -296,6 +296,38 @@ namespace Kheti.Migrations
                     b.ToTable("ProductReplies");
                 });
 
+            modelBuilder.Entity("Kheti.Models.QueryComment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CommentText")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DateCreated")
+                        .IsRequired()
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("QueryFormId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("QueryFormId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("QueryComments");
+                });
+
             modelBuilder.Entity("Kheti.Models.QueryForm", b =>
                 {
                     b.Property<int>("Id")
@@ -352,6 +384,44 @@ namespace Kheti.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("QueryForms");
+                });
+
+            modelBuilder.Entity("Kheti.Models.QueryReply", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("QueryCommentId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("QueryCommentId1")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ReplyText")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("QueryCommentId");
+
+                    b.HasIndex("QueryCommentId1")
+                        .IsUnique()
+                        .HasFilter("[QueryCommentId1] IS NOT NULL");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("QueryReplies");
                 });
 
             modelBuilder.Entity("Kheti.Models.ShoppingCart", b =>
@@ -747,6 +817,25 @@ namespace Kheti.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Kheti.Models.QueryComment", b =>
+                {
+                    b.HasOne("Kheti.Models.QueryForm", "Form")
+                        .WithMany()
+                        .HasForeignKey("QueryFormId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Kheti.Models.KhetiApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Form");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Kheti.Models.QueryForm", b =>
                 {
                     b.HasOne("Kheti.Models.KhetiApplicationUser", "User")
@@ -754,6 +843,29 @@ namespace Kheti.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Kheti.Models.QueryReply", b =>
+                {
+                    b.HasOne("Kheti.Models.QueryComment", "Comment")
+                        .WithMany()
+                        .HasForeignKey("QueryCommentId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Kheti.Models.QueryComment", null)
+                        .WithOne("QueryReply")
+                        .HasForeignKey("Kheti.Models.QueryReply", "QueryCommentId1");
+
+                    b.HasOne("Kheti.Models.KhetiApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Comment");
 
                     b.Navigation("User");
                 });
@@ -838,6 +950,12 @@ namespace Kheti.Migrations
             modelBuilder.Entity("Kheti.Models.ProductComment", b =>
                 {
                     b.Navigation("Replies");
+                });
+
+            modelBuilder.Entity("Kheti.Models.QueryComment", b =>
+                {
+                    b.Navigation("QueryReply")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Kheti.Models.KhetiApplicationUser", b =>

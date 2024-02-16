@@ -5,6 +5,7 @@ using System.Linq;
 using Kheti.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 
 namespace Kheti.Controllers
 {
@@ -52,7 +53,6 @@ namespace Kheti.Controllers
             else
             //if user is of role:seller
             {
-
                 queries = _db.QueryForms
                 /*  .OrderByDescending(p => p.UrgencyLevel == "High")
                   .ThenByDescending(x => x.UrgencyLevel == "Medium")
@@ -60,7 +60,6 @@ namespace Kheti.Controllers
                 .Where(p => p.UserId == userId)
                 .OrderByDescending(p => p.DateCreated).ToList();
             }                       
-
             return View(queries);
         }
 
@@ -131,10 +130,34 @@ namespace Kheti.Controllers
             return View();
         }
 
-        public IActionResult QueryDetails()
+        public IActionResult QueryDetails(int queryId)
         {
-            return View();
+            var query = _db.QueryForms.FirstOrDefault(x => x.Id == queryId);
+
+            return View(query);
         }
+
+        [HttpPost]
+        public IActionResult SubmitQueryComment(int queryFormId, string commentText) 
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+               
+
+            var queryComment = new QueryComment
+            {
+                QueryFormId = queryFormId,
+                UserId = userId,
+                CommentText = commentText,
+                DateCreated = DateTime.Now,
+
+            };
+            
+
+
+            return View(); 
+        }
+
 
 
     }

@@ -21,7 +21,7 @@
                         <p class="card-text">Email: @query.Email</p>
                         <p class="card-text">Problem Category: @query.ProblemCategory</p>
                         <p class="card-text">Location: @query.Location</p>
-                        <p class="card-text overflow" data-toggle="tooltip" data-placement="top" title="@query.Description">Description: @query.Description</p>
+                        @* <p class="card-text overflow" data-toggle="tooltip" data-placement="top" title="@query.Description">Description: @query.Description</p> *@
 
                         <p class="card-text">Created: @GetQueryElapsedTime((DateTime)query.DateCreated)</p> <!-- Display time elapsed -->
 
@@ -38,12 +38,15 @@
                             
                         <p style="color:darkcyan">Urgency level: @query.UrgencyLevel</p>
                         }
+                        <p style="color:">Query Status: @query.QueryStatus</p>
                         
                         <div class="d-flex justify-content-between align-items-center">
                             <div class="btn-group d-flex gap-2">
                                 <!-- Add a button/link to view details or comments -->
-                                <a href="@Url.Action("Details", "Query", new { id = query.Id })" class="btn btn-sm purple-background white-text">View Details</a>
-                                <a href="@Url.Action("Details", "Query", new { id = query.Id })" class="btn btn-sm btn-secondary white-text">Select Query</a>
+                                
+                                <a asp-action="QueryDetails" asp-controller="Consultation" asp-route-queryId="@query.Id" class="btn btn-sm purple-background white-text">View Details</a>
+                              @*   <a href="@Url.Action("QueryDetails", "Consultation", new { id = query.Id })" class="btn btn-sm purple-background white-text">View Details</a> *@
+                               @*  <a href="@Url.Action("Details", "Query", new { id = query.Id })" class="btn btn-sm btn-secondary white-text">Select Query</a> *@
                             </div>
                         </div>
                     </div>
@@ -78,8 +81,6 @@
         }
     }
 }
-
-
 
     <script>
         $(document).ready(function () {
