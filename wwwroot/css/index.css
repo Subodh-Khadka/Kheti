@@ -40,8 +40,7 @@
 
 /* body css */
 
-.home_page_row1 {
-    /* height: calc(100vh - 56.67px); */
+.home_page_row1 {    
     height: 70vh;
     margin-top: 150px;
     /* margin-top: 90px; */
@@ -100,19 +99,16 @@
 /* media querry */
 @media (max-width: 720px) {
     /* Custom styles for screens below 720px */
+   /* body p{
+        font-size:5px;
+    }*/
+
     .navbar-nav .nav-link {
-        font-size: 14px; /* Adjust the font size as needed */
+        font-size: 14px; 
     }
 
     .login_signup_btn button {
         font-size: 12px;
         padding: 0.1rem 1rem;
     }
-
-    /*.home_page_row1 {*/
-        /* height: calc(100vh - 56.67px); */
-        /*margin-top: 80px;
-        font-size: smaller;*/
-        /* margin-top: 90px; */
-    /*}*/
 }

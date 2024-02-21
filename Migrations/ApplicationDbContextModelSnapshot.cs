@@ -312,7 +312,13 @@ namespace Kheti.Migrations
                         .IsRequired()
                         .HasColumnType("datetime2");
 
+                    b.Property<bool>("IsExpert")
+                        .HasColumnType("bit");
+
                     b.Property<int>("QueryFormId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("QueryFormId1")
                         .HasColumnType("int");
 
                     b.Property<string>("UserId")
@@ -322,6 +328,8 @@ namespace Kheti.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("QueryFormId");
+
+                    b.HasIndex("QueryFormId1");
 
                     b.HasIndex("UserId");
 
@@ -403,6 +411,9 @@ namespace Kheti.Migrations
                     b.Property<int?>("QueryCommentId1")
                         .HasColumnType("int");
 
+                    b.Property<int?>("QueryFormId")
+                        .HasColumnType("int");
+
                     b.Property<string>("ReplyText")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -418,6 +429,8 @@ namespace Kheti.Migrations
                     b.HasIndex("QueryCommentId1")
                         .IsUnique()
                         .HasFilter("[QueryCommentId1] IS NOT NULL");
+
+                    b.HasIndex("QueryFormId");
 
                     b.HasIndex("UserId");
 
@@ -825,6 +838,10 @@ namespace Kheti.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.HasOne("Kheti.Models.QueryForm", null)
+                        .WithMany("QueryComments")
+                        .HasForeignKey("QueryFormId1");
+
                     b.HasOne("Kheti.Models.KhetiApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
@@ -858,6 +875,10 @@ namespace Kheti.Migrations
                     b.HasOne("Kheti.Models.QueryComment", null)
                         .WithOne("QueryReply")
                         .HasForeignKey("Kheti.Models.QueryReply", "QueryCommentId1");
+
+                    b.HasOne("Kheti.Models.QueryForm", null)
+                        .WithMany("QueryReplies")
+                        .HasForeignKey("QueryFormId");
 
                     b.HasOne("Kheti.Models.KhetiApplicationUser", "User")
                         .WithMany()
@@ -956,6 +977,13 @@ namespace Kheti.Migrations
                 {
                     b.Navigation("QueryReply")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Kheti.Models.QueryForm", b =>
+                {
+                    b.Navigation("QueryComments");
+
+                    b.Navigation("QueryReplies");
                 });
 
             modelBuilder.Entity("Kheti.Models.KhetiApplicationUser", b =>

@@ -11,12 +11,15 @@ namespace Kheti.Models
         public string CommentText { get; set; }
         [Required]        
         public DateTime? DateCreated { get; set; }
+        public bool IsExpert { get; set; }
+        [Required]
         public int QueryFormId { get; set; }
         [ForeignKey("QueryFormId")]
         public QueryForm Form { get; set; }
         public string UserId { get; set; }
         [ForeignKey("UserId")]
         public KhetiApplicationUser User { get; set; }
+
 
         //navigation properties for reply
         public QueryReply QueryReply { get; set; }

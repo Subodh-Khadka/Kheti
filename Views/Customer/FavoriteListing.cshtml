@@ -13,7 +13,7 @@
     }
 </style>
 
-<h1>Favorite Products</h1>
+<h5 class="text-success">Favorite Products</h5>
 
 @if (Model.Count == 0)
 {
@@ -29,22 +29,22 @@ else
                     <img src="~/@favorite.Product.ProductImageUrl" class="product-image m-2" />
                     <div class="card-body">
                         <h5 class="card-title">@favorite.Product.ProductName</h5>
-                        <p class="card-text">@favorite.Product.ProductDescription</p>
+                        <p class="card-text">@favorite.Product.ProductDescription</p>                        
                         <div class="d-flex justify-content-between align-items-center">
                             <div class="btn-group d-flex gap-4">
                                @*  <a class="btn purple-background text-white" asp-action="Details" asp-controller="Customer" asp-route-id="@favorite.ProductId">Details</a> *@
 
                                 <!-- Form to add product to cart -->
-                                <form method="post" action="@Url.Action("Details", "Customer")">
+                                <form method="post" asp-action="AddToCartFromFavorites" asp-controller="Customer">                                    
                                     <input type="hidden" name="productId" value="@favorite.ProductId" />
                                     <input type="hidden" name="quantity" value="1" /> <!-- Set the quantity to 1 -->
-                                    <button type="submit" class="btn btn-sm btn-outline-secondary"><i class="bi bi-cart-dash fs-5"></i></button>
+                                    <button type="submit" class="btn btn-sm "><i class="bi bi-cart-dash fs-5 text-success "></i></button>
                                 </form>
 
                                 <!-- Form to remove product from favorites -->
-                                <form method="post" action="@Url.Action("RemoveFromFavorites", "Customer")">
-                                    <input type="hidden" name="productId" value="@favorite.ProductId" />
-                                    <button type="submit" class="btn btn-sm btn-outline-secondary"><i class="bi bi-trash3-fill fs-5"></i></button>
+                                <form asp-action="DeleteFromFavorite">
+                                    <input type="hidden" name="id" value="@favorite.ProductId" />
+                                    <button type="submit" class="btn btn-sm"><i class="bi bi-trash3-fill fs-5 text-danger"></i></button>
                                 </form>
                             </div>
                         </div>

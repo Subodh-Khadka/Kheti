@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Kheti.Controllers
 {
+    [Authorize]
     public class ConsultationController : Controller
     {
         private readonly ApplicationDbContext _db;
@@ -46,7 +47,7 @@ namespace Kheti.Controllers
                 else
                 {
                     //if expertProfile is null
-                    return RedirectToAction("Erro","Home");
+                    return RedirectToAction("Error","Home");
                 }
 
             }
@@ -69,17 +70,7 @@ namespace Kheti.Controllers
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
 
             var user = _db.KhetiApplicationUsers.FirstOrDefault(u => u.Id == userId);
-
-            if (user == null)
-            {
-                // Handle scenario where user is not found
-                return RedirectToAction("Error");
-            }
-            /*
-                        var userEmail = user.Email;
-                        var userAddress = user.Address;*/
-
-            //fetching and populating the categoryList
+           
             ViewBag.CategoryList = new SelectList(_db.Categories, "Id", "Name");
 
             QueryForm form = new QueryForm
@@ -98,13 +89,11 @@ namespace Kheti.Controllers
         {
             if (!ModelState.IsValid)
             {
-
                 var claimsIdentity = (ClaimsIdentity)User.Identity;
                 var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
 
                 if (imageFile != null && imageFile.Length > 0)
-                {
-                    //save the image to rootPath
+                {                    
                     var imagePath = Path.Combine(_webHostEnvironment.WebRootPath, "Images", "QueryImages");
                     var uniqueFileName = Guid.NewGuid().ToString() + "_" + imageFile.FileName;
                     var filePath = Path.Combine(imagePath, uniqueFileName);
@@ -124,7 +113,7 @@ namespace Kheti.Controllers
                 _db.QueryForms.Add(queryForm);
                 _db.SaveChanges();
 
-                return RedirectToAction(nameof(CreateQuery), "Consultation");
+                return RedirectToAction(nameof(QueryList), "Consultation");
             }
 
             return View();
@@ -132,30 +121,60 @@ namespace Kheti.Controllers
 
         public IActionResult QueryDetails(int queryId)
         {
-            var query = _db.QueryForms.FirstOrDefault(x => x.Id == queryId);
+            var query = _db.QueryForms
+                .OrderByDescending(q => q.DateCreated)
+                .Include(q => q.QueryComments)
+                .Include(q => q.User)
+                .FirstOrDefault(x => x.Id == queryId);
 
             return View(query);
         }
 
+        //queryComment post method
         [HttpPost]
-        public IActionResult SubmitQueryComment(int queryFormId, string commentText) 
+        public IActionResult QueryDetails(int queryFormId, string commentText) 
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
-               
+            var userRole = User.FindFirstValue(ClaimTypes.Role);
 
-            var queryComment = new QueryComment
+            var query = _db.QueryForms
+                .Include(query => query.QueryComments)
+                .FirstOrDefault(q => q.Id == queryFormId);
+            if (query ==  null)
             {
-                QueryFormId = queryFormId,
-                UserId = userId,
-                CommentText = commentText,
-                DateCreated = DateTime.Now,
+                return RedirectToAction("Error");
+            }
 
-            };
-            
+            if(userRole == "Expert")
+            {
+                var queryComment = new QueryComment
+                {
+                    QueryFormId = queryFormId,
+                    UserId = userId,
+                    CommentText = commentText,
+                    DateCreated = DateTime.Now,
+                    IsExpert = true,
+                };
 
+                query.QueryComments.Add(queryComment);
+                _db.SaveChanges();
+            }
+            else
+            {
+                var queryComment = new QueryComment
+                {
+                    QueryFormId = queryFormId,
+                    UserId = userId,
+                    CommentText = commentText,
+                    DateCreated = DateTime.Now,
+                };
 
-            return View(); 
+                query.QueryComments.Add(queryComment);
+                _db.SaveChanges();
+            }                       
+
+            return RedirectToAction("QueryDetails", new {queryId = queryFormId});
         }
 
 

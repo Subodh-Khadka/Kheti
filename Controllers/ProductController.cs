@@ -56,7 +56,7 @@ namespace Kheti.Controllers
                 product.UserId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
                 if (imageFile != null && imageFile.Length > 0)
-                {                    
+                {
 
                     //Save the image to wwwroot/Images/ProductImages
                     var imagePath = Path.Combine(_webHostEnvironment.WebRootPath, "Images", "ProductImages");
@@ -83,47 +83,76 @@ namespace Kheti.Controllers
 
         public IActionResult Edit(Guid id)
         {
-            var product = _db.Products.Include(c => c.Category).FirstOrDefault(p => p.ProductId == id);    
+            var product = _db.Products.Include(c => c.Category).FirstOrDefault(p => p.ProductId == id);
 
             var categories = _db.Categories.ToList();
             SelectList categoryList = new SelectList(categories, "Id", "Name");
             ViewBag.CategoryList = categoryList;
-            
+
             return View(product);
         }
 
         [HttpPost]
         public IActionResult Edit(Guid id, Product product, IFormFile? imageFile)
         {
-           
-                // Retrieve the userId from the current user's Claims
-                var claimsIdentity = (ClaimsIdentity)User.Identity;                
-                product.UserId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            // Retrieve the userId from the current user's Claims
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            product.UserId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-                if (imageFile != null && imageFile.Length > 0)
-                {                   
+            if (imageFile != null && imageFile.Length > 0)
+            {
 
-                    // Example: Save the image to wwwroot/Images/ProductImages
-                    var imagePath = Path.Combine(_webHostEnvironment.WebRootPath, "Images", "ProductImages");
-                    var uniqueFileName = Guid.NewGuid().ToString() + "_" + imageFile.FileName;
-                    var filePath = Path.Combine(imagePath, uniqueFileName);
+                // Example: Save the image to wwwroot/Images/ProductImages
+                var imagePath = Path.Combine(_webHostEnvironment.WebRootPath, "Images", "ProductImages");
+                var uniqueFileName = Guid.NewGuid().ToString() + "_" + imageFile.FileName;
+                var filePath = Path.Combine(imagePath, uniqueFileName);
 
-                    using (var stream = new FileStream(filePath, FileMode.Create))
-                    {
-                        imageFile.CopyTo(stream);
-                    }
-
-                    product.ProductImageUrl = Path.Combine("Images", "ProductImages", uniqueFileName);
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    imageFile.CopyTo(stream);
                 }
-                _db.Products.Update(product);
-                _db.SaveChanges();
-                return RedirectToAction("Index");                        
+
+                product.ProductImageUrl = Path.Combine("Images", "ProductImages", uniqueFileName);
+            }
+            else
+            {
+                //added as no tracking
+                var existingProduct = _db.Products.AsNoTracking().FirstOrDefault(p => p.ProductId == id);
+                if (existingProduct != null)
+                {
+                    product.ProductImageUrl = existingProduct.ProductImageUrl;
+                }
+            }
+
+            _db.Entry(product).State = EntityState.Modified;
+            /*_db.Products.Update(product);*/
+            _db.SaveChanges();
+            return RedirectToAction("Index");
         }
 
         public IActionResult Delete(Guid id)
         {
-            var product = _db.Products.FirstOrDefault(x => x.ProductId == id);
-            _db.Products.Remove(product);
+            var productToDelete = _db.Products.FirstOrDefault(x => x.ProductId == id);
+
+            var existingProductInCart = _db.ShoppingCarts.Where(x => x.ProductId == id).ToList();
+            var existingProductInFavorite = _db.Favorites.Where(x => x.ProductId == id).ToList();
+
+            if (existingProductInCart.Any() || existingProductInFavorite.Any())
+            {
+                foreach (var shoppingCart in existingProductInCart)
+                {
+                    _db.ShoppingCarts.Remove(shoppingCart);
+                }
+
+
+                foreach (var favorite in existingProductInFavorite)
+                {
+                    _db.Favorites.Remove(favorite);
+                }
+                _db.SaveChanges();
+            }
+
+            _db.Products.Remove(productToDelete);
             _db.SaveChanges();
             return RedirectToAction("Index");
         }

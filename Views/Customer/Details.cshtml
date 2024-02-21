@@ -8,16 +8,16 @@
 
 </style>
 
-@* <link rel="stylesheet" href="~/css/details.css" asp-append-version="true" /> *@
+<link rel="stylesheet" href="~/css/details.css" asp-append-version="true" />
 
 
 <form method="post" asp-action="Details">
 
     <input hidden asp-for="ProductId" />
 
-    <div class="container mt-4 mb-4 justify-content-center align-items-center">
-        <div class="purple-text fs-6">
-            <a asp-action="Index" class="mt-4 mb-4 text-md-start text-decoration-none gap-3"><i class="bi bi-arrow-left pe-2 back-icon"></i>Back To Home</a>
+    <div class="container mt-4 mb-4 justify-content-center align-items-center position-relative">
+        <div class="fs-6">
+            <a asp-action="Index" class="mt-4 mb-4 text-md-start small_grey_text_css text-decoration-none gap-3"><i class="bi bi-arrow-left pe-2 back-icon"></i>Back To Home</a>
         </div>
 
         <div class="row mt-4">
@@ -25,7 +25,7 @@
                 <img src="~/@Model.Product.ProductImageUrl" alt="@Model.Product.ProductName" height="375px" width="100%">
             </div>
             <div class="col-sm-12 col-md-5 small_grey_text_css text d-flex flex-column justify-content-center">
-                <h2 class="purple-text">@Model.Product.ProductName</h2>
+                <h3 class="">@Model.Product.ProductName</h3>
                 <p class="small_grey_text_css mb-2">Category: @Model.Product.Category.Name</p>
                 <p class="small_grey_text_css mb-2">Price: Rs @Model.Product.Price</p>
                 <p class="small_grey_text_css mb-2">SellerId: @Model.Product.UserId</p>
@@ -36,32 +36,74 @@
                     <input asp-for="Quantity" type="number" min="1" value="1" />
                     <button type="submit" class="favorite-btn" asp-controller="Customer" asp-action="AddToFavorite" asp-route-ProductId="@Model.Product.ProductId"><i class="favorite-icon fs-3 bi bi-heart-fill ms-4"></i></button>
                 </div>
+                @if (ViewBag.AddedToCartMessage != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show position-absolute top-0 end-0" role="alert">
+                        @ViewBag.AddedToCartMessage
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+                @if (ViewBag.AddedToFavorite != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show position-absolute top-0 end-0" role="alert">
+                        @ViewBag.AddedToFavorite
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+                @if (ViewBag.Message != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show position-absolute top-0 end-0" role="alert">
+                        @ViewBag.Message
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
 
-                <button type="submit" class="btn btn-success w-100 mt-5">Add To Cart</button>
-                <a asp-action="Index" class="signup_btn continue mt-2 text-center">Continue Shopping</a>
+                @if (User.IsInRole(StaticDetail.CustomerRole) || User.IsInRole(StaticDetail.AdminRole))
+                {
+                    <button type="submit" class="btn btn-success w-100 mt-5">Add To Cart</button>
+                    <a asp-action="Index" class="signup_btn continue mt-2 text-center">Continue Shopping</a>
+
+                }
+                else
+                {
+                    <button type="submit" class="btn btn-success w-100 mt-5 disabled">Add To Cart</button>
+                    @* <a asp-action="Index" class="signup_btn continue mt-2 text-center">Continue Shopping</a> *@
+                }
+
             </div>
         </div>
 
         <!-- Comment Section -->
-        <div class="mt-5">
-            <h3>Leave your comments  below</h3>
+        <div class="row-cols-2">
+            <div class="mt-5">
 
-            <!-- Include the partial view for comments -->
-            <div id="commentsSection">
-                <!-- Render the comments section using the partial view -->
-                @Html.Partial("_CommentsPartial", Model.Product.ProductComments)
+                @if (User.IsInRole(StaticDetail.CustomerRole))
+                {
+                    <h6 class="text-success">Leave your questions below</h6>
+                }
+                else
+                {
+                    <h3>Comment of users </h3>
+                }
+
+
+                <!-- Include the partial view for comments -->
+                <div id="commentsSection">
+                    <!-- Render the comments section using the partial view -->
+                    @Html.Partial("_CommentsPartial", Model.Product.ProductComments)
+                </div>
+
+                @if (User.IsInRole(StaticDetail.CustomerRole))
+                {
+
+                    <!-- Form to submit a new comment -->
+                    <form id="commentForm">
+                        <textarea class="p-2" id="commentText" rows="2" cols="50" placeholder="Write a comment..."></textarea><br />
+                        <button id="submitComment" class="btn btn-sm purple-background text-white" type="button">Comment</button>
+                    </form>
+
+                }
             </div>
-
-            @if (User.IsInRole(StaticDetail.CustomerRole))
-            {
-                
-            <!-- Form to submit a new comment -->
-            <form id="commentForm">
-                <textarea id="commentText" rows="2" cols="50" placeholder="Write a comment..."></textarea><br />
-                <button id="submitComment" class="btn btn-sm purple-background text-white" type="button">Comment</button>
-            </form>
-
-            }
 
         </div>
         <!-- End of Comment Section -->

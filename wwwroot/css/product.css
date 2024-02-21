@@ -51,10 +51,16 @@
 
 .search-input {
     margin:0;
-    padding: 0.3rem 1rem;
+    background-color:ghostwhite;
+    padding: 0.8rem 1rem;
     margin-right: 0;
+    border:0px solid white;
 }
-.search-btn {
-    padding: 0.4rem 1.2rem;
+
+    .search-input:hover {
+        
+    }
+    .search-btn {
+    padding: 0.4rem 0.7rem;
     margin:0;
 }

@@ -9,16 +9,12 @@ namespace Kheti.Controllers
 {
     public class CartController : Controller
     {
-        private readonly ApplicationDbContext _db;
-        /*[BindProperty]*/
+        private readonly ApplicationDbContext _db;        
         public ShoppingCartVM ShoppingCartVm { get; set; }
-
-        public CartController(ApplicationDbContext db)
+        public CartController (ApplicationDbContext db)
         {
             _db = db;
         }      
-
-
         public IActionResult Index()
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
@@ -106,7 +102,7 @@ namespace Kheti.Controllers
             ShoppingCartVm.Order.CustomerName = ShoppingCartVm.Order.User.FirstName + " " + ShoppingCartVm.Order.User.LastName;
             ShoppingCartVm.Order.Address = ShoppingCartVm.Order.User.Address;
             ShoppingCartVm.Order.phoneNumber = ShoppingCartVm.Order.User.PhoneNumber;
-            ShoppingCartVm.Order.Address = ShoppingCartVm.Order.User.Address;
+            ShoppingCartVm.Order.Address = ShoppingCartVm.Order.User.Address;            
 
             foreach (var cart in ShoppingCartVm.ShoppingCartList)
             {
@@ -180,13 +176,11 @@ namespace Kheti.Controllers
             // Clear the fields by creating a new empty ShoppingCartVM object
             ShoppingCartVm = new ShoppingCartVM()
             {
-                ShoppingCartList = new List<ShoppingCart>(), // Clear the shopping cart list
-                Order = new Order() // Create a new empty order
+                ShoppingCartList = new List<ShoppingCart>(),
+                Order = new Order() 
             };
 
-            return RedirectToAction(nameof(OrderConformation), new { orderId = shoppingCartVM.Order.OrderId });
-            /*return View(ShoppingCartVm);*/
-
+            return RedirectToAction(nameof(OrderConformation), new { orderId = shoppingCartVM.Order.OrderId });            
         }
 
         public IActionResult OrderConformation(int orderID)

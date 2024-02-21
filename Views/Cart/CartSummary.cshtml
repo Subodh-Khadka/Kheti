@@ -16,76 +16,73 @@
 
 <body>
     <div class="container mt-2">
-        <h3 class="text-center m-2 p-2">Order Summary</h3>        
-            <a asp-action="Index" class="mt-4 mb-4 text-md-start text-decoration-none gap-3"><i class="bi bi-arrow-left pe-2 back-icon"></i>Back To Home</a>
-        </div>
-
-        <form asp-controller="Cart" asp-action="CartSummary" method="post">
-            <div class="row rows mt-2 p-2">
-                <!-- Customer Details Section -->
-                <div class="col-md-6">
-                    <div class="customer-details">
-                        <h5>Customer Details</h5>
-                        <input asp-for="@Model.Order.CustomerName" type="text" class="editable-field mb-2" placeholder="Name">
-                        <span asp-validation-for="Order.CustomerName"></span>                       
-                        <input asp-for="@Model.Order.phoneNumber" class="editable-field" placeholder="Phone Number">
-                        <span asp-validation-for="Order.phoneNumber"></span>
-
-                    </div>
-
-                    <!-- Shipping Details Section -->
-                    <div class="shipping-details mt-4">
-                        <h5>Shipping Details</h5>
-                        <input asp-for="@Model.Order.Address" class="editable-field" placeholder="Shipping Address">
-                        <span asp-validation-for="Order.Address"></span>
-                    </div>
-                    <div class="shipping-details mt-4">
-                        <h6 class="text-success" style="font-size:small">You can edit your details above!</h6>
-                    </div>
-                </div>
-
-                <!-- Order Details Section -->
-                <div class="col-md-6">
-                    <div class="">
-                        <h5>Order Details</h5>
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Product</th>
-                                    <th>Quantity</th>
-                                    <th>Price</th>
-                                    <th>Total</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var item in Model.ShoppingCartList)
-                                {                                    
-                                    <tr>
-                                        @* <td class="truncate" title="@item.Product.ProductName">@item.Product.ProductName</td> *@
-                                        <td class="truncate" data-toggle="tooltip" data-placement="top" title="@item.Product.ProductName">@item.Product.ProductName</td>
-                                        <td>@item.Quantity</td>
-                                        <td>@item.Product.Price</td>
-                                        <td>@(item.Quantity * item.Product.Price)</td>
-                                    </tr>
-                                    
-                                    <!-- Add more rows for each product in the order -->
-                                }
-                            </tbody>
-                        </table>
-                        <p class="fs-6 text-end">Total: Rs @Model.Order.OrderTotal</p>
-                        @*    <div class="payment-details mt-4">
-                        <h2>Payment Details</h2>
-                        <p>Payment Method: Credit Card</p>
-                        <p>Card Number: **** **** **** 1234</p>
-                        </div> *@
-                    </div>
-                    <button type="submit" class="btn order-btn">Place Order</button>
-                </div>
-            </div>
-        </form>
+        <h3 class="text-center m-2 p-2">Order Summary</h3>
+        <a asp-action="Index" class="mt-4 mb-4 text-md-start text-decoration-none gap-3"><i class="bi bi-arrow-left pe-2 back-icon"></i>Back To Home</a>
     </div>
 
+    <form asp-controller="Cart" asp-action="CartSummary" method="post">
+        <div class="row rows mt-2 p-2">
+            <!-- Customer Details Section -->
+            <div class="col-md-6">
+                <div class="customer-details">
+                    <h5>Customer Details</h5>
+                    <input asp-for="@Model.Order.CustomerName" type="text" class="editable-field mb-2" placeholder="Name">
+                    <span asp-validation-for="Order.CustomerName"></span>
+                    <input asp-for="@Model.Order.phoneNumber" class="editable-field" placeholder="Phone Number">
+                    <input asp-for="@Model.Order.phoneNumber" class="editable-field" placeholder="Phone Number">
+                    <span asp-validation-for="Order.phoneNumber"></span>
+                    <input asp-for="@Model.Order.User.Email" class="editable-field" placeholder="Phone Number">
+                    <span asp-validation-for="Order.User.Email"></span>
+                    <input asp-for="@Model.Order.LocalAddress" class="editable-field" placeholder="Enter local Address">
+                    <span asp-validation-for="Order.LocalAddress"></span>
+                    
 
+                </div>
+
+                <!-- Shipping Details Section -->
+                <div class="shipping-details mt-4">
+                    <h5>Shipping Details</h5>
+                    <input asp-for="@Model.Order.Address" class="editable-field" placeholder="Shipping Address">
+                    <span asp-validation-for="Order.Address"></span>
+                </div>
+                <div class="shipping-details mt-4">
+                    <h6 class="text-success" style="font-size:small">You can edit your details above!</h6>
+                </div>
+            </div>
+
+            <!-- Order Details Section -->
+            <div class="col-md-6">
+                <div class="">
+                    <h5>Order Details</h5>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Quantity</th>
+                                <th>Price</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.ShoppingCartList)
+                            {
+                                <tr>
+                                    <td class="truncate" data-toggle="tooltip" data-placement="top" title="@item.Product.ProductName">@item.Product.ProductName</td>
+                                    <td>@item.Quantity</td>
+                                    <td>@item.Product.Price</td>
+                                    <td>@(item.Quantity * item.Product.Price)</td>
+                                </tr>
+
+                            }
+                        </tbody>
+                    </table>
+                    <p class="fs-6 text-end">Total: Rs @Model.Order.OrderTotal</p>
+                </div>
+                <button type="submit" class="btn purple-background order-btn">Place Order</button>
+            </div>
+        </div>
+    </form>
+    </div>
 
     <script>
         $(document).ready(function () {

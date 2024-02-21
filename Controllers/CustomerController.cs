@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace Kheti.Controllers
-{
+{    
     public class CustomerController : Controller
     {
         private readonly ApplicationDbContext _db;
@@ -27,16 +27,15 @@ namespace Kheti.Controllers
             IEnumerable<Product> products;
 
             if (userRole == "Seller")
-            {
-                // Filter products to include only those listed by the logged-in seller
+            {                
                 products = _db.Products
                     .Include(p => p.Category)
                     .Include(p => p.User)
                     .Where(p => p.UserId == userId);
             }
-            else // Customer role
+            else 
             {
-                // Display all products
+                
                 products = _db.Products
                     .Include(p => p.Category)
                     .Include(p => p.User);
@@ -52,16 +51,17 @@ namespace Kheti.Controllers
             return View(sortedProducts);
         }
 
+        [Authorize(Roles = "Seller,Customer")]
         public IActionResult Details(Guid id)
         {
             var product = _db.Products
                 .Include(p => p.Category)
                 .Include(p => p.User)
                 .Include(p => p.ProductComments)
-                    .ThenInclude(c => c.User) // Include the user who posted the comment
+                    .ThenInclude(c => c.User) 
                 .Include(p => p.ProductComments)
-                    .ThenInclude(c => c.Replies) // Include replies for each comment
-                        .ThenInclude(r => r.User) // Include the user who posted the reply
+                    .ThenInclude(c => c.Replies) 
+                        .ThenInclude(r => r.User) 
                 .FirstOrDefault(p => p.ProductId == id);
 
             ShoppingCart cart = new()
@@ -71,9 +71,17 @@ namespace Kheti.Controllers
                 ProductId = id
             };
 
+            if (TempData["AddedToCartMessage"] != null)
+            {
+                ViewBag.AddedToCartMessage = TempData["AddedToCartMessage"];
+            }
             if (TempData["Message"] != null)
             {
                 ViewBag.Message = TempData["Message"];
+            }
+            if (TempData["AddedToFavorite"] != null)
+            {
+                ViewBag.AddedToFavorite = TempData["AddedToFavorite"];
             }
 
             return View(cart);
@@ -103,9 +111,13 @@ namespace Kheti.Controllers
             }
             _db.SaveChanges();
 
-            return RedirectToAction("Index", "Cart");
+            // Set TempData for successful addition of product to cart
+            TempData["AddedToCartMessage"] = "Product added to cart!";
+
+            return RedirectToAction("Details");
         }
 
+        
         public IActionResult FavoriteListing()
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
@@ -116,8 +128,11 @@ namespace Kheti.Controllers
                 .Include(f => f.Product)
                 .ToList();
 
-            return View("~/Views/Customer/FavoriteListing.cshtml", favorites);
-
+            if (TempData["AddedToCartMessage"] != null)
+            {
+                ViewBag.AddedToCartMessage = TempData["AddedToCartMessage"];
+            }
+            return View(favorites);
         }
 
         [HttpPost]
@@ -126,18 +141,15 @@ namespace Kheti.Controllers
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
-
-            // Check if the product is already in favorites
+            
             var existingFavorite = _db.Favorites.FirstOrDefault(f => f.UserId == userId && f.ProductId == productId);
             if (existingFavorite != null)
             {
-                // Product already exists in favorites, handle accordingly
-                // For example, display a message or redirect back to the details page
+               
                 TempData["Message"] = "Product is already in favorites!";
                 return RedirectToAction("Details", new { id = productId });
             }
 
-            // Add the product to favorites
             var newFavorite = new Favorite
             {
                 UserId = userId,
@@ -147,7 +159,56 @@ namespace Kheti.Controllers
             _db.Favorites.Add(newFavorite);
             _db.SaveChanges();
 
-            // Redirect to the favorite listing page
+            TempData["AddedToFavorite"] = "Product added to favorites!";
+
+            return RedirectToAction("Details", new { id = productId });          
+        }
+
+        public IActionResult AddToCartFromFavorites(Guid productId) 
+        {
+            var claimsIdenttiy = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdenttiy.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            //check if the product already exists in cart or not
+            var existingCartInDb = _db.ShoppingCarts.FirstOrDefault(c => c.ProductId == productId && c.UserId == userId);
+
+            if(existingCartInDb != null)
+            {
+                //if exists, update the quantity
+                existingCartInDb.Quantity++;
+                _db.ShoppingCarts.Update(existingCartInDb);
+            }
+            else
+            {
+                ShoppingCart newCart = new ShoppingCart()
+                {
+                    ProductId = productId,
+                    UserId = userId,
+                    Quantity = 1,
+                };
+
+                _db.ShoppingCarts.Add(newCart);
+            }
+
+            _db.SaveChanges();
+
+            TempData["AddedToCartMessage"] = "Product added to cart!";
+
+            return RedirectToAction("FavoriteListing");
+        }
+
+
+        //Method for deleting the products from the favorites
+        public IActionResult DeleteFromFavorite(Guid id)
+        {
+            var productsToDelete = _db.Favorites.FirstOrDefault(p => p.ProductId == id);
+
+            if (productsToDelete != null)
+            {
+                _db.Favorites.Remove(productsToDelete);
+                _db.SaveChanges();
+            }
+
             return RedirectToAction("FavoriteListing");
         }
 
@@ -157,13 +218,13 @@ namespace Kheti.Controllers
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
 
-            // Retrieve the product
+            
             var product = _db.Products
-                .Include(p => p.ProductComments.OrderByDescending(pc => pc.CommentDate)) // Retrieve comments in reverse order
+                .Include(p => p.ProductComments.OrderByDescending(pc => pc.CommentDate)) 
                 .Include(p => p.User)
                 .FirstOrDefault(p => p.ProductId == productId);
 
-            // Create a new comment
+            
             var comment = new ProductComment
             {
                 ProductId = productId,
@@ -171,20 +232,17 @@ namespace Kheti.Controllers
                 UserId = userId,
                 CommentDate = DateTime.Now,
             };
-
-            // Add the comment to the product
+            
             product.ProductComments.Add(comment);
-
-            // Save changes
+            
             _db.SaveChanges();
-
-            // Return the partial view with the updated comments section
+            
             var updatedProduct = _db.Products
-                .Include(p => p.ProductComments) // Include comments
+                .Include(p => p.ProductComments) 
                     .ThenInclude(p => p.User)
                     .Include(p => p.ProductComments)
-                    .ThenInclude(c => c.Replies) // Include replies for each comment
-                    .ThenInclude(r => r.User) // Include user for each reply
+                    .ThenInclude(c => c.Replies) 
+                    .ThenInclude(r => r.User) 
                 .FirstOrDefault(p => p.ProductId == productId);
 
             return PartialView("_CommentsPartial", updatedProduct.ProductComments);
@@ -192,11 +250,9 @@ namespace Kheti.Controllers
         }
 
         public IActionResult SubmitProductReply(int commentId, string replyText)
-        {
-            // Retrieve the comment
+        {            
             var comment = _db.ProductComments.Include(c => c.Replies).FirstOrDefault(c => c.Id == commentId);
-
-            // Create a new reply
+            
             var reply = new ProductReply
             {
                 ProductCommentId = commentId,
@@ -204,22 +260,18 @@ namespace Kheti.Controllers
                 UserId = User.FindFirstValue(ClaimTypes.NameIdentifier),
                 ReplyDate = DateTime.Now
             };
-
-            // Add the reply to the comment
+            
             comment.Replies.Add(reply);
-
-            // Save changes
+            
             _db.SaveChanges();
-
-            //Return the list of replies for the comment
+            
             var replies = _db.ProductReplies
                 .Where(r => r.ProductCommentId == commentId)
                 .Include(r => r.User)
                 .ToList();
-
+                
             return PartialView("_RepliesPartial", replies);
 
         }
-
     }
 }

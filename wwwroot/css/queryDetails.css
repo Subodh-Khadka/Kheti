@@ -1,15 +1,11 @@
-    * {
-    font-family: "Poppins", sans-serif;
-    font-size:small;
-}
 
 .left-side {
     border: 1px solid white;
 }
 
 .right-side {
-    position: relative; /* Required for absolute positioning of the message form */
-    padding-bottom: 60px; /* Adjust this value to accommodate the height of the message form */
+    position: relative;
+    padding-bottom: 60px;
 }
 
 .message-form {
@@ -27,7 +23,7 @@
     }
 
     .message-form button {
-        width: 80px; /* Adjust button width */
+        width: 80px;
     }
 
 .row {
@@ -49,7 +45,7 @@
     padding: 0px;
     height: 50px;
 }
-   
+
 
 .card-body {
     background-color: #fafafa;
@@ -67,18 +63,12 @@ form input {
 }
 
 .messages-container {
-    height: 300px; /* Set a fixed height for the container */
-    overflow-y: auto; /* Enable vertical scrolling */
+    display: flex;
+    flex-direction: column;
+    height: 300px;
+    /* Enable vertical scrolling */
+    overflow-y: auto;
 }
-
-.message {
-    border-radius: 10px;
-    max-width: 70%;
-}
-
-    .message.card {
-        padding: 10px;
-    }
 
 .message-form {
     position: absolute;
@@ -95,5 +85,5 @@ form input {
     }
 
     .message-form button {
-        width: 90px; /* Adjust button width */
+        width: 90px;
     }

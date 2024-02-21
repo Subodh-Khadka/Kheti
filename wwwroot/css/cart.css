@@ -12,13 +12,13 @@ input[type="number"] {
     }
 
 .quantity-btn {
-    color:black;
-    background-color:lightgrey;
+    color: black;
+    background-color: lightgrey;
     width: 80px;
     border: 0px;
     height: 50px;
     padding: 7px 10px;
-    margin:0;
+    margin: 0;
 }
 
     .quantity-btn:hover {
@@ -26,11 +26,12 @@ input[type="number"] {
     }
 
     .quantity-btn i {
-        color:black;
-    }
-    .quantity-btn i:hover {
         color: black;
     }
+
+        .quantity-btn i:hover {
+            color: black;
+        }
 
 
 .del-btn i {
@@ -42,17 +43,17 @@ input[type="number"] {
 }
 
 .checkout-btn {
-    width:100%;
-    font-size:small;
+    width: 100%;
+    font-size: small;
     border: 1px solid green;
-    color: green;
-    background-color: white;
+    color: white;
     transition: all 0.6s ease;
+    background-color: green;
 }
 
     .checkout-btn:hover {
-        color: white;
-        background-color: green;
+        background-color: white;
+        color: green;
     }
 
 
@@ -77,20 +78,19 @@ input[type="number"] {
 }
 
 .rows {
-    font-size:small;
+    font-size: small;
     box-shadow: 0 0px 15px rgba(0, 0, 0, 0.1);
     padding: 20px;
 }
 
 /*.checkout-div {
     padding: 1rem;*/
-    /*border: 1px solid green;*/    
-    /*border-radius: 8px;
+/*border: 1px solid green;*/
+/*border-radius: 8px;
 }*/
 
 @media (max-width: 720px) {
-    .rows{        
-        font-size:0.8rem;
-        
+    .rows {
+        font-size: 0.8rem;
     }
 }

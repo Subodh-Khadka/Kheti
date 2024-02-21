@@ -8,6 +8,6 @@ namespace Kheti.ViewModels
         public Order Order { get; set; }
 
         public decimal Price { get; set; } 
-        /*public decimal OrderTotal { get; set; }*/
+        
     }
 }

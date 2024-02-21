@@ -1,7 +1,4 @@
-﻿
-
-
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -11,13 +8,8 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
-    @* <link rel="stylesheet" href="~/BookStore.styles.css" asp-append-version="true" /> *@
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
-    @* Animation Library *@
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
     <style>
         body {
@@ -36,7 +28,7 @@
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3">
             <div class="container-fluid">
                 @* <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Kheti</a> *@
-                <img src="~/Images/KhetiLogo/logo.png" height="50px" width="150px" />
+                <img src="~/Images/KhetiLogo/newlogo.png" height="50px" width="150px" />
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -46,54 +38,60 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-                        @*   <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li> *@
+
                         @if (User.IsInRole(StaticDetail.AdminRole))
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Category" asp-action="Index">Category</a>
                             </li>
-
                         }
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Customer" asp-action="Index">Products</a>
                         </li>
 
-                        @if (User.IsInRole(StaticDetail.SellerRole))
+                        @if (User.IsInRole(StaticDetail.SellerRole) || User.IsInRole(StaticDetail.AdminRole))
                         {
-
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Product" asp-action="Index">AddProduct</a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Consultation" asp-action="CreateQuery">Submit Query</a>
+                            </li>
 
                         }
+                        @if (User.IsInRole(StaticDetail.ExpertRole))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Consultation" asp-action="QueryList">View Query</a>
+                            </li>
+                        }
 
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Consultation" asp-action="CreateQuery">Submit Query</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Consultation" asp-action="QueryList">View Query</a>
-                        </li>
+                        @if (User.IsInRole(StaticDetail.CustomerRole) || (User.IsInRole(StaticDetail.SellerRole) || User.IsInRole(StaticDetail.AdminRole)))
+                                    {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Customer" asp-action="FavoriteListing">Favorite </a>
+                            </li>
+                        }
+
+                        @if (User.IsInRole(StaticDetail.CustomerRole) || User.IsInRole(StaticDetail.AdminRole))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Cart" asp-action="Index"> <i class="bi bi-cart-dash-fill"></i></a>
+                            </li>
+                        }
+
+
 
                         @* Dropdown Section *@
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Dropdown
-                            </a>
-                            <ul style="font-size:small" class="dropdown-menu dropdown-menu-success" aria-labelledby="navbarDarkDropdownMenuLink">
+                        @*   <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Dropdown
+                        </a>
+                        <ul style="font-size:small" class="dropdown-menu dropdown-menu-success" aria-labelledby="navbarDarkDropdownMenuLink">
 
-                                @if (User.IsInRole(StaticDetail.CustomerRole))
-                                {
-                                    <li class="nav-item">
-                                        <a class="nav-link" asp-area="" asp-controller="Cart" asp-action="Index"> <i class="bi bi-cart-dash-fill"></i>&nbsp;(0) </a>
-                                    </li>
-                                }
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-area="" asp-controller="Customer" asp-action="FavoriteListing">Favorite </a>
-                                </li>
-                            </ul>
-                        </li>
+
+                        </ul>
+                        </li> *@
                     </ul>
                     <partial name="_loginPartial" />
                 </div>
@@ -106,11 +104,11 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2023 - Kheti - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
+    @*  <footer class="border-top footer text-muted">
+    <div class="container">
+    &copy; 2023 - Kheti - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    </div>
+    </footer> *@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajax-unobtrusive/3.2.6/jquery.unobtrusive-ajax.min.js" integrity="sha512-DedNBWPF0hLGUPNbCYfj8qjlEnNE92Fqn7xd3Sscfu7ipy7Zu33unHdugqRD3c4Vj7/yLv+slqZhMls/4Oc7Zg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

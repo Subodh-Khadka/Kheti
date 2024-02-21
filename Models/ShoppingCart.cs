@@ -9,14 +9,11 @@ namespace Kheti.Models
     {
         [Key]
         public int ShoppingCartId { get; set; }
-
         public Guid ProductId { get; set; }
         [ForeignKey("ProductId")]
         [ValidateNever]
         public Product Product { get; set; }
-
         public int Quantity { get; set; }
-
         public string UserId { get; set; }  
         [ForeignKey("UserId")]
         [ValidateNever]

@@ -20,12 +20,12 @@ namespace Kheti.Models
         public string Description { get; set; }
         [Required]
         public string Location { get; set; }
+        [Required]
         public string ProblemCategory { get; set; }
         [ValidateNever]
         public string UrgencyLevel { get; set; }
-        [Required]
-        [ValidateNever]
-        public String ImageUrl{ get; set; }
+        [Required(ErrorMessage ="Please select an image")]        
+        public string ImageUrl{ get; set; }
         [Required]
         public DateTime? DateCreated { get; set; }
 
@@ -36,6 +36,10 @@ namespace Kheti.Models
         public KhetiApplicationUser User { get; set; }
         public string QueryStatus { get; set; }
         public bool IsSelected { get; set; }
+
+        //navigation property for query comments and replies
+        public ICollection<QueryComment> QueryComments { get; set; }
+        public ICollection<QueryReply> QueryReplies { get; set; }
 
     }
 }

@@ -5,25 +5,22 @@
 }
 
 <link rel="stylesheet" href="~/css/product.css" asp-append-version="true" />
-@* <link rel="stylesheet" href="~/css/index.css" asp-append-version="true" /> *@
 
 <style>
     .pimage {
         width: 100%; 
         height: 150px; 
         object-fit: fill; 
-    }
-
-   
+    }   
 </style>
 
 <body>
 
     @* Search Section *@
     <div class="text-end gap-0">
-        <form method="get" asp-action="Index" asp-controller="Customer">
-            <input class="search-input" type="text" name="searchInput" placeholder="Search products...." class="" />
-            <button type="submit" class="btn btn-sm search-btn purple-background text-white">Search</button>
+        <form method="get" asp-action="Index" asp-controller="Customer" class="mb-2">
+            <input class="search-input" type="text" name="searchInput" placeholder="Search products...." />
+            <button type="submit" class="btn btn-sm search-btn purple-background text-white"><i class="bi bi-search"></i></button>
         </form>
     </div>
 
@@ -33,7 +30,6 @@
         <p class="text text-center fw-bold mt-0">Our Products</p>
         <div class="grey_line"></div>       
 
-        <!-- displaying products in grid -->
         <div class="container-fluid mt-3">
             <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4 mt-3">                
                 @foreach (var product in Model)
