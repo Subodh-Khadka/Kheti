@@ -35,28 +35,7 @@
                     <label class="" for="quanitty">Add Quantity</label>
                     <input asp-for="Quantity" type="number" min="1" value="1" />
                     <button type="submit" class="favorite-btn" asp-controller="Customer" asp-action="AddToFavorite" asp-route-ProductId="@Model.Product.ProductId"><i class="favorite-icon fs-3 bi bi-heart-fill ms-4"></i></button>
-                </div>
-                @if (ViewBag.AddedToCartMessage != null)
-                {
-                    <div class="alert alert-success alert-dismissible fade show position-absolute top-0 end-0" role="alert">
-                        @ViewBag.AddedToCartMessage
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                }
-                @if (ViewBag.AddedToFavorite != null)
-                {
-                    <div class="alert alert-success alert-dismissible fade show position-absolute top-0 end-0" role="alert">
-                        @ViewBag.AddedToFavorite
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                }
-                @if (ViewBag.Message != null)
-                {
-                    <div class="alert alert-success alert-dismissible fade show position-absolute top-0 end-0" role="alert">
-                        @ViewBag.Message
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                }
+                </div>                 
 
                 @if (User.IsInRole(StaticDetail.CustomerRole) || User.IsInRole(StaticDetail.AdminRole))
                 {

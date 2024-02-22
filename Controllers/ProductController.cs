@@ -74,6 +74,9 @@ namespace Kheti.Controllers
 
                 _db.Products.Add(product);
                 _db.SaveChanges();
+
+                TempData["success"] = "Product added successfully!";
+
                 return RedirectToAction("Index");
             }
 

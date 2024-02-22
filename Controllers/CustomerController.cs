@@ -71,7 +71,7 @@ namespace Kheti.Controllers
                 ProductId = id
             };
 
-            if (TempData["AddedToCartMessage"] != null)
+           /* if (TempData["AddedToCartMessage"] != null)
             {
                 ViewBag.AddedToCartMessage = TempData["AddedToCartMessage"];
             }
@@ -83,7 +83,7 @@ namespace Kheti.Controllers
             {
                 ViewBag.AddedToFavorite = TempData["AddedToFavorite"];
             }
-
+*/
             return View(cart);
         }
 
@@ -112,7 +112,7 @@ namespace Kheti.Controllers
             _db.SaveChanges();
 
             // Set TempData for successful addition of product to cart
-            TempData["AddedToCartMessage"] = "Product added to cart!";
+            TempData["success"] = "Product added to cart!";
 
             return RedirectToAction("Details");
         }
@@ -146,7 +146,7 @@ namespace Kheti.Controllers
             if (existingFavorite != null)
             {
                
-                TempData["Message"] = "Product is already in favorites!";
+                TempData["success"] = "Product is already in favorites!";
                 return RedirectToAction("Details", new { id = productId });
             }
 
@@ -159,7 +159,8 @@ namespace Kheti.Controllers
             _db.Favorites.Add(newFavorite);
             _db.SaveChanges();
 
-            TempData["AddedToFavorite"] = "Product added to favorites!";
+            /*TempData["AddedToFavorite"] = "Product added to favorites!";*/
+            TempData["success"] = "Added To Favorite";
 
             return RedirectToAction("Details", new { id = productId });          
         }
@@ -191,8 +192,8 @@ namespace Kheti.Controllers
             }
 
             _db.SaveChanges();
-
-            TempData["AddedToCartMessage"] = "Product added to cart!";
+            
+            TempData["update"] = "Product added To Cart";
 
             return RedirectToAction("FavoriteListing");
         }
@@ -208,6 +209,8 @@ namespace Kheti.Controllers
                 _db.Favorites.Remove(productsToDelete);
                 _db.SaveChanges();
             }
+
+            TempData["delete"] = "Product removed from favorites!";
 
             return RedirectToAction("FavoriteListing");
         }
