@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Kheti.KhetiUtils;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Kheti.Hubs;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,6 +25,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 builder.Services.AddRazorPages();
 builder.Services.AddScoped<IEmailSender, EmailSender>();
+builder.Services.AddSignalR();
 
 
 var app = builder.Build();
@@ -42,7 +44,8 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-app.MapRazorPages();    
+app.MapRazorPages();
+app.MapHub<ChatHub>("/ChatHub");
 
 app.MapControllerRoute(
     name: "default",

@@ -71,7 +71,7 @@ input[type="number"] {
 
 .title {
     font-size: x-small;
-    max-width: 100px; /* Adjust as needed */
+    max-width: 100px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;

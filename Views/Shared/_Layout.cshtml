@@ -9,6 +9,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" asp-append-version="true" />
+    <script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
 
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -61,39 +62,26 @@
                             </li>
 
                         }
-                        @if (User.IsInRole(StaticDetail.ExpertRole))
+                        @if (User.IsInRole(StaticDetail.ExpertRole) || User.IsInRole(StaticDetail.SellerRole))
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Consultation" asp-action="QueryList">View Query</a>
                             </li>
                         }
 
-                        @if (User.IsInRole(StaticDetail.CustomerRole) || (User.IsInRole(StaticDetail.SellerRole) || User.IsInRole(StaticDetail.AdminRole)))
+                       @*  @if (User.IsInRole(StaticDetail.CustomerRole) || (User.IsInRole(StaticDetail.SellerRole) || User.IsInRole(StaticDetail.AdminRole)))
                                     {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Customer" asp-action="FavoriteListing">Favorite </a>
                             </li>
-                        }
+                        } *@
 
-                        @if (User.IsInRole(StaticDetail.CustomerRole) || User.IsInRole(StaticDetail.AdminRole))
+                       @*  @if (User.IsInRole(StaticDetail.CustomerRole) || User.IsInRole(StaticDetail.AdminRole))
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Cart" asp-action="Index"> <i class="bi bi-cart-dash-fill"></i></a>
+                                <a class="nav-link" asp-area="" asp-controller="Cart" asp-action="Index"> <i class="fs-6 bi bi-cart-dash-fill"></i></a>
                             </li>
-                        }
-
-
-
-                        @* Dropdown Section *@
-                        @*   <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Dropdown
-                        </a>
-                        <ul style="font-size:small" class="dropdown-menu dropdown-menu-success" aria-labelledby="navbarDarkDropdownMenuLink">
-
-
-                        </ul>
-                        </li> *@
+                        }        *@                
                     </ul>
                     <partial name="_loginPartial" />
                 </div>

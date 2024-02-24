@@ -8,7 +8,7 @@ namespace Kheti.Models
         [Key]
         public int Id { get; set; }
         [Required]
-        public string CommentText { get; set; }
+        public string CommentText { get; set; } 
         [Required]        
         public DateTime? DateCreated { get; set; }
         public bool IsExpert { get; set; }

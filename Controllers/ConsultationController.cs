@@ -6,6 +6,8 @@ using Kheti.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.SignalR;
+using Kheti.Hubs;
 
 namespace Kheti.Controllers
 {
@@ -14,11 +16,13 @@ namespace Kheti.Controllers
     {
         private readonly ApplicationDbContext _db;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IHubContext<ChatHub> _hubContext;
 
-        public ConsultationController(ApplicationDbContext db, IWebHostEnvironment webHostEnvironment)
+        public ConsultationController(ApplicationDbContext db, IWebHostEnvironment webHostEnvironment, IHubContext<ChatHub> hubContext)
         {
             _db = db;
             _webHostEnvironment = webHostEnvironment;
+            _hubContext = hubContext;
         }
 
         [Authorize(Roles = "Seller,Expert")]
@@ -29,14 +33,14 @@ namespace Kheti.Controllers
             var userRole = User.FindFirstValue(ClaimTypes.Role);
 
             IEnumerable<QueryForm> queries;
-            
+
 
             if (userRole == "Expert")
             {
                 //retrieve the expertProfile for the current User
                 var expertProfile = _db.ExpertProfiles.FirstOrDefault(u => u.UserId == userId);
 
-                if(expertProfile != null)
+                if (expertProfile != null)
                 {
                     var expertise = expertProfile.FieldOfExpertise;
 
@@ -47,7 +51,7 @@ namespace Kheti.Controllers
                 else
                 {
                     //if expertProfile is null
-                    return RedirectToAction("Error","Home");
+                    return RedirectToAction("Error", "Home");
                 }
 
             }
@@ -60,7 +64,7 @@ namespace Kheti.Controllers
                   .ThenByDescending(p => p.UrgencyLevel == "Low")*/
                 .Where(p => p.UserId == userId)
                 .OrderByDescending(p => p.DateCreated).ToList();
-            }                       
+            }
             return View(queries);
         }
 
@@ -70,7 +74,7 @@ namespace Kheti.Controllers
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
 
             var user = _db.KhetiApplicationUsers.FirstOrDefault(u => u.Id == userId);
-           
+
             ViewBag.CategoryList = new SelectList(_db.Categories, "Id", "Name");
 
             QueryForm form = new QueryForm
@@ -93,7 +97,7 @@ namespace Kheti.Controllers
                 var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
 
                 if (imageFile != null && imageFile.Length > 0)
-                {                    
+                {
                     var imagePath = Path.Combine(_webHostEnvironment.WebRootPath, "Images", "QueryImages");
                     var uniqueFileName = Guid.NewGuid().ToString() + "_" + imageFile.FileName;
                     var filePath = Path.Combine(imagePath, uniqueFileName);
@@ -113,7 +117,8 @@ namespace Kheti.Controllers
                 _db.QueryForms.Add(queryForm);
                 _db.SaveChanges();
 
-                return RedirectToAction(nameof(QueryList), "Consultation");
+                /*return RedirectToAction(nameof(QueryList), "Consultation");*/
+                return RedirectToAction("CreateQuery");
             }
 
             return View();
@@ -122,31 +127,40 @@ namespace Kheti.Controllers
         public IActionResult QueryDetails(int queryId)
         {
             var query = _db.QueryForms
-                .OrderByDescending(q => q.DateCreated)
-                .Include(q => q.QueryComments)
-                .Include(q => q.User)
-                .FirstOrDefault(x => x.Id == queryId);
+        .OrderByDescending(q => q.DateCreated)
+        .Include(q => q.QueryComments) // Include related comments
+            .ThenInclude(c => c.User) // Optionally include user information for each comment
+        .Include(q => q.User) // Optionally include user information for the query
+        .FirstOrDefault(x => x.Id == queryId);
 
-            return View(query);
+            // Retrieve past messages for the query
+            var pastMessages = query.QueryComments.ToList();
+
+            // Pass past messages to the view
+            ViewBag.PastMessages = pastMessages;
+
+                return View(query);
         }
 
         //queryComment post method
         [HttpPost]
-        public IActionResult QueryDetails(int queryFormId, string commentText) 
+        public IActionResult QueryDetails(int queryFormId, string commentText)
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
             var userRole = User.FindFirstValue(ClaimTypes.Role);
 
             var query = _db.QueryForms
-                .Include(query => query.QueryComments)
+                   .Include(query => query.QueryComments)
                 .FirstOrDefault(q => q.Id == queryFormId);
-            if (query ==  null)
+            if (query == null)
             {
                 return RedirectToAction("Error");
             }
 
-            if(userRole == "Expert")
+            var isExpert = userRole == "Expert";
+
+            if (userRole == "Expert")
             {
                 var queryComment = new QueryComment
                 {
@@ -172,9 +186,53 @@ namespace Kheti.Controllers
 
                 query.QueryComments.Add(queryComment);
                 _db.SaveChanges();
-            }                       
 
-            return RedirectToAction("QueryDetails", new {queryId = queryFormId});
+                //send message through signalR
+                var user = isExpert ? "Expert" : "Seller";
+                _hubContext.Clients.All.SendAsync("ReceiveMessage", user, commentText);
+            }
+
+            return RedirectToAction("QueryDetails", new { queryId = queryFormId });
+        }
+
+        [HttpPost]
+        public IActionResult SendMessage(int queryFormId, string commentText)
+        {
+            // Log a message to indicate that the SendMessage action method is being hit
+            Console.WriteLine("SendMessage action method hit with queryFormId: " + queryFormId + " and commentText: " + commentText);
+
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var userRole = User.FindFirstValue(ClaimTypes.Role);
+
+            var query = _db.QueryForms
+                .Include(q => q.QueryComments) // Include messages for eager loading
+                .FirstOrDefault(q => q.Id == queryFormId);
+
+            if (query == null)
+            {
+                return RedirectToAction("Error");
+            }
+
+            var isExpert = userRole == "Expert";
+
+            var message = new QueryComment
+            {
+                CommentText = commentText,
+                DateCreated = DateTime.Now,
+                QueryFormId = queryFormId,
+                UserId = userId,
+                IsExpert = isExpert
+            };
+
+            _db.QueryComments.Add(message);
+            _db.SaveChanges(); // Save the message to the database
+
+            /*// Send message through SignalR
+            var user = isExpert ? "Expert" : "Seller";
+            _hubContext.Clients.All.SendAsync("ReceiveMessage", user, commentText);*/
+
+            return RedirectToAction("QueryDetails", new { queryId = queryFormId });
         }
 
 

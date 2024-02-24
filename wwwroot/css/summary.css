@@ -56,9 +56,9 @@ p {
     margin-bottom: 10px;
     width: 100%;
 }
-
+    
 .truncate {
-    max-width: 100px; /* Adjust the maximum width as needed */
+    max-width: 100px; 
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

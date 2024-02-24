@@ -14,7 +14,6 @@
         background-color: #f2f2f2;
         color: green;
         margin: 5px 0px;
-        
         border-radius: 10px;
     }
 
@@ -29,7 +28,7 @@
         border-radius: 10px;
         justify-content: end;
         margin-left: auto;
-    }   
+    }
 </style>
 
 <link rel="stylesheet" href="~/css/queryDetails.css">
@@ -69,22 +68,22 @@
 
         <!-- right side query section -->
         <div class="col-md-8 right-side">
+          
             <div class="title purple-background  d-flex justify-content-center align-items-center">
                 <h5 class="text-center mt-1">MESSAGES</h5>
             </div>
             <hr class="text-white">
 
-            <div class="messages-container mt-4">
-                <!-- Expert's comment -->
+            <div class="messages-container mt-4 mb-4">              
+                 <!-- Expert's comment -->
                 @if (Model.QueryComments != null && Model.QueryComments.Any())
-                {                  
-                    @foreach (var comment in Model.QueryComments)
-                    {
-                        <!-- Expert's reply -->
+                {
+                    @foreach (var comment in ViewBag.pastMessages)
+                    {                        
                         @if (comment.IsExpert)
                         {
-                        <section class="expert-message">
-                            <p>@comment.CommentText</p>
+                            <section class="expert-message">
+                                <p>@comment.CommentText</p>
                             </section>
                         }
                         else
@@ -93,61 +92,60 @@
                                 <p>@comment.CommentText</p>
                             </section>
                         }
-
-                }
-@* 
-                        <section class="seller-message mb-5">
-                            <p>hi</p>
-                        </section> *@
-                }
-                else
-                {
-                    <p>No comments available.</p>
-                }
-            </div>
-
-            <!-- Message form -->
+                    }
+                }          
+            </div>            
             <div class="message-form">
-                <form method="post" class="d-flex gap-4 mt-4" asp-action="QueryDetails" asp-controller="Consultation">
-                    <input type="hidden" name="queryFormId" value="@Model.Id">
-                    <input type="text" id="commentText" name="commentText" class="form-control" placeholder="Type your message..." data-ajax="true" data-ajax-complete="count">
-                    <button class="btn purple-background white-text">Submit</button>
+                <form id="messageForm" class="d-flex gap-4 mt-4">
+                    <input type="hidden" id="queryFormId" name="queryFormId" value="@Model.Id">
+                    <input type="text" id="commentText" name="commentText" class="form-control" placeholder="Type your message...">
+                    <button type="submit" class="btn purple-background white-text">Submit</button>
                 </form>
             </div>
-
-
-
         </div>
-
     </div>
 </div>
-<script>
 
-    deletepage = function () {
-        location.reload();
-    }
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.7/signalr.min.js"></script>
+    <script>
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/ChatHub")
+            .build();
 
-    count = function () {
-        location.reload();
-    }
+        connection.start()
+            .then(() => console.log("SignalR Connected"))
+            .catch(err => console.error("SignalR Connection Error: ", err.toString()));
 
-</script>
-@* 
-<div class="comment card bg-light mb-3">
-    <div class="card-body">
-        <!-- Expert's reply -->
-        <div class="reply card bg-light mb-3">
-            <div class="card-body" style="background-color:dodgerblue">
-                <p class="card-text text-white">@comment.CommentText</p>
-            </div>
-        </div>
-        <!-- Seller's reply -->
-        <div class="reply card bg-light mb-3">
-            <div class="card-body">
-                <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-            </div>
-        </div>
-    </div>
-</div> *@
+        connection.on("ReceiveMessage", function (user, message, isExpert) {
+            
+            const cssClass = isExpert ? "expert-message" : "seller-message";
+            
+            const messageHTML = `<section class="${cssClass}"><p>${message}</p></section>`;
+            
+            if (isExpert) {
+                $(".messages-container").append(messageHTML); 
+            } else {
+                $(".messages-container").append(messageHTML); 
+            }
+            
+            $(".messages-container").scrollTop($(".messages-container")[0].scrollHeight);
+        });
 
+        $("#messageForm").submit(function (event) {
+            event.preventDefault();
+            const user = "@User.Identity.Name";
+            console.log("User's identity name:", user);
 
+            const message = $("#commentText").val();
+            const queryFormId = $("#queryFormId").val();
+
+            connection.invoke("SendMessage", user, message, parseInt(queryFormId))
+                .catch(err => console.error(err.toString()));
+
+            $("#commentText").val("");
+        });
+
+    </script>
+}
+       

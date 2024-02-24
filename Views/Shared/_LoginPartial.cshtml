@@ -10,9 +10,9 @@
         margin-right: 10px;
     }
 
-    .login_signup_btn a:hover{
-        color:darkgray;
-    }
+        .login_signup_btn a:hover {
+            color: darkgray;
+        }
 
     .signup_btn {
         color: green;
@@ -44,25 +44,50 @@
 <ul class="navbar-nav">
     @if (SignInManager.IsSignedIn(User))
     {
-        <li class="nav-item">
-            @* <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @UserManager.GetUserName(User)!</a> *@
-            <a id="manage" class="nav-link text-secondary mt-1 fw-bolder" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello User! </a>
+
+        @* Dropdown Section *@
+        <li class="nav-item dropdown me-4">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-person-circle fs-5"></i>
+                Hello user!
+            </a>
+            <ul style="font-size:small" class="dropdown-menu dropdown-menu-success" aria-labelledby="navbarDarkDropdownMenuLink">
+
+                <li class="nav-item">
+                    @* <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @UserManager.GetUserName(User)!</a> *@
+                    <a id="manage" class="nav-link text-secondary" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage"><i class="bi bi-person fs-5 ms-2 me-2"></i> Manage! </a>
+                </li>
+                @if (User.IsInRole(StaticDetail.CustomerRole) || (User.IsInRole(StaticDetail.SellerRole) || User.IsInRole(StaticDetail.AdminRole)))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Customer" asp-action="FavoriteListing"><i class="bi bi-heart ms-2 me-2"></i> Favorite </a>
+                    </li>
+                }
+                <li class="nav-item">
+                    <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                        <button id="logout" type="submit" class="nav-link btn btn-link text-secondary border-0"><i class="bi bi-box-arrow-left ms-2 me-2"></i> Logout</button>
+                    </form>
+                </li>
+            </ul>
         </li>
-        <li class="nav-item">
-            <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-                <button id="logout" type="submit" class="nav-link btn btn-link text-dark border-0">Logout</button>
-            </form>
-        </li>
+
+        @if (User.IsInRole(StaticDetail.CustomerRole) || User.IsInRole(StaticDetail.AdminRole))
+        {
+            <li class="nav-item">
+                <a class="nav-link" asp-area="" asp-controller="Cart" asp-action="Index"> <i class="fs-4 bi bi-cart-dash-fill"></i></a>
+            </li>
+        }
+
     }
     else
     {
-        <div class="login_signup_btn">
-            <li class="nav-item">
-                <a class="signup_btn nav-item text-decoration-none" id="register" asp-area="Identity" asp-page="/Account/Register">Register</a>
-            </li>
-            <li class="nav-item">
-                <a class="login_btn nav-item text-decoration-none" id="login" asp-area="Identity" asp-page="/Account/Login">Login</a>
-            </li>
-        </div>
+        <section class="login_signup_btn">
+        <li class="nav-item">
+            <a class="signup_btn nav-item text-decoration-none" id="register" asp-area="Identity" asp-page="/Account/Register">Register</a>
+        </li>
+        <li class="nav-item">
+            <a class="login_btn nav-item text-decoration-none" id="login" asp-area="Identity" asp-page="/Account/Login">Login</a>
+        </li>
+        </section>
     }
 </ul>
