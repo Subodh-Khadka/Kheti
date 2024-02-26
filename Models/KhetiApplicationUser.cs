@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Kheti.Models
 {
@@ -22,5 +23,10 @@ namespace Kheti.Models
 
         //Navigation Property to link to ExpertProfile
         public ExpertProfile ExpertProfile { get; set; }
+
+        //added later
+        public string province { get; set; }
+        public string LocalAddress { get; set; }
+        public string AdditionalPhoneNumber { get; set; }
     }
 }

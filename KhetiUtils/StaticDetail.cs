@@ -9,8 +9,7 @@
         public const string ExpertRole = "Expert";
 
         //OrderStatus
-        public const string OrderStatusPending = "Pending";
-        
+        public const string OrderStatusPending = "Pending";        
 
         //Payment Status
         public const string PaymentStatusPending = "Pending";

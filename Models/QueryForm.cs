@@ -35,11 +35,13 @@ namespace Kheti.Models
         [ValidateNever]
         public KhetiApplicationUser User { get; set; }
         public string QueryStatus { get; set; }
-        public bool IsSelected { get; set; }
+        public string IsSelected { get; set; }
 
         //navigation property for query comments and replies
         public ICollection<QueryComment> QueryComments { get; set; }
         public ICollection<QueryReply> QueryReplies { get; set; }
+
+        public string IsSolved { get; set; }
 
     }
 }

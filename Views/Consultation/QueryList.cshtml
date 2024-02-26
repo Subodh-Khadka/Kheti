@@ -1,12 +1,10 @@
 ﻿@model List<Kheti.Models.QueryForm>
 
+<link rel="stylesheet" href="~/css/queryList.css" />
 
+<html>
 
-    <link rel="stylesheet" href="~/css/queryList.css" />
-
-    <html>
-
-    <body>
+<body>
 
 
     <h2>Query List</h2>
@@ -24,8 +22,7 @@
                         @* <p class="card-text overflow" data-toggle="tooltip" data-placement="top" title="@query.Description">Description: @query.Description</p> *@
 
                         <p class="card-text">Created: @GetQueryElapsedTime((DateTime)query.DateCreated)</p> <!-- Display time elapsed -->
-
-                        @if(query.UrgencyLevel == "High")
+                        @if (query.UrgencyLevel == "High")
                         {
                             <p style="color:red">Urgency level: @query.UrgencyLevel</p>
                         }
@@ -35,18 +32,18 @@
                         }
                         else
                         {
-                            
-                        <p style="color:darkcyan">Urgency level: @query.UrgencyLevel</p>
+
+                            <p style="color:darkcyan">Urgency level: @query.UrgencyLevel</p>
                         }
                         <p style="color:">Query Status: @query.QueryStatus</p>
-                        
+
                         <div class="d-flex justify-content-between align-items-center">
                             <div class="btn-group d-flex gap-2">
                                 <!-- Add a button/link to view details or comments -->
-                                
+
                                 <a asp-action="QueryDetails" asp-controller="Consultation" asp-route-queryId="@query.Id" class="btn btn-sm purple-background white-text">View Details</a>
-                              @*   <a href="@Url.Action("QueryDetails", "Consultation", new { id = query.Id })" class="btn btn-sm purple-background white-text">View Details</a> *@
-                               @*  <a href="@Url.Action("Details", "Query", new { id = query.Id })" class="btn btn-sm btn-secondary white-text">Select Query</a> *@
+                                @*   <a href="@Url.Action("QueryDetails", "Consultation", new { id = query.Id })" class="btn btn-sm purple-background white-text">View Details</a> *@
+                                @*  <a href="@Url.Action("Details", "Query", new { id = query.Id })" class="btn btn-sm btn-secondary white-text">Select Query</a> *@
                             </div>
                         </div>
                     </div>
@@ -55,37 +52,37 @@
         }
     </div>
 
-@functions {
+    @functions {
         public string GetQueryElapsedTime(DateTime creationTime)
-    {
-        TimeSpan timeDifference = DateTime.Now - creationTime;
+        {
+            TimeSpan timeDifference = DateTime.Now - creationTime;
 
-        if (timeDifference.TotalDays >= 1)
-        {
-            string daysText = (int)timeDifference.TotalDays == 1 ? "day" : "days";
-            return $"{(int)timeDifference.TotalDays} {daysText} ago";
-        }
-        else if (timeDifference.TotalHours >= 1)
-        {
-            string hoursText = (int)timeDifference.TotalHours == 1 ? "hour" : "hours";
-            return $"{(int)timeDifference.TotalHours} {hoursText} ago";
-        }
-        else if (timeDifference.TotalMinutes >= 1)
-        {
-            string minutesText = (int)timeDifference.TotalMinutes == 1 ? "minute" : "minutes";
-            return $"{(int)timeDifference.TotalMinutes} {minutesText} ago";
-        }
-        else
-        {
-            return "Just now";
+            if (timeDifference.TotalDays >= 1)
+            {
+                string daysText = (int)timeDifference.TotalDays == 1 ? "day" : "days";
+                return $"{(int)timeDifference.TotalDays} {daysText} ago";
+            }
+            else if (timeDifference.TotalHours >= 1)
+            {
+                string hoursText = (int)timeDifference.TotalHours == 1 ? "hour" : "hours";
+                return $"{(int)timeDifference.TotalHours} {hoursText} ago";
+            }
+            else if (timeDifference.TotalMinutes >= 1)
+            {
+                string minutesText = (int)timeDifference.TotalMinutes == 1 ? "minute" : "minutes";
+                return $"{(int)timeDifference.TotalMinutes} {minutesText} ago";
+            }
+            else
+            {
+                return "Just now";
+            }
         }
     }
-}
 
     <script>
         $(document).ready(function () {
             $('[data-toggle="tooltip"]').tooltip();
         });
     </script>
-    </body>
-    </html>
+</body>
+</html>

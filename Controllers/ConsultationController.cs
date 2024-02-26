@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.SignalR;
 using Kheti.Hubs;
+using Kheti.KhetiUtils;
 
 namespace Kheti.Controllers
 {
@@ -83,7 +84,7 @@ namespace Kheti.Controllers
                 UserId = userId,
                 Location = user.Address,
                 Email = user.Email
-            };
+            };           
 
             return View(form);
         }
@@ -110,12 +111,16 @@ namespace Kheti.Controllers
                     queryForm.UserId = userId;
                     queryForm.DateCreated = DateTime.Now;
                     queryForm.ImageUrl = Path.Combine("Images", "QueryImages", uniqueFileName);
+                    queryForm.IsSelected = "false";
+                    queryForm.IsSolved = StaticDetail.QueryStatusPending;
 
                     queryForm.QueryStatus = KhetiUtils.StaticDetail.QueryStatusPending;
                 }
 
                 _db.QueryForms.Add(queryForm);
                 _db.SaveChanges();
+
+                TempData["success"] = "Query submitted successfully";
 
                 /*return RedirectToAction(nameof(QueryList), "Consultation");*/
                 return RedirectToAction("CreateQuery");
@@ -197,8 +202,7 @@ namespace Kheti.Controllers
 
         [HttpPost]
         public IActionResult SendMessage(int queryFormId, string commentText)
-        {
-            // Log a message to indicate that the SendMessage action method is being hit
+        {            
             Console.WriteLine("SendMessage action method hit with queryFormId: " + queryFormId + " and commentText: " + commentText);
 
             var claimsIdentity = (ClaimsIdentity)User.Identity;
@@ -206,7 +210,7 @@ namespace Kheti.Controllers
             var userRole = User.FindFirstValue(ClaimTypes.Role);
 
             var query = _db.QueryForms
-                .Include(q => q.QueryComments) // Include messages for eager loading
+                .Include(q => q.QueryComments) 
                 .FirstOrDefault(q => q.Id == queryFormId);
 
             if (query == null)
@@ -224,16 +228,35 @@ namespace Kheti.Controllers
                 UserId = userId,
                 IsExpert = isExpert
             };
-
             _db.QueryComments.Add(message);
-            _db.SaveChanges(); // Save the message to the database
+            _db.SaveChanges();
 
-            /*// Send message through SignalR
+            // Send message through SignalR
             var user = isExpert ? "Expert" : "Seller";
-            _hubContext.Clients.All.SendAsync("ReceiveMessage", user, commentText);*/
+            _hubContext.Clients.All.SendAsync("ReceiveMessage", user, commentText);
 
             return RedirectToAction("QueryDetails", new { queryId = queryFormId });
         }
+
+        [Authorize(Roles = "Expert")]
+        [HttpPost]
+        public IActionResult MarkAsSolved(int queryFormId)
+        {
+            var query = _db.QueryForms.FirstOrDefault(q => q.Id == queryFormId);
+            if (query != null)
+            {
+                query.QueryStatus = StaticDetail.QueryStatusSolved;
+                _db.SaveChanges();
+
+                TempData["success"] = "Marked query as solved";
+            }
+            else
+            {
+                TempData["error"] = "Error marking query as solved.";
+            }
+            return RedirectToAction("QueryList");
+        }
+
 
 
 

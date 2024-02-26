@@ -1,0 +1,37 @@
+
+.main-div {
+    border-radius:9px;
+    background-color: white;
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+    
+}
+
+form label{
+    color:lightslategrey;
+    margin:5px;
+}
+
+.user-image {
+    
+    border-radius: 50%;
+    height: 250px;
+    width:300px;
+}   
+
+.form-group{
+    margin-bottom:10px;
+}
+
+/*input[type="text"]:valid {
+    color:grey;    
+}
+
+
+input[type="text"]:placeholder-shown {*/
+    /*border-color: red; */
+/*}
+
+.form-control{
+    font-size:small;
+    color:grey;
+}*/

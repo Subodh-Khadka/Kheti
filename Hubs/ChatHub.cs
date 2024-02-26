@@ -11,11 +11,11 @@ namespace Kheti.Hubs
 {
     public class ChatHub : Hub
     {
-        private readonly ApplicationDbContext _dbContext;
+        private readonly ApplicationDbContext _db;
 
         public ChatHub(ApplicationDbContext dbContext)
         {
-            _dbContext = dbContext;
+            _db = dbContext;
         }
 
         public async Task SendMessage(string user, string message, int queryFormId)
@@ -24,7 +24,7 @@ namespace Kheti.Hubs
 
             var isExpert = IsUserExpert(userId); 
 
-            var query = _dbContext.QueryForms
+            var query = _db.QueryForms
                 .Include(q => q.QueryComments)
                 .Include(q => q.User)
                 .FirstOrDefault(q => q.Id == queryFormId);               
@@ -39,13 +39,13 @@ namespace Kheti.Hubs
             };
 
             query.QueryComments.Add(newComment);
-            await _dbContext.SaveChangesAsync();
+            await _db.SaveChangesAsync();
             
             await Clients.All.SendAsync("ReceiveMessage", user, message, isExpert);
         }
         private bool IsUserExpert(string userId)
         {            
-            return _dbContext.ExpertProfiles.Any(ep => ep.UserId == userId);
+            return _db.ExpertProfiles.Any(ep => ep.UserId == userId);
         }
     }
 }

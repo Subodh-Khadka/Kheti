@@ -29,12 +29,28 @@
         justify-content: end;
         margin-left: auto;
     }
+
+    .markAsSolved{
+        background-color:aliceblue;
+        width:350px;
+        border-radius:15px;
+        color:white;
+    }
+
+ 
 </style>
 
 <link rel="stylesheet" href="~/css/queryDetails.css">
 
+
+<form class="d-flex gap-4 ms-2 markAsSolved" method="post" asp-action="MarkAsSolved" asp-route-queryFormId="@Model.Id">
+    <button type="submit" class="btn  btn-sm btn-secondary"><i class="bi bi-check2"></i> Mark As Solved</button>
+    <p class="card-title mt-2 text-secondary">Query Status: @Model.QueryStatus</p>    
+</form>
+
+
 <div class="container-fluid">
-    <div class="row mt-4">
+    <div class="row mt-2">      
         <!-- left side query section -->
         <div class="col-md-4 left-side">
             <div class="title purple-background d-flex justify-content-center align-items-center">
@@ -95,16 +111,21 @@
                     }
                 }          
             </div>            
+
+            @if(Model.QueryStatus != StaticDetail.QueryStatusSolved)
+            {
             <div class="message-form">
                 <form id="messageForm" class="d-flex gap-4 mt-4">
                     <input type="hidden" id="queryFormId" name="queryFormId" value="@Model.Id">
                     <input type="text" id="commentText" name="commentText" class="form-control" placeholder="Type your message...">
                     <button type="submit" class="btn purple-background white-text">Submit</button>
                 </form>
-            </div>
+            </div>                
+            }
         </div>
     </div>
 </div>
+
 
 @section Scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.7/signalr.min.js"></script>
@@ -135,17 +156,21 @@
         $("#messageForm").submit(function (event) {
             event.preventDefault();
             const user = "@User.Identity.Name";
-            console.log("User's identity name:", user);
 
             const message = $("#commentText").val();
             const queryFormId = $("#queryFormId").val();
+
+            console.log("User's identity name:", user);
+            console.log("User's message:", message);
+            console.log("queryFormId:", queryFormId);
 
             connection.invoke("SendMessage", user, message, parseInt(queryFormId))
                 .catch(err => console.error(err.toString()));
 
             $("#commentText").val("");
-        });
+        });        
 
-    </script>
+    </script>   
+
 }
        

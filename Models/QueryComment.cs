@@ -18,11 +18,10 @@ namespace Kheti.Models
         public QueryForm Form { get; set; }
         public string UserId { get; set; }
         [ForeignKey("UserId")]
-        public KhetiApplicationUser User { get; set; }
-
-
+        public KhetiApplicationUser User { get; set; }        
         //navigation properties for reply
         public QueryReply QueryReply { get; set; }
+       
         
 
     }

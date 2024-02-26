@@ -44,3 +44,21 @@ body {
     padding:0.6rem 1.5rem;
 }
 
+/*form*/
+input[type="text"]:valid {
+    color: grey;
+}
+
+
+input[type="text"]:placeholder-shown {
+    /*border-color: red; */
+}
+
+.form-control {
+    font-size: small;
+    color: grey;
+}
+
+form label{
+    color:lightslategrey;
+}

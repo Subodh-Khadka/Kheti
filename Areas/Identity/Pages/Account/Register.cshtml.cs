@@ -150,7 +150,6 @@ namespace Kheti.Areas.Identity.Pages.Account
                 })
             };
 
-
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
@@ -163,7 +162,8 @@ namespace Kheti.Areas.Identity.Pages.Account
             {
                 var user = CreateUser();
 
-                user.FirstName = Input.FirstName; user.LastName = Input.LastName;
+                user.FirstName = Input.FirstName;
+                user.LastName = Input.LastName;
                 user.PhoneNumber = Input.PhoneNumber;
                 user.Address = Input.Address;
                 user.RegistrationDate = DateTime.UtcNow;
