@@ -11,15 +11,22 @@ form label{
     margin:5px;
 }
 
-.user-image {
-    
+.user-image {    
     border-radius: 50%;
-    height: 250px;
-    width:300px;
+    height: 150px;
+    width:150px;
 }   
 
 .form-group{
     margin-bottom:10px;
+}
+
+input [type = "file"]{
+    color:green;
+}
+
+.form-control[type=file]:not(:disabled):not([readonly]) {
+    cursor: pointer;
 }
 
 /*input[type="text"]:valid {

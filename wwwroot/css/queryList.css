@@ -7,4 +7,7 @@
     text-overflow: ellipsis;
     color: rebeccapurple;
 }
-    
+
+.form-select{
+    border-radius:20px;
+}

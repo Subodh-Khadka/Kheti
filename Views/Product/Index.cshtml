@@ -55,8 +55,8 @@
                 @Html.DisplayFor(modelItem => item.User.Id)
             </td> *@
             <td>
-                <a class="btn btn-primary" asp-controller="Product" asp-action="Edit" asp-route-id="@item.ProductId">Edit</a>
-                    <a class="btn btn-danger" asp-action="Delete" asp-controller="Product" asp-route-id="@item.ProductId">Delete</a>
+                <a class="btn btn-sm btn-primary" asp-controller="Product" asp-action="Edit" asp-route-id="@item.ProductId">Edit</a>
+                    <a class="btn btn-sm btn-danger" asp-action="Delete" asp-controller="Product" asp-route-id="@item.ProductId">Delete</a>
             </td>
         </tr>
 }

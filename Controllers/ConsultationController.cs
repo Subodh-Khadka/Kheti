@@ -27,21 +27,22 @@ namespace Kheti.Controllers
         }
 
         [Authorize(Roles = "Seller,Expert")]
-        public IActionResult QueryList()
+        public IActionResult QueryList(string status)
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
             var userRole = User.FindFirstValue(ClaimTypes.Role);
+            var queryStatus = string.IsNullOrEmpty(status) ? "all" : status;
+
 
             IEnumerable<QueryForm> queries;
 
 
             if (userRole == "Expert")
-            {
-                //retrieve the expertProfile for the current User
+            {                
                 var expertProfile = _db.ExpertProfiles.FirstOrDefault(u => u.UserId == userId);
 
-                if (expertProfile != null)
+                if (expertProfile != null && queryStatus == "all")
                 {
                     var expertise = expertProfile.FieldOfExpertise;
 
@@ -49,9 +50,17 @@ namespace Kheti.Controllers
                         .OrderByDescending(q => q.UrgencyLevel == "High")
                         .Where(q => q.ProblemCategory == expertise).ToList();
                 }
-                else
+
+                else if (expertProfile != null && queryStatus != "all")
                 {
-                    //if expertProfile is null
+                    var expertise = expertProfile.FieldOfExpertise;
+
+                    queries = _db.QueryForms
+                        .OrderByDescending(q => q.UrgencyLevel == "High")
+                        .Where(q => q.ProblemCategory == expertise && q.QueryStatus == status).ToList();
+                }
+                else
+                {                    
                     return RedirectToAction("Error", "Home");
                 }
 
@@ -59,14 +68,33 @@ namespace Kheti.Controllers
             else
             //if user is of role:seller
             {
-                queries = _db.QueryForms
-                /*  .OrderByDescending(p => p.UrgencyLevel == "High")
-                  .ThenByDescending(x => x.UrgencyLevel == "Medium")
-                  .ThenByDescending(p => p.UrgencyLevel == "Low")*/
-                .Where(p => p.UserId == userId)
-                .OrderByDescending(p => p.DateCreated).ToList();
+                if (queryStatus == "all")
+                {
+                    queries = _db.QueryForms
+                    /*  .OrderByDescending(p => p.UrgencyLevel == "High")
+                      .ThenByDescending(x => x.UrgencyLevel == "Medium")
+                      .ThenByDescending(p => p.UrgencyLevel == "Low")*/
+                    .Where(p => p.UserId == userId)
+                    .OrderByDescending(p => p.DateCreated).ToList();
+                }
+                else
+                {
+                    queries = _db.QueryForms
+                    /*  .OrderByDescending(p => p.UrgencyLevel == "High")
+                      .ThenByDescending(x => x.UrgencyLevel == "Medium")
+                      .ThenByDescending(p => p.UrgencyLevel == "Low")*/
+                    .Where(p => p.UserId == userId && p.QueryStatus == queryStatus)
+                    .OrderByDescending(p => p.DateCreated).ToList();
+                }
+            }
+            /*TempData["success"] = $"showing results for {queryStatus}";*/
+            if (queryStatus != null)
+            {
+                TempData["defaultName"] = queryStatus;
+
             }
             return View(queries);
+
         }
 
         public IActionResult CreateQuery()
@@ -84,7 +112,7 @@ namespace Kheti.Controllers
                 UserId = userId,
                 Location = user.Address,
                 Email = user.Email
-            };           
+            };
 
             return View(form);
         }
@@ -112,7 +140,7 @@ namespace Kheti.Controllers
                     queryForm.DateCreated = DateTime.Now;
                     queryForm.ImageUrl = Path.Combine("Images", "QueryImages", uniqueFileName);
                     queryForm.IsSelected = "false";
-                    queryForm.IsSolved = StaticDetail.QueryStatusPending;
+                    queryForm.IsSolved = "false";
 
                     queryForm.QueryStatus = KhetiUtils.StaticDetail.QueryStatusPending;
                 }
@@ -144,7 +172,7 @@ namespace Kheti.Controllers
             // Pass past messages to the view
             ViewBag.PastMessages = pastMessages;
 
-                return View(query);
+            return View(query);
         }
 
         //queryComment post method
@@ -202,7 +230,7 @@ namespace Kheti.Controllers
 
         [HttpPost]
         public IActionResult SendMessage(int queryFormId, string commentText)
-        {            
+        {
             Console.WriteLine("SendMessage action method hit with queryFormId: " + queryFormId + " and commentText: " + commentText);
 
             var claimsIdentity = (ClaimsIdentity)User.Identity;
@@ -210,7 +238,7 @@ namespace Kheti.Controllers
             var userRole = User.FindFirstValue(ClaimTypes.Role);
 
             var query = _db.QueryForms
-                .Include(q => q.QueryComments) 
+                .Include(q => q.QueryComments)
                 .FirstOrDefault(q => q.Id == queryFormId);
 
             if (query == null)
@@ -257,8 +285,24 @@ namespace Kheti.Controllers
             return RedirectToAction("QueryList");
         }
 
+        public IActionResult MarkQueryAsSelected(int queryId)
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
 
+            var currentQuery = _db.QueryForms.FirstOrDefault(q => q.Id == queryId);
 
+            if (currentQuery != null)
+            {
+                currentQuery.IsSelected = "true";
+                currentQuery.SelectedExpertId = userId;
+                currentQuery.QueryStatus = StaticDetail.QueryStatusInProcess;
+            }
+
+            _db.SaveChanges();
+
+            return RedirectToAction("QueryList");
+        }
 
     }
 }

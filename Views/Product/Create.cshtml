@@ -4,12 +4,13 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<link rel="stylesheet" href="~/css/create.css" asp-append-version="true" />
 
-<h4>Product</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
+<div class="row d-flex justify-content-center">
+    <a asp-action="Index" class="text-md-start text-decoration-none gap-3"><i class="bi bi-arrow-left pe-2 back-icon"></i>Back To list</i></a>
+    <div class="col-md-4 create-form">      
+            <h6 class="text-success">Add a new product</h6>                   
+        <hr />
         <form asp-action="Create" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
@@ -26,37 +27,38 @@
                 <label asp-for="Price" class="control-label"></label>
                 <input asp-for="Price" class="form-control" />
                 <span asp-validation-for="Price" class="text-danger"></span>
-            </div>    
+            </div>
             <input asp-for="CreatedDate" hidden />
-           
-           @*  <div class="form-group mt-2">
-                <label asp-for="UserId" class="control-label"></label>
-                <select asp-for="UserId" class ="form-control" asp-items="ViewBag.UserId"></select>
+
+            @*  <div class="form-group mt-2">
+            <label asp-for="UserId" class="control-label"></label>
+            <select asp-for="UserId" class ="form-control" asp-items="ViewBag.UserId"></select>
             </div> *@
             <input asp-for="UserId" type="hidden" />
 
             <div class="form-group mt-2">
                 <label asp-for="CategoryId" class="control-label"></label>
-                <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategoryList">
-                    <option value="">Select a Category--></option>
+                <select asp-for="CategoryId" class="form-select" asp-items="ViewBag.CategoryList">
+                    <option value="">Select category</option>
                 </select>
             </div>
             <div class="form-group mt-2">
                 <label asp-for="ProductImageUrl" class="control-label"></label>
-                <input asp-for=ProductImageUrl type="file" name="imageFile" class="form-control" />    
+                <input asp-for=ProductImageUrl type="file" name="imageFile" class="form-control" />
                 <span asp-validation-for="ProductImageUrl" class="text-danger"></span>
             </div>
             <div class="form-group mt-3">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Add" class="btn btn-sm w-100 purple-background text-white" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

@@ -42,6 +42,7 @@ namespace Kheti.Models
         public ICollection<QueryReply> QueryReplies { get; set; }
 
         public string IsSolved { get; set; }
+        public string? SelectedExpertId { get; set; }
 
     }
 }

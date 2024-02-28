@@ -6,12 +6,12 @@
 
 <link rel="stylesheet" href="/css/EditUserInformation.css" />
 
-<p class="text-secondary mt-4">welcome to your profile,@Model.FirstName.</p>
+<p class="text-secondary mt-5">welcome to your profile,@Model.FirstName.</p>
 
 <form asp-action="Edit" method="post" enctype="multipart/form-data">
     <div class="container-fluid main-div">
         <div class="row p-2">
-            <div class="col-md-4">
+            <div class="col-md-3">
                 @if (Model.ProfilePictureURL == null)
                 {
                     <i style="font-size:150px" class="bi bi-person-square ms-2"></i>
@@ -23,9 +23,9 @@
                 else
                 {
                     <img src="~/@Model.ProfilePictureURL" class="m-3 user-image img-fluid" />
-                    <div class="form-group d-flex flex-wrap gap-2 text-center">
-                        <input type="file" id="profilePicture" name="profilePicture" style="font-size:xx-small" class="form-control w-50">
-                        <button asp-action="updateProfilePicture" asp-route-id="@Model.Id" type="submit" class="btn btn-sm btn-secondary" style="font-size:xx-small;border-radius:10px">Update</button>
+                    <div class="form-group d-flex flex-column flex-wrap gap-2 text-center">
+                        <input type="file" id="profilePicture" name="profilePicture" style="font-size:xx-small" class="form-control">
+                        <button asp-action="updateProfilePicture" asp-route-id="@Model.Id" type="submit" class="btn btn-secondary" style="font-size:xx-small;border-radius:10px">Update</button>
                     </div>
                 }
 
@@ -74,7 +74,7 @@
 
                 <div class="form-group">
                     <label asp-for="province" class="control-label"></label>
-                    <select asp-for="province" class="form-control">
+                    <select asp-for="province" class="form-select">
                         <option disabled selected>Select</option>
                         <option>Koshi</option>
                         <option>Bagmati</option>

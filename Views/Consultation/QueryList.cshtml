@@ -1,27 +1,70 @@
 ﻿@model List<Kheti.Models.QueryForm>
 
 <link rel="stylesheet" href="~/css/queryList.css" />
+<script src="~/js/queryList.js"></script>
 
-<html>
+<style>
+    .form-select {
+        border-radius: 20px;
+    }
+</style>
+@* <h2>Query List</h2> *@
 
-<body>
+<div class="d-flex justify-content-end align-items-center gap-4">
+    <p class="extra_small_grey_text_css">Sort By:</p>
+    <form id="queryStatusForm" class="mb-3" method="get" asp-action="QueryList">
+        <select id="queryStatusFilter" class="form-select w-100" name="status">
+            <option>
+                @if (TempData["defaultName"] != null)
+                {
+                    <p class="text-end disabled">showing @TempData["defaultName"] queries</p>
+                }
+                else
+                {
+                    <p>select</p>
+                }
+                
+             </option>
+            <option value="all">All</option>
+            <option value="pending">Pending</option>
+            <option value="In Process">In Process</option>
+            <option value="solved">Solved</option>
+        </select>
+    </form>
+</div>
+   
 
-
-    <h2>Query List</h2>
-
-    <div class="row">
+<div class="container">
+    <div class="row d-flex justify-content-center">
         @foreach (var query in Model)
         {
             <div class="col-md-4">
-                <div class="card mb-4 shadow-sm">
+                <div class="card mb-4">
                     <div class="card-body">
-                        <h5 class="card-title overflow" data-toggle="tooltip" data-placement="top" title="@query.Title">@query.Title</h5>
+                        <section class="d-flex gap-3">
+                            <h5 class="card-title overflow" data-toggle="tooltip" data-placement="top" title="@query.Title">@query.Title</h5>
+                            <div class="position-absolute top-0 end-0 mt-2 me-2">
+
+                                @if (query.QueryStatus == StaticDetail.QueryStatusPending)
+                                {
+                                    <i class="bi bi-shield-fill-x text-danger fs-5"></i>
+                                }
+                                else if (query.QueryStatus == StaticDetail.QueryStatusInProcess)
+                                {
+                                    <i class="bi bi-fast-forward-circle-fill text-info fs-5"></i>
+                                }
+                                else
+                                {
+                                    <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                                }
+                            </div>
+                        </section>
                         <p class="card-text">Email: @query.Email</p>
-                        <p class="card-text">Problem Category: @query.ProblemCategory</p>
+                        <p class="card-text">Category: @query.ProblemCategory</p>
                         <p class="card-text">Location: @query.Location</p>
                         @* <p class="card-text overflow" data-toggle="tooltip" data-placement="top" title="@query.Description">Description: @query.Description</p> *@
 
-                        <p class="card-text">Created: @GetQueryElapsedTime((DateTime)query.DateCreated)</p> <!-- Display time elapsed -->
+                        <p class="card-text">Created: @GetQueryElapsedTime((DateTime)query.DateCreated)</p>
                         @if (query.UrgencyLevel == "High")
                         {
                             <p style="color:red">Urgency level: @query.UrgencyLevel</p>
@@ -37,13 +80,22 @@
                         }
                         <p style="color:">Query Status: @query.QueryStatus</p>
 
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="btn-group d-flex gap-2">
-                                <!-- Add a button/link to view details or comments -->
+                        <p style="color:">Is selected: @query.IsSelected</p>
 
-                                <a asp-action="QueryDetails" asp-controller="Consultation" asp-route-queryId="@query.Id" class="btn btn-sm purple-background white-text">View Details</a>
-                                @*   <a href="@Url.Action("QueryDetails", "Consultation", new { id = query.Id })" class="btn btn-sm purple-background white-text">View Details</a> *@
-                                @*  <a href="@Url.Action("Details", "Query", new { id = query.Id })" class="btn btn-sm btn-secondary white-text">Select Query</a> *@
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class=" d-flex gap-2">
+                                <a asp-action="QueryDetails" asp-controller="Consultation" asp-route-queryId="@query.Id" class="btn btn-sm purple-background white-text w-100">Details</a>
+
+                                @if (User.IsInRole("Expert") && query.IsSelected == "false" || query.IsSelected == "0")
+                                {
+                                    <a asp-action="MarkQueryAsSelected" asp-controller="Consultation" asp-route-queryId="@query.Id" class="btn btn-sm btn-primary white-text w-100"
+                                       data-ajax="true" data-ajax-complete="spotReload">Select</a>
+
+                                }
+                                else if (User.IsInRole("Expert") && query.IsSelected == "true")
+                                {
+                                    <a asp-action="MarkQueryAsSelected" asp-controller="Consultation" asp-route-queryId="@query.Id" class="btn btn-sm btn-success disabled white-text w-100">Selected</a>
+                                }
                             </div>
                         </div>
                     </div>
@@ -51,38 +103,31 @@
             </div>
         }
     </div>
+</div>
 
-    @functions {
-        public string GetQueryElapsedTime(DateTime creationTime)
+@functions {
+    public string GetQueryElapsedTime(DateTime creationTime)
+    {
+        TimeSpan timeDifference = DateTime.Now - creationTime;
+
+        if (timeDifference.TotalDays >= 1)
         {
-            TimeSpan timeDifference = DateTime.Now - creationTime;
-
-            if (timeDifference.TotalDays >= 1)
-            {
-                string daysText = (int)timeDifference.TotalDays == 1 ? "day" : "days";
-                return $"{(int)timeDifference.TotalDays} {daysText} ago";
-            }
-            else if (timeDifference.TotalHours >= 1)
-            {
-                string hoursText = (int)timeDifference.TotalHours == 1 ? "hour" : "hours";
-                return $"{(int)timeDifference.TotalHours} {hoursText} ago";
-            }
-            else if (timeDifference.TotalMinutes >= 1)
-            {
-                string minutesText = (int)timeDifference.TotalMinutes == 1 ? "minute" : "minutes";
-                return $"{(int)timeDifference.TotalMinutes} {minutesText} ago";
-            }
-            else
-            {
-                return "Just now";
-            }
+            string daysText = (int)timeDifference.TotalDays == 1 ? "day" : "days";
+            return $"{(int)timeDifference.TotalDays} {daysText} ago";
+        }
+        else if (timeDifference.TotalHours >= 1)
+        {
+            string hoursText = (int)timeDifference.TotalHours == 1 ? "hour" : "hours";
+            return $"{(int)timeDifference.TotalHours} {hoursText} ago";
+        }
+        else if (timeDifference.TotalMinutes >= 1)
+        {
+            string minutesText = (int)timeDifference.TotalMinutes == 1 ? "minute" : "minutes";
+            return $"{(int)timeDifference.TotalMinutes} {minutesText} ago";
+        }
+        else
+        {
+            return "Just now";
         }
     }
-
-    <script>
-        $(document).ready(function () {
-            $('[data-toggle="tooltip"]').tooltip();
-        });
-    </script>
-</body>
-</html>
+}

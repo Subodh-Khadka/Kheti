@@ -123,7 +123,7 @@ namespace Kheti.Controllers
                 currentUser.ProfilePictureURL = Path.Combine("Images", "UserImages", uniqueFileName);
 
                 _db.SaveChanges();
-                TempData["sucess"] = "Image Updated";
+                TempData["success"] = "Image Updated";
                 return RedirectToAction("EditInformation");
             }
             else

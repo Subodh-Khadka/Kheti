@@ -1,6 +1,7 @@
 ﻿using Kheti.Data;
 using Kheti.Models;
 using Kheti.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -14,7 +15,9 @@ namespace Kheti.Controllers
         public CartController (ApplicationDbContext db)
         {
             _db = db;
-        }      
+        }
+
+        [Authorize(Roles ="Customer")]                
         public IActionResult Index()
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
@@ -70,7 +73,6 @@ namespace Kheti.Controllers
 
             return RedirectToAction("Index");
         }
-
 
         public IActionResult RemoveCart(int cartId)
         {
