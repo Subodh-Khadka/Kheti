@@ -21,20 +21,21 @@
     </div>
 
     <form asp-controller="Cart" asp-action="CartSummary" method="post">
+        <input asp-for="Orders.OrderTotal" type="hidden" />
         <div class="row rows mt-2 p-2">
             <!-- Customer Details Section -->
             <div class="col-md-6">
                 <div class="customer-details">
                     <h5>Customer Details</h5>
-                    <input asp-for="@Model.Order.CustomerName" type="text" class="editable-field mb-2" placeholder="Name">
-                    <span asp-validation-for="Order.CustomerName"></span>
-                    <input asp-for="@Model.Order.phoneNumber" class="editable-field" placeholder="Phone Number">
-                    <input asp-for="@Model.Order.phoneNumber" class="editable-field" placeholder="Phone Number">
-                    <span asp-validation-for="Order.phoneNumber"></span>
-                    <input asp-for="@Model.Order.User.Email" class="editable-field" placeholder="Phone Number">
-                    <span asp-validation-for="Order.User.Email"></span>
-                    <input asp-for="@Model.Order.LocalAddress" class="editable-field" placeholder="Enter local Address">
-                    <span asp-validation-for="Order.LocalAddress"></span>
+                    <input asp-for="@Model.Orders.CustomerName" type="text" class="editable-field mb-2" placeholder="Name">
+                    <span asp-validation-for="Orders.CustomerName"></span>
+                    <input asp-for="@Model.Orders.phoneNumber" class="editable-field" placeholder="Phone Number">
+                    <input asp-for="@Model.Orders.phoneNumber" class="editable-field" placeholder="Phone Number">
+                    <span asp-validation-for="Orders.phoneNumber"></span>
+                    <input asp-for="@Model.Orders.User.Email" class="editable-field" placeholder="Phone Number">
+                    <span asp-validation-for="Orders.User.Email"></span>
+                    <input asp-for="@Model.Orders.LocalAddress" class="editable-field" placeholder="Enter local Address">
+                    <span asp-validation-for="Orders.LocalAddress"></span>
                     
 
                 </div>
@@ -42,8 +43,8 @@
                 <!-- Shipping Details Section -->
                 <div class="shipping-details mt-4">
                     <h5>Shipping Details</h5>
-                    <input asp-for="@Model.Order.Address" class="editable-field" placeholder="Shipping Address">
-                    <span asp-validation-for="Order.Address"></span>
+                    <input asp-for="@Model.Orders.Address" class="editable-field" placeholder="Shipping Address">
+                    <span asp-validation-for="Orders.Address"></span>
                 </div>
                 <div class="shipping-details mt-4">
                     <h6 class="text-success" style="font-size:small">You can edit your details above!</h6>
@@ -76,7 +77,7 @@
                             }
                         </tbody>
                     </table>
-                    <p class="fs-6 text-end">Total: Rs @Model.Order.OrderTotal</p>
+                    <a class="fs-6 text-end">Total: Rs @Model.Orders.OrderTotal</a>
                 </div>
                 <button type="submit" class="btn purple-background order-btn">Place Order</button>
             </div>

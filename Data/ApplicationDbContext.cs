@@ -19,6 +19,7 @@ namespace Kheti.Data
         public DbSet<ExpertProfile> ExpertProfiles { get; set; }
         public DbSet<QueryComment> QueryComments { get; set; }
         public DbSet<QueryReply> QueryReplies { get; set; }
+        public DbSet<Review> Reviews { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -65,7 +66,21 @@ namespace Kheti.Data
               .HasOne(s => s.Comment).WithMany()
               .OnDelete(DeleteBehavior.NoAction);
 
+            modelBuilder.Entity<Review>()
+            .HasOne(s => s.Product).WithMany()
+            .OnDelete(DeleteBehavior.NoAction);
 
+
+            modelBuilder.Entity<Review>()
+            .HasOne(s => s.Product).WithMany()
+            .HasForeignKey(s => s.ProductId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Review>()
+                .HasOne(s => s.User)
+                .WithMany()
+                .HasForeignKey(s => s.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             base.OnModelCreating(modelBuilder);
         }

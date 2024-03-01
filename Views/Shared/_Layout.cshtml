@@ -7,8 +7,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" asp-append-version="true" />
+       
     <script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
 
 
@@ -68,20 +67,6 @@
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Consultation" asp-action="QueryList">View Query</a>
                             </li>
                         }
-
-                       @*  @if (User.IsInRole(StaticDetail.CustomerRole) || (User.IsInRole(StaticDetail.SellerRole) || User.IsInRole(StaticDetail.AdminRole)))
-                                    {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Customer" asp-action="FavoriteListing">Favorite </a>
-                            </li>
-                        } *@
-
-                       @*  @if (User.IsInRole(StaticDetail.CustomerRole) || User.IsInRole(StaticDetail.AdminRole))
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Cart" asp-action="Index"> <i class="fs-6 bi bi-cart-dash-fill"></i></a>
-                            </li>
-                        }        *@                
                     </ul>
                     <partial name="_loginPartial" />
                 </div>

@@ -20,6 +20,10 @@
   box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
+.form-control:focus {    
+    box-shadow: 0 0 0 1px green;
+}
+
 html {
   position: relative;
   min-height: 100%;

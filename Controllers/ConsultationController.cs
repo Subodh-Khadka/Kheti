@@ -48,7 +48,7 @@ namespace Kheti.Controllers
 
                     queries = _db.QueryForms
                         .OrderByDescending(q => q.UrgencyLevel == "High")
-                        .Where(q => q.ProblemCategory == expertise).ToList();
+                        .Where(q => q.ProblemCategory == expertise ).ToList();
                 }
 
                 else if (expertProfile != null && queryStatus != "all")
@@ -161,15 +161,13 @@ namespace Kheti.Controllers
         {
             var query = _db.QueryForms
         .OrderByDescending(q => q.DateCreated)
-        .Include(q => q.QueryComments) // Include related comments
-            .ThenInclude(c => c.User) // Optionally include user information for each comment
-        .Include(q => q.User) // Optionally include user information for the query
+        .Include(q => q.QueryComments) 
+            .ThenInclude(c => c.User) 
+        .Include(q => q.User) 
         .FirstOrDefault(x => x.Id == queryId);
 
-            // Retrieve past messages for the query
             var pastMessages = query.QueryComments.ToList();
 
-            // Pass past messages to the view
             ViewBag.PastMessages = pastMessages;
 
             return View(query);

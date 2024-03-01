@@ -1,0 +1,46 @@
+body{
+    /*background-color:lightgrey*/;
+}
+
+.order-container {
+    color: green;
+    /*background-color: lightgrey;*/
+    /*box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;*/
+}
+
+.order-item {
+    background-color: #9896f1;
+    color:white;
+    /*background-color: white;*/
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+    padding: 10px;
+}
+
+.customer-Name {
+    width: 100px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.btn{
+    font-size:smaller;
+}
+
+img {
+    width: 70px;
+    height: 70px;
+}
+
+
+@media (max-width: 500px) {
+    .order-container {
+        /*width:200px;*/
+        font-size: 7px;
+    }
+
+    img {
+        width: 50px;
+        height: 50px;
+    }
+}

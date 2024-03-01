@@ -274,7 +274,6 @@ namespace Kheti.Controllers
                 .ToList();
                 
             return PartialView("_RepliesPartial", replies);
-
-        }
+        }        
     }
 }

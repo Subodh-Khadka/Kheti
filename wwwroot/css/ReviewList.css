@@ -1,0 +1,46 @@
+body{
+    /*background-color:lightgrey*/;
+}
+
+.container {
+    color:azure;
+
+    /*background-color: lightgrey;*/
+    /*box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;*/
+}
+
+.review-item {
+    /*background-color: #7c73e6;*/
+    /*background-color: #ececec;*/
+    background-color: #9896f1;
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+    padding: 10px;
+}
+
+.toBeEllipsed{
+    width:130px;
+    overflow:hidden;
+}
+
+.product-name {
+    width: 100px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.btn{
+    font-size:smaller;
+}
+
+/*img{
+    margin:10px;
+}
+*/
+
+@media (max-width: 500px) {
+    .review-container {
+        /*width:200px;*/
+        font-size: 7px;
+    }
+}

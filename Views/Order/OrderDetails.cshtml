@@ -1,0 +1,49 @@
+﻿@model Kheti.ViewModels.OrderVm
+
+<link rel="stylesheet" href="~/css/orderDetails.css" asp-append-version="true" />
+<script src="~/js/productReview.js"></script>
+
+<style>
+    .rated{
+        color: #efd510;
+    }
+</style>
+    
+<h5 class="text-center text-success">Order Details</h5>
+<hr class="m-0" />
+<div class="d-flex justify-content-between mt-2 mb-2">
+    <a asp-controller="Order" asp-action="OrderDetails" class="btn btn-sm disabled btn-secondary text-white mt-0 "> Order Status: @Model.Order.OrderStatus</a>
+    <a asp-controller="Order" asp-action="OrderDetails" class="btn btn-sm btn-success me-md-2 me-lg-5 ">Pay Now</a>
+</div>
+<div class="container-fluid order-container extra_small_grey_text_css">
+    @{
+        int count = 0;
+    }
+   
+    @foreach (var orderItem in Model.OrderItems)
+    {
+        count++;
+        <p>Item @count</p>
+        <div class="order-item d-flex gap-3 justify-content-around align-items-center mb-3">
+            <img src="~/@orderItem.Product.ProductImageUrl" />
+            <div style="width: 100px; overflow: hidden;">
+                <p class="customer-Name" title="@orderItem.Product.ProductName">@orderItem.Product.ProductName</p>
+            </div>
+            <p>Rs @orderItem.Product.Price</p>
+            <p>Qty: @orderItem.Quantity</p>
+            <p>Total: @(orderItem.Price * @orderItem.Quantity)</p>
+
+            <section class="btn-group d-flex gap-2">
+                <button type="button" 
+                        class="btn btn-sm purple-background text-white review-btn"
+                        data-product-id="@orderItem.ProductId"
+                        data-bs-toggle="modal"                        
+                        data-bs-target="#reviewModal">
+                    Review
+                </button>                            
+                <input type="hidden" id="selectedRating" name="rating" value="0" />
+            </section>
+        </div>
+    }
+    @Html.Partial("_ReviewFormPartial.cshtml")
+</div>
