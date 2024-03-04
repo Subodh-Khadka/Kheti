@@ -6,6 +6,11 @@
 
 @* <h1>Index</h1> *@
 
+@if (User.IsInRole("Admin"))
+{
+    Layout = "_AdminLayout";
+}
+
 <p>
     <a class="btn purple-background btn-sm text-white" asp-action="Create">Create New Product</a>
 </p>

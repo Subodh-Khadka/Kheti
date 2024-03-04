@@ -20,12 +20,14 @@ namespace Kheti.Areas.Identity.Pages.Account
     public class LoginModel : PageModel
     {
         private readonly SignInManager<IdentityUser> _signInManager;
-        private readonly ILogger<LoginModel> _logger;        
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly ILogger<LoginModel> _logger;
 
-        public LoginModel(SignInManager<IdentityUser> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(SignInManager<IdentityUser> signInManager, ILogger<LoginModel> logger, UserManager<IdentityUser> userManager)
         {
             _signInManager = signInManager;
             _logger = logger;
+            _userManager = userManager;
         }
 
         /// <summary>
@@ -46,6 +48,7 @@ namespace Kheti.Areas.Identity.Pages.Account
         ///     directly from your code. This API may change or be removed in future releases.
         /// </summary>
         public string ReturnUrl { get; set; }
+        public string AdminUrl { get; set; }
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -104,16 +107,27 @@ namespace Kheti.Areas.Identity.Pages.Account
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
             returnUrl ??= Url.Content("~/");
+            string adminUrl = Url.Content("/Admin/Index");
 
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
             if (ModelState.IsValid)
-            {
+            {               
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
+                     // Check if the user is an admin
+                var user = await _userManager.FindByEmailAsync(Input.Email);
+                var isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
+
+                if (isAdmin)
+                {
+                    // Redirect to admin layout page if user is an admin
+                    return LocalRedirect(adminUrl);
+                }
+
                     TempData["update"] = "Login Successfull!";
                     _logger.LogInformation("User logged in.");
                     return LocalRedirect(returnUrl);

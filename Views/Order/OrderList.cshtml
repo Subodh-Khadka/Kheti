@@ -1,14 +1,14 @@
 ﻿@model Kheti.ViewModels.OrderVm
 
+
 <link rel="stylesheet" href="~/css/orderList.css" asp-append-version="true" />
 
-
 <h5 class="text-center mt-2 text-success">My Orders</h5>
-<div class="order-container  small_grey_text_css mt-4">
+<div class="order-container mt-4">
     <div class="row d-flex justify-content-center ">
-        <div class="col-sm-12 col-md-12 text-success">
+        <div class="col-sm-12 col-md-12">
             <div class="col-12">
-                <table class="table text-success">
+                <table class="table">
                     <thead>
                         <tr>
                             <th>Id</th>
@@ -25,19 +25,18 @@
                         {
                             <tr>
                                 <td>@order.OrderId</td>
-                              @*   <td>
-                                    <div style="width: 100px; overflow: hidden;">
-                                        <p class="customer-Name" title="@order.CustomerName" >@order.CustomerName</p>
-                                    </div>
-                                </td> *@
                                 <td>@order.OrderTotal</td>
                                 <td>@order.OrderCreatedDate.ToString("yyyy-MM-dd")</td>
                                 <td>@order.OrderStatus</td>
-                                <td>@order.PaymentStatus</td>                                
+                                <td>@order.PaymentStatus</td>
                                 <td class="btn-group d-flex gap-2">
                                     <a asp-controller="Order" asp-action="OrderDetails" asp-route-orderId="@order.OrderId" class="btn btn-sm btn-primary">Detail</a>
-                                    <a asp-controller="Order" asp-action="OrderDetails" asp-route-orderId="@order.OrderId" class="btn btn-sm btn-success">Pay</a>                                   
-                                    <a asp-controller="Order" asp-action="OrderDetails" asp-route-orderId="@order.OrderId" class="btn btn-sm btn-danger">Cancel</a>                                   
+                                    <a asp-controller="Order" asp-action="OrderDetails" asp-route-orderId="@order.OrderId" class="btn btn-sm btn-success">Pay</a>
+                                    <form id="paymentForm" method="post" action="@Url.Action("Pay", "Order")">
+                                        <input type="hidden" name="orderId" value="@order.OrderId" />
+                                        <button type="submit" class="btn btn-sm btn-success">Pay</button>
+                                    </form>
+                                    <a asp-controller="Order" asp-action="OrderDetails" asp-route-orderId="@order.OrderId" class="btn btn-sm btn-danger">Cancel</a>
                                 </td>
                             </tr>
                         }
@@ -47,13 +46,18 @@
         </div>
     </div>
 </div>
-<script>
 
-    deletepage = function () {
-        location.reload();
-    }
+@* <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var khaltiPayButtons = document.querySelectorAll(".khaltiPayButton");
+        khaltiPayButtons.forEach(function (button) {
+            button.addEventListener("click", function () {
+                var orderId = this.getAttribute("data-order-id");
+                var amount = this.getAttribute("data-amount");
 
-    count = function () {
-        location.reload();
-    }
-</script>
+                // Redirect to Khalti payment URL
+                window.location.href = "https://pay.khalti.com/?orderId=" + orderId + "&amount=" + amount;
+            });
+        });
+    });
+</script> *@

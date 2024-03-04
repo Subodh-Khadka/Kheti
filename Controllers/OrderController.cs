@@ -1,4 +1,5 @@
 ﻿using Kheti.Data;
+using Kheti.KhetiUtils;
 using Kheti.Models;
 using Kheti.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -60,7 +61,7 @@ namespace Kheti.Controllers
         public IActionResult SaveReview(ReviewVm reviewVm, string orderId)
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
-            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;            
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
 
             var review = new Review
             {
@@ -74,21 +75,36 @@ namespace Kheti.Controllers
             _db.Reviews.Add(review);
             _db.SaveChanges();
 
-            return RedirectToAction("OrderDetails", new { orderId = orderId});
-            
+            return RedirectToAction("OrderDetails", new { orderId = orderId });
+
         }
         public IActionResult ReviewList()
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
 
-            var reviews = _db.Reviews 
+            var reviews = _db.Reviews
                 .Include(r => r.User)
                 .Include(r => r.Product)
                 .Where(r => r.UserId == userId).ToList();
             return View(reviews);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Pay(int orderId)
+        {
+            int purchaseOrderId = orderId;
 
+            string returnUrl = "https://localhost:7108/Order/OrderList";
+            int totalAmountInPaisa = 1000;
+            string paymentUrl = await Kheti.KhetiUtils.KhaltiPayment.InitiatePayment(purchaseOrderId, totalAmountInPaisa, returnUrl);
+
+            var order = _db.Orders.FirstOrDefault(o => o.OrderId == orderId);
+            order.PaymentStatus = StaticDetail.PaymentStatusCompleted;
+            _db.Orders.Update(order);
+            _db.SaveChangesAsync();
+
+            return Redirect(paymentUrl);
         }
     }
+}

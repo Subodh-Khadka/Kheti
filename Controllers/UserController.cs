@@ -14,10 +14,7 @@ namespace Kheti.Controllers
             _db = db;
             _webHostEnvironment = webHostEnvironment;
         }
-        public IActionResult Index()
-        {
-            return View();
-        }
+      
 
         [HttpGet]
         public IActionResult EditInformation()

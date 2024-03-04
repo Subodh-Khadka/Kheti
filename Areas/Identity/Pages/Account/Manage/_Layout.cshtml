@@ -1,6 +1,6 @@
 ﻿<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 @{
-    if (ViewData.TryGetValue("ParentLayout", out var parentLayout) && parentLayout !=  null)
+    if (ViewData.TryGetValue("ParentLayout", out var parentLayout) && parentLayout != null)
     {
         Layout = parentLayout.ToString();
     }
@@ -9,16 +9,37 @@
         Layout = "/Views/Shared/_Layout.cshtml";
     }
 }
-<h3>Manage your account</h3>
 
-<div>
-    <h4>Change your account settings</h4>
-    <hr />
-    <div class="row">
-        <div class="col-md-3">
+<style>
+    .edit-conatiner {
+        margin-top:50px;
+        width:900px;
+        /* display:flex;    */
+        padding: 20px;
+        /* background-color:whitesmoke; */
+        justify-content: center;
+        box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+    }
+
+    .btn-background{
+        background-color: #eeeeee;
+    }
+
+    .right-one{
+        border-radius:10px;
+        /* background-color: #9896f1; */
+        padding:10px;
+    }
+</style>
+<h4 class="text-center text-success">Manage your account!</h4>
+<hr />
+<div class="container edit-conatiner">
+    <div class="row gap-3 align-items-center">
+        <div class="col-md-3  ">
             <partial name="_ManageNav" />
         </div>
-        <div class="col-md-9">
+
+        <div class="col-md-7 right-one align-self-center justify-content-center">
             @RenderBody()
         </div>
     </div>

@@ -6,21 +6,6 @@
     /*font-size:small;*/
 }
 
-body {
-    /* Set background image */
-    /*height: 80vh;*/
-    /* background-image: linear-gradient(
-    to top,
-    #1e3c72 0%,
-    #1e3c72 1%,
-    #2a5298 100%
-  ); */
-    /* background-image: url("/pictures/tractor-field-ai-generated-image.jpg"); */
-    /* Set background image properties */
-    /* background-size: cover;
-  background-position: center; 
-  background-repeat: no-repeat; */
-}
 
 .left_section {
 }
@@ -29,10 +14,6 @@ body {
     /* border-radius: 120px; */
     font-size: small;
     /*height: 100vh;*/
-}
-
-.login_container {
-    height: 60vh;
 }
 
 img {
@@ -44,11 +25,6 @@ img {
     font-size: 12px;        
 }
 
-/* .img-fluid {
-  max-width: 100%;
-  max-height: 100%;
-} */
-
 .form-group{
     font-size:xx-large;
 }
@@ -58,8 +34,7 @@ img {
         height: 50%;
     }
 
-    .login {
-        /* border-radius: 120px; */
+    .login { 
         height: 10vh;
     }
 

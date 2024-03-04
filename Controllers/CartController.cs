@@ -282,14 +282,6 @@ namespace Kheti.Controllers
             .Where(u => u.UserId == userId)
             .ToList();
 
-            // Remove all items from the shopping cart
-            /*_db.ShoppingCarts.RemoveRange(shoppingCartItems);*/
-            /* // Clear the fields by creating a new empty ShoppingCartVM object
-             ShoppingCartVm = new ShoppingCartVM()
-             {
-                 ShoppingCartList = new List<ShoppingCart>(), // Clear the shopping cart list
-                 Order = new Order() // Create a new empty order
-             };*/
             return View(orderID);
         }
 

@@ -1,0 +1,117 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://khalti.com/api/v2/kpg/js/khalti-checkout.js"></script>
+    <script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <style>
+        body {
+            font-size: small;
+        }
+
+        * {
+            padding: 0;
+            margin: 0;
+            font-family: "Poppins", sans-serif;
+        }
+        
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 200px;   
+            background-color: #27296d;
+            padding-top: 56px;
+            overflow-y: auto;
+        }
+        
+        .main-content {
+            margin-left: 220px; 
+            padding-top: 56px; 
+        }
+        
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            /* height: 56px; */
+            background-color: #343a40;
+            color: white;
+            z-index: 10;
+        }
+
+            .header a {
+                font-size: smaller;
+            }
+
+        .nav-link{
+            margin: 5px 10px;            
+            border-radius:10px;
+            background-color: #8f71ff
+        }
+    </style>
+</head>
+<body>
+    
+    <header class="header">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a class="navbar-brand ps-3 text-center">Admin Panel</a>
+        </nav>
+    </header>   
+
+
+    <div class="sidebar">
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a asp-action="Index" asp-controller="Admin" class="nav-link white-text mt-2 mb-2">Dashboard</a>
+            </li>
+            <li class="nav-item">
+                <a asp-action="Index" asp-controller="Product" class="nav-link  white-text">Add</a>
+            </li>  
+            <li class="nav-item">
+                <a class="nav-link white-text" asp-area="" asp-controller="Admin" asp-action="CategoryList">Category</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link white-text" asp-area="" asp-controller="Admin" asp-action="UserList">Users</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link white-text" asp-area="" asp-controller="Home" asp-action="Index">Back To Home</a>
+            </li>
+            <li class="nav-item">
+                <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                    <button id="logout" type="submit" class="nav-link text-white border-0"><i class="bi bi-box-arrow-left ms-2 me-2"></i> Logout</button>
+                </form>
+            </li>
+            
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <div class="container-fluid">
+            <partial name="_Notification" />
+            @RenderBody()
+        </div>
+    </div>
+
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajax-unobtrusive/3.2.6/jquery.unobtrusive-ajax.min.js" integrity="sha512-DedNBWPF0hLGUPNbCYfj8qjlEnNE92Fqn7xd3Sscfu7ipy7Zu33unHdugqRD3c4Vj7/yLv+slqZhMls/4Oc7Zg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+</html>

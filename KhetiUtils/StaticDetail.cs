@@ -13,6 +13,7 @@
 
         //Payment Status
         public const string PaymentStatusPending = "Pending";
+        public const string PaymentStatusCompleted = "Completed";
        
         //Query Status
         public const string QueryStatusPending = "Pending";

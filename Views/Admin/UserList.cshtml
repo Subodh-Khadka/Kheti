@@ -1,0 +1,59 @@
+﻿@model List<Kheti.Models.KhetiApplicationUser>
+@{
+    Layout = "_AdminLayout";
+}
+
+<style>
+    .table th {
+        background-color: aliceblue;
+    }
+
+    .table {
+        font-size: x-small;
+        border: 1px solid #dddddd;
+    }
+
+    td {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100px;
+    }
+</style>
+
+<div class="container-fluid">
+    <h6 class="text-center">Userlist</h6>
+    <hr />
+    <table class="table  table-hover">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>PhoneNumber</th>
+                <th>Address</th>
+                <th>Date</th>
+                <th>ProfileImage</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var users in Model)
+            {
+                @if(users.FirstName != null)
+                {
+                    <tr>
+                        <td title="@users.FirstName">@users.FirstName</td>                        
+                        <td title="@users.Email">@users.Email</td>
+                        <td>@users.PhoneNumber</td>
+                        <td>@users.Address</td>
+                        <td>@users.RegistrationDate.ToString("yyyy-MM-dd")</td>
+                        <td>
+                            <img src="~/@users.ProfilePictureURL" height="100px" width="100px" />
+                        </td>
+                    </tr>
+                }
+               
+            }
+        </tbody>
+    </table>
+</div>

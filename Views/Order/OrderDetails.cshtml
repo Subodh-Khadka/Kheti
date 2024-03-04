@@ -13,6 +13,7 @@
 <hr class="m-0" />
 <div class="d-flex justify-content-between mt-2 mb-2">
     <a asp-controller="Order" asp-action="OrderDetails" class="btn btn-sm disabled btn-secondary text-white mt-0 "> Order Status: @Model.Order.OrderStatus</a>
+    <a asp-controller="Order" asp-action="OrderDetails" class="btn btn-sm disabled btn-secondary text-white mt-0 "> Payment Status: @Model.Order.PaymentStatus</a>
     <a asp-controller="Order" asp-action="OrderDetails" class="btn btn-sm btn-success me-md-2 me-lg-5 ">Pay Now</a>
 </div>
 <div class="container-fluid order-container extra_small_grey_text_css">

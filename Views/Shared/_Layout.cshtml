@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script src="https://khalti.com/api/v2/kpg/js/khalti-checkout.js"></script>
        
     <script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
 
@@ -46,6 +48,10 @@
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Category" asp-action="Index">Category</a>
                             </li>
+                              <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="Index">AdminPanel</a>
+                            </li>
+
                         }
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Customer" asp-action="Index">Products</a>

@@ -6,6 +6,10 @@
     text-overflow: ellipsis;
 }
 
+.table{
+    color:lightslategrey
+}
+
 .order-container {    
     /*width:50%;*/
     padding:15px;

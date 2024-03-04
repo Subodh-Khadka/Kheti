@@ -1,0 +1,55 @@
+﻿@model IEnumerable<Kheti.Models.Category>
+@{
+    Layout = "_AdminLayout";
+}
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<style>
+    .table{
+        font-size:smaller;
+    }
+    
+    .button{
+        font-size:small;
+        width:50px;
+    }
+    .btn{
+        width:100px;
+        font-size:small;
+    }
+</style>
+
+<div class="container">
+    <h6 class="text-center">Product Categories</h6>
+    <hr />
+
+    <p>
+        <a class="btn purple-background btn-sm text-white" asp-action="CreateCategory" asp-controller="Admin">Create New</a>
+    </p>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                    <td>
+                        <div class="d-flex gap-3">                            
+                            <a class="btn btn-sm  btn-primary" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                            <a class="btn btn-sm  btn-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
