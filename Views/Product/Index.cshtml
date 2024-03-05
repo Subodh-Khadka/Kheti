@@ -4,13 +4,6 @@
     ViewData["Title"] = "Index";
 }
 
-@* <h1>Index</h1> *@
-
-@if (User.IsInRole("Admin"))
-{
-    Layout = "_AdminLayout";
-}
-
 <p>
     <a class="btn purple-background btn-sm text-white" asp-action="Create">Create New Product</a>
 </p>
@@ -26,15 +19,10 @@
             <th>
                 @Html.DisplayNameFor(model => model.Price)
             </th>
-         @*    <th>
-                @Html.DisplayNameFor(model => model.PrdouctImageUrl)
-            </th> *@
+       
             <th>
                 @Html.DisplayNameFor(model => model.Category)
             </th>
-          @*   <th>
-                @Html.DisplayNameFor(model => model.User)
-            </th> *@
             <th></th>
         </tr>
     </thead>

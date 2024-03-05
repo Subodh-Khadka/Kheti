@@ -24,7 +24,7 @@
 <div class="container-fluid">
     <h6 class="text-center">Userlist</h6>
     <hr />
-    <table class="table  table-hover">
+    <table class="table">
         <thead>
             <tr>
                 <th>Name</th>
@@ -39,10 +39,10 @@
 
             @foreach (var users in Model)
             {
-                @if(users.FirstName != null)
+                @if (users.FirstName != null)
                 {
                     <tr>
-                        <td title="@users.FirstName">@users.FirstName</td>                        
+                        <td title="@users.FirstName">@users.FirstName</td>
                         <td title="@users.Email">@users.Email</td>
                         <td>@users.PhoneNumber</td>
                         <td>@users.Address</td>
@@ -50,9 +50,20 @@
                         <td>
                             <img src="~/@users.ProfilePictureURL" height="100px" width="100px" />
                         </td>
+                        <td class="flex-column gap-2 justify-content-center">
+                            <form asp-action="EditInformation" asp-controller="User">
+                                <input type="hidden" id="id" name="id" value="@users.Id" />
+                                <button type="submit" class="btn btn-primary text-white mt-1 mb-1 btn-sm"><i class="bi bi-pencil-square"></i></button>
+                            </form>
+                            <form asp-action="EditInformation" asp-controller="User">
+                                <input type="hidden" id="id" name="id" value="@users.Id" />
+                                <button type="submit" class="btn btn-danger text-white btn-sm"><i class="bi bi-shield-x"></i></button>
+                            </form>
+
+                        </td>
                     </tr>
                 }
-               
+
             }
         </tbody>
     </table>

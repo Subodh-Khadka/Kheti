@@ -14,20 +14,24 @@ namespace Kheti.Controllers
             _db = db;
             _webHostEnvironment = webHostEnvironment;
         }
-      
 
-        [HttpGet]
-        public IActionResult EditInformation()
-        {            
+
+        /*[HttpGet]*/
+        public IActionResult EditInformation(string id)
+        {
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-            var user = _db.KhetiApplicationUsers.FirstOrDefault(u => u.Id == userId);
 
-            if (user == null)
+            if (id != null)
             {
-                return NotFound();
-            }
+                var user = _db.KhetiApplicationUsers.FirstOrDefault(u => u.Id == id);
+                return View(user);
 
-            return View(user);
+            }
+            else
+            {
+                var user = _db.KhetiApplicationUsers.FirstOrDefault(u => u.Id == userId);
+                return View(user);
+            }
         }
 
         [HttpPost]
@@ -50,8 +54,8 @@ namespace Kheti.Controllers
                 currentUser.PhoneNumber = updatedUser.PhoneNumber;
                 currentUser.LocalAddress = updatedUser.LocalAddress;
                 currentUser.province = updatedUser.province;
-                currentUser.AdditionalPhoneNumber = updatedUser.AdditionalPhoneNumber;                
-                
+                currentUser.AdditionalPhoneNumber = updatedUser.AdditionalPhoneNumber;
+
                 _db.SaveChanges();
 
                 TempData["Success"] = "Information updated!";
@@ -65,7 +69,7 @@ namespace Kheti.Controllers
             {
                 TempData["ErrorMessage"] = "User not found.";
             }
-            
+
             TempData["ErrorMessage"] = "Concurrency error occurred.";
             return RedirectToAction("Index");
         }
@@ -92,12 +96,12 @@ namespace Kheti.Controllers
                 _db.SaveChanges();
                 TempData["sucess"] = "Image Added";
                 return RedirectToAction("EditInformation");
-            }           
+            }
             else
-            {                              
+            {
                 TempData["delete"] = "No Image Selected";
                 return RedirectToAction("EditInformation");
-            }            
+            }
         }
 
         public IActionResult updateProfilePicture(string id, IFormFile profilePicture)
@@ -127,7 +131,7 @@ namespace Kheti.Controllers
             {
                 TempData["delete"] = "No Image Selected";
                 return RedirectToAction("EditInformation");
-            }            
+            }
 
         }
 

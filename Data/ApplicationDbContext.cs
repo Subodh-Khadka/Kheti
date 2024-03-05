@@ -41,7 +41,7 @@ namespace Kheti.Data
             .HasOne(s => s.Product)
             .WithMany()
             .HasForeignKey(s => s.ProductId)
-            .OnDelete(DeleteBehavior.NoAction); // Specify ON DELETE NO ACTION
+            .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<Favorite>()
                 .HasOne(s => s.Product).WithMany()

@@ -1,6 +1,4 @@
-﻿@using Microsoft.AspNetCore.Identity
-@inject SignInManager<IdentityUser> SignInManager
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -9,12 +7,9 @@
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://khalti.com/api/v2/kpg/js/khalti-checkout.js"></script>
-    <script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>    
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    
+
     <style>
         body {
             font-size: small;
@@ -25,29 +20,29 @@
             margin: 0;
             font-family: "Poppins", sans-serif;
         }
-        
+
         .sidebar {
             position: fixed;
             top: 0;
             left: 0;
             height: 100%;
-            width: 200px;   
+            width: 200px;
             background-color: #27296d;
             padding-top: 56px;
             overflow-y: auto;
+            transition: width 0.3s ease;
         }
-        
+
         .main-content {
-            margin-left: 220px; 
-            padding-top: 56px; 
+            margin-left: 200px; 
+            padding-top: 56px;
         }
-        
+
         .header {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            /* height: 56px; */
             background-color: #343a40;
             color: white;
             z-index: 10;
@@ -57,35 +52,51 @@
                 font-size: smaller;
             }
 
-        .nav-link{
-            margin: 5px 10px;            
-            border-radius:10px;
-            background-color: #8f71ff
+        .nav-link {
+            margin: 5px 10px;
+            border-radius: 0px;
+            background-color: #8f71ff;
+        }
+
+        .icon{
+            font-size:20px;
+            padding: 0 7px;
+        }
+
+        .sidebar-hidden{
+            width:0;
+        }
+
+        .show-full {
+            margin-left:0;
+            width:100%;
         }
     </style>
 </head>
 <body>
-    
+
     <header class="header">
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <button id="sidebarToggle" class="navbar-brand bg-dark ms-3 text-center">
+                <i class="bi bi-list icon"></i>
+            </button>
             <a class="navbar-brand ps-3 text-center">Admin Panel</a>
         </nav>
-    </header>   
+    </header>
 
-
-    <div class="sidebar">
+    <div class="sidebar" id="sidebar">
         <ul class="nav flex-column">
             <li class="nav-item">
                 <a asp-action="Index" asp-controller="Admin" class="nav-link white-text mt-2 mb-2">Dashboard</a>
             </li>
             <li class="nav-item">
-                <a asp-action="Index" asp-controller="Product" class="nav-link  white-text">Add</a>
-            </li>  
-            <li class="nav-item">
                 <a class="nav-link white-text" asp-area="" asp-controller="Admin" asp-action="CategoryList">Category</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link white-text" asp-area="" asp-controller="Admin" asp-action="UserList">Users</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link white-text" asp-area="" asp-controller="Admin" asp-action="QueryList">Queries</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link white-text" asp-area="" asp-controller="Home" asp-action="Index">Back To Home</a>
@@ -95,23 +106,47 @@
                     <button id="logout" type="submit" class="nav-link text-white border-0"><i class="bi bi-box-arrow-left ms-2 me-2"></i> Logout</button>
                 </form>
             </li>
-            
         </ul>
     </div>
 
-    <div class="main-content">
+    <div class="main-content mt-2">
         <div class="container-fluid">
             <partial name="_Notification" />
             @RenderBody()
         </div>
     </div>
 
+<script>
+        $(document).ready(function () {
+            // Check if the sidebar state is stored in localStorage
+            var isSidebarHidden = localStorage.getItem('sidebarHidden') === 'true';
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajax-unobtrusive/3.2.6/jquery.unobtrusive-ajax.min.js" integrity="sha512-DedNBWPF0hLGUPNbCYfj8qjlEnNE92Fqn7xd3Sscfu7ipy7Zu33unHdugqRD3c4Vj7/yLv+slqZhMls/4Oc7Zg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            // Set the initial state of the sidebar based on the stored value
+            if (isSidebarHidden) {
+                $('#sidebar').addClass('sidebar-hidden');
+                $('.main-content').addClass('show-full');
+            }
+                
+            $('#sidebarToggle').click(function () {
+                $('#sidebar').toggleClass('sidebar-hidden');
+                $('.main-content').toggleClass('show-full');
+
+                // Store the current state of the sidebar in localStorage
+                var isHidden = $('#sidebar').hasClass('sidebar-hidden');
+                localStorage.setItem('sidebarHidden', isHidden);
+            });
+        });
+
+</script>
+
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 
+    <script>
+        var toastEl = document.querySelector('.toast');
+        var toast = new bootstrap.Toast(toastEl);
+        toast.show();
+    </script>
 </body>
 </html>

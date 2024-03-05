@@ -1,0 +1,64 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model List<Kheti.Models.QueryForm>
+@{
+    Layout = "_AdminLayout";
+}
+
+<style>
+    .table th {
+        background-color: aliceblue;
+    }
+
+    .table {
+        font-size: x-small;
+        border: 1px solid #dddddd;
+    }
+
+    td {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100px;
+    }
+</style>
+
+<div class="container-fluid">
+    <h6 class="text-center">QueryList</h6>
+    <hr />
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>User</th>
+                <th>Problem</th>
+                <th>QueryStatus</th>
+                <th>Date</th>
+                <th>selectedStatus</th>
+                <th>Image</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var query in Model)
+            {
+                <tr>
+                    <td title="@query.Title">@query.Title</td>
+                    <td title="@query.User.FirstName">@query.User.FirstName</td>
+                    <td title="@query.ProblemCategory">@query.ProblemCategory</td>
+                    <td title="@query.QueryStatus">@query.QueryStatus</td>
+                    <td title="@query.DateCreated">@query.DateCreated</td>
+                    <td title="@query.IsSelected">@query.IsSelected</td>
+                    <td>
+                        <img src="~/@query.ImageUrl" height="100px" width="100px" />
+                    </td>
+                </tr>
+            }
+
+
+        </tbody>
+    </table>
+</div>
