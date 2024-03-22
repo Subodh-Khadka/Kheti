@@ -9,10 +9,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.SignalR;
 using Kheti.Hubs;
 using Kheti.KhetiUtils;
+using Microsoft.Extensions.Options;
 
 namespace Kheti.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Seller,Expert")]
     public class ConsultationController : Controller
     {
         private readonly ApplicationDbContext _db;
@@ -26,41 +27,54 @@ namespace Kheti.Controllers
             _hubContext = hubContext;
         }
 
-        [Authorize(Roles = "Seller,Expert")]
         public IActionResult QueryList(string status)
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
             var userRole = User.FindFirstValue(ClaimTypes.Role);
-            var queryStatus = string.IsNullOrEmpty(status) ? "all" : status;
+            var queryStatus = string.IsNullOrEmpty(status) ? "All" : status;
 
 
             IEnumerable<QueryForm> queries;
 
-
+            //for user with role 'Expert'
             if (userRole == "Expert")
-            {                
+            {
                 var expertProfile = _db.ExpertProfiles.FirstOrDefault(u => u.UserId == userId);
 
-                if (expertProfile != null && queryStatus == "all")
+                if (expertProfile != null && queryStatus == "All")
                 {
                     var expertise = expertProfile.FieldOfExpertise;
 
                     queries = _db.QueryForms
                         .OrderByDescending(q => q.UrgencyLevel == "High")
-                        .Where(q => q.ProblemCategory == expertise ).ToList();
+                        .Where(q => q.ProblemCategory == expertise).ToList();
                 }
 
                 else if (expertProfile != null && queryStatus != "all")
                 {
                     var expertise = expertProfile.FieldOfExpertise;
 
-                    queries = _db.QueryForms
-                        .OrderByDescending(q => q.UrgencyLevel == "High")
-                        .Where(q => q.ProblemCategory == expertise && q.QueryStatus == status).ToList();
+                    if (queryStatus == StaticDetail.QueryStatusPending)
+                    {
+                        queries = _db.QueryForms
+                       .OrderByDescending(q => q.UrgencyLevel == "High")
+                       .Where(q => q.ProblemCategory == expertise
+                       && q.QueryStatus == status).
+                      ToList();
+                    }
+
+                    else
+                    {
+                        queries = _db.QueryForms
+                       .OrderByDescending(q => q.UrgencyLevel == "High")
+                       .Where(q => q.ProblemCategory == expertise
+                       && q.QueryStatus == status
+                       && q.SelectedExpertId == userId).ToList();
+                    }
                 }
                 else
-                {                    
+                {
                     return RedirectToAction("Error", "Home");
                 }
 
@@ -68,7 +82,7 @@ namespace Kheti.Controllers
             else
             //if user is of role:seller
             {
-                if (queryStatus == "all")
+                if (queryStatus == "All")
                 {
                     queries = _db.QueryForms
                     /*  .OrderByDescending(p => p.UrgencyLevel == "High")
@@ -159,18 +173,57 @@ namespace Kheti.Controllers
 
         public IActionResult QueryDetails(int queryId)
         {
-            var query = _db.QueryForms
-        .OrderByDescending(q => q.DateCreated)
-        .Include(q => q.QueryComments) 
-            .ThenInclude(c => c.User) 
-        .Include(q => q.User) 
-        .FirstOrDefault(x => x.Id == queryId);
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var userRole = User.FindFirstValue(ClaimTypes.Role);
 
-            var pastMessages = query.QueryComments.ToList();
+            //for seller
+            if (userRole == StaticDetail.SellerRole)
+            {
+                var query = _db.QueryForms
+                .OrderByDescending(q => q.DateCreated)
+                .Include(q => q.QueryComments)
+                .ThenInclude(c => c.User)
+                .Include(q => q.User)
+                .FirstOrDefault(x => x.Id == queryId && x.UserId == userId);
 
-            ViewBag.PastMessages = pastMessages;
+                if(query == null)
+                {
+                    return Redirect($"/Identity/Account/AccessDenied");
+                }
 
-            return View(query);
+                var pastMessages = query.QueryComments.ToList();
+                ViewBag.PastMessages = pastMessages;
+                return View(query);
+            }
+            //for expert
+            else
+            {
+                var query = _db.QueryForms
+                .OrderByDescending(q => q.DateCreated)
+                .Include(q => q.QueryComments)
+                .ThenInclude(c => c.User)
+                .Include(q => q.User)
+                .FirstOrDefault(x => x.Id == queryId);
+
+                if (query == null)
+                {
+                    TempData["delete"] = "Not Available!";
+                    return RedirectToAction("QueryList");
+                }
+
+                if (query.SelectedExpertId != userId)
+                {
+                    TempData["delete"] = "Not Available!";
+                    return RedirectToAction("QueryList");
+                }
+
+                var pastMessages = query.QueryComments.ToList();
+
+                ViewBag.PastMessages = pastMessages;
+
+                return View(query);
+            }
         }
 
         //queryComment post method
@@ -290,11 +343,16 @@ namespace Kheti.Controllers
 
             var currentQuery = _db.QueryForms.FirstOrDefault(q => q.Id == queryId);
 
-            if (currentQuery != null)
+            if (currentQuery != null && currentQuery.IsSelected != "true")
             {
                 currentQuery.IsSelected = "true";
                 currentQuery.SelectedExpertId = userId;
                 currentQuery.QueryStatus = StaticDetail.QueryStatusInProcess;
+            }
+            else
+            {
+                TempData["delete"] = "Query was selected already be else!";
+                return RedirectToAction("QueryList");
             }
 
             _db.SaveChanges();

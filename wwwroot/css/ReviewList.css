@@ -12,14 +12,18 @@ body{
 .review-item {
     /*background-color: #7c73e6;*/
     /*background-color: #ececec;*/
-    background-color: #9896f1;
+    /*background-color: #9896f1;*/
     box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
     padding: 10px;
+    font-size:x-small;
+    color:black;
 }
 
-.toBeEllipsed{
-    width:130px;
-    overflow:hidden;
+.toBeEllipsed {
+    width: 200px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .product-name {

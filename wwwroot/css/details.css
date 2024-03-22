@@ -1,3 +1,4 @@
+
 .signup_btn {
     color: green;
     background-color: #ffffff;
@@ -63,3 +64,25 @@ input[type="number"] {
     background-color:white;
 }
 
+.comment-section{
+    font-size:x-small;
+}
+
+.review{
+    font-size:x-small;
+}
+
+.review img{
+    border-radius:50%;
+}
+
+.ellps {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.review-card{
+    height:150px;
+}

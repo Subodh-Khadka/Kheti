@@ -17,7 +17,8 @@ namespace Kheti.Models
         public string FieldOfExpertise { get; set; }
         [Required]
         [Range(0, int.MaxValue, ErrorMessage ="Years of experience must be a non-negative integer.")]
-        public int YearsOfExperience { get; set; }        
-        
+        public int YearsOfExperience { get; set; }
+        public bool IsDeleted { get; set; } = false;
+
     }
 }

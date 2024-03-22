@@ -7,6 +7,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
+
 namespace Kheti.Controllers
 {    
     public class CustomerController : Controller
@@ -19,7 +20,7 @@ namespace Kheti.Controllers
         }
 
         /*[Authorize(Roles = "Seller,Customer")]*/
-        public IActionResult Index(string searchInput)
+        public IActionResult Index(string searchInput)  
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var userRole = User.FindFirstValue(ClaimTypes.Role);
@@ -31,14 +32,14 @@ namespace Kheti.Controllers
                 products = _db.Products
                     .Include(p => p.Category)
                     .Include(p => p.User)
-                    .Where(p => p.UserId == userId);
+                    .Where(p => p.UserId == userId && p.IsDeleted == false);
             }
             else 
             {
-                
                 products = _db.Products
                     .Include(p => p.Category)
-                    .Include(p => p.User);
+                    .Include(p => p.User)
+                    .Where(p => p.IsDeleted == false); ;
             }
 
             if (!string.IsNullOrEmpty(searchInput))
@@ -51,7 +52,7 @@ namespace Kheti.Controllers
             return View(sortedProducts);
         }
 
-        [Authorize(Roles = "Seller,Customer")]
+        [Authorize(Roles = "Seller,Customer,Expert")]
         public IActionResult Details(Guid id)
         {
             var product = _db.Products
@@ -62,7 +63,12 @@ namespace Kheti.Controllers
                 .Include(p => p.ProductComments)
                     .ThenInclude(c => c.Replies) 
                         .ThenInclude(r => r.User) 
+                .Include(p => p.Reviews)
+                .ThenInclude(p => p.User)
                 .FirstOrDefault(p => p.ProductId == id);
+
+            double averageProductRating = product.Reviews.Any() ? Math.Round(product.Reviews.Average(r => r.Rating), 2) : 0;
+            double totalRating = product.Reviews.Count();
 
             ShoppingCart cart = new()
             {
@@ -71,19 +77,8 @@ namespace Kheti.Controllers
                 ProductId = id
             };
 
-           /* if (TempData["AddedToCartMessage"] != null)
-            {
-                ViewBag.AddedToCartMessage = TempData["AddedToCartMessage"];
-            }
-            if (TempData["Message"] != null)
-            {
-                ViewBag.Message = TempData["Message"];
-            }
-            if (TempData["AddedToFavorite"] != null)
-            {
-                ViewBag.AddedToFavorite = TempData["AddedToFavorite"];
-            }
-*/
+            ViewData["AverageRating"] = averageProductRating;
+            ViewData["TotalRating"] = totalRating;
             return View(cart);
         }
 

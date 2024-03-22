@@ -1,5 +1,6 @@
 ﻿using Kheti.Data;
 using Kheti.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -7,8 +8,10 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Reflection;
 using System.Security.Claims;
 
+
 namespace Kheti.Controllers
 {
+    [Authorize(Roles = "Seller,Admin")]
     public class ProductController : Controller
     {
         private readonly ApplicationDbContext _db;
@@ -26,7 +29,7 @@ namespace Kheti.Controllers
 
             //filtering the products based on the userId
             var products = _db.Products.Include(p => p.Category)
-                .Where(p => p.UserId == userId);
+                .Where(p => p.UserId == userId && p.IsDeleted == false);
             return View(products);
         }
 
@@ -150,12 +153,14 @@ namespace Kheti.Controllers
 
                 foreach (var favorite in existingProductInFavorite)
                 {
+
                     _db.Favorites.Remove(favorite);
                 }
                 _db.SaveChanges();
             }
 
-            _db.Products.Remove(productToDelete);
+            /*_db.Products.Remove(productToDelete);*/
+            productToDelete.IsDeleted = true;
             _db.SaveChanges();
             return RedirectToAction("Index");
         }

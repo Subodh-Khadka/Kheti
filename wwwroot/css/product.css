@@ -43,11 +43,12 @@
     }
 
 .search-input {
-    margin:0;
-    background-color:ghostwhite;
-    padding: 0.8rem 1rem;
+    margin: 0;
+    /*background-color:white;*/
+    padding: 0.5rem 1rem;
     margin-right: 0;
-    border:0px solid white;
+    border: 1px solid green;
+    border-radius:5px;
 }
 
     .search-input:hover {

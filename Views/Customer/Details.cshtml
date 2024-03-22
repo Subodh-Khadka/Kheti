@@ -4,6 +4,7 @@
     ViewData["Title"] = "Details";
 }
 
+
 <style>
 
 </style>
@@ -15,13 +16,13 @@
 
     <input hidden asp-for="ProductId" />
 
-    <div class="container mt-4 mb-4 justify-content-center align-items-center position-relative">
+    <div class="container mt-4 mb-4  justify-content-center align-items-center position-relative">
         <div class="fs-6">
             <a asp-action="Index" class="mt-4 mb-4 text-md-start small_grey_text_css text-decoration-none gap-3"><i class="bi bi-arrow-left pe-2 back-icon"></i>Back To Home</a>
         </div>
 
-        <div class="row mt-4">
-            <div class="col-sm-12 col-md-5">
+        <div class="row mt-4 d-flex gap-5">
+            <div class="col-md-5">
                 <img src="~/@Model.Product.ProductImageUrl" alt="@Model.Product.ProductName" height="375px" width="100%">
             </div>
             <div class="col-sm-12 col-md-5 small_grey_text_css text d-flex flex-column justify-content-center">
@@ -31,30 +32,88 @@
                 <p class="small_grey_text_css mb-2">Price: Rs @Model.Product.Price</p>
                 <p class="small_grey_text_css mb-2">SellerId: @Model.Product.UserId</p>
                 <p class="small_grey_text_css mb-2">@Model.Product.ProductDescription</p>
+                <p class="small_grey_text_css mb-2">Average Rating:<span class="fs-6 ms-2 text-success">@ViewData["AverageRating"]</span></p>
+                <p class="small_grey_text_css mb-2">Total Rating:<span class="fs-6 ms-2 text-success">@ViewData["TotalRating"]</span></p>
+
+
 
                 <div class="d-flex align-items-center gap-2">
                     <label class="" for="quanitty">Add Quantity</label>
                     <input asp-for="Quantity" type="number" min="1" value="1" />
                     <button type="submit" class="favorite-btn" asp-controller="Customer" asp-action="AddToFavorite" asp-route-ProductId="@Model.Product.ProductId"><i class="favorite-icon fs-3 bi bi-heart-fill ms-4"></i></button>
-                </div>                 
-
+                </div>
                 @if (User.IsInRole(StaticDetail.CustomerRole) || User.IsInRole(StaticDetail.AdminRole))
                 {
-                    <button type="submit" class="btn btn-success w-100 mt-5">Add To Cart</button>
-                    <a asp-action="Index" class="signup_btn continue mt-2 text-center">Continue Shopping</a>
-
+                    <button type="submit" class="btn btn-sm btn-success w-100 mt-3">Add To Cart</button>
+                    <a asp-action="Index" class="signup_btn btn-sm continue mt-2 text-center">Buy Now</a>
                 }
                 else
                 {
                     <button type="submit" class="btn btn-success w-100 mt-5 disabled">Add To Cart</button>
-                    @* <a asp-action="Index" class="signup_btn continue mt-2 text-center">Continue Shopping</a> *@
                 }
 
             </div>
         </div>
+        <hr class="text-secondary" />
+
+        @* Reviews Section *@
+        <p class="text text-center fw-bold mt-0 text-success mt-4">Product Reviews</p>
+
+        @if (Model.Product.Reviews.Count > 0)
+        {
+            <div class="row review p-2 bg-light">
+
+                <div class="grey_line"></div>
+                @foreach (var reviews in Model.Product.Reviews)
+                {
+                    <div class="col-md-4 mb-2">
+                        <div class="card review-card">
+                            <div class="card-body">
+                                <div class="d-flex gap-3 align-content-center">
+                                    @if (reviews.User?.ProfilePictureURL != null)
+                                    {
+                                        <img src="~/@reviews.User.ProfilePictureURL" height="60px" width="60px" />
+                                        <p class="align-self-center">@reviews.User.FirstName @reviews.User.LastName</p>
+                                    }
+                                    else
+                                    {
+                                        <p class="mt-2">No profile picture available</p>
+                                    }
+
+                                </div>
+                                <div class="stars-container mb-3">
+                                    @for (int i = 0; i < reviews.Rating; i++)
+                                    {
+                                        <i class="bi bi-star-fill fs-6 m-0 p-0 rated" data-rating="1"></i>
+                                    }
+                                    @for (int i = reviews.Rating; i < 5; i++)
+                                    {
+                                        <i class="bi bi-star-fill fs-6 m-0 p-0" data-rating="1"></i>
+                                    }
+
+                                </div>
+                                <p class="card-text ellps">@reviews.Comment</p>
+                            </div>
+                        </div>
+                    </div>
+                    @*
+            <p>@reviews.DateReviewed</p>
+            <p>@reviews.Rating</p>
+            <p>@reviews.Comment</p>
+            </div> *@
+
+                }
+            </div>
+        }
+        else
+        {
+            <p class="text-center">No Reviews</p>
+        }
+
+
 
         <!-- Comment Section -->
-        <div class="row-cols-2">
+        <div class="row comment-section">
             <div class="mt-5">
 
                 @if (User.IsInRole(StaticDetail.CustomerRole))
@@ -66,28 +125,19 @@
                     <h3>Comment of users </h3>
                 }
 
-
-                <!-- Include the partial view for comments -->
-                <div id="commentsSection">
-                    <!-- Render the comments section using the partial view -->
+                <div id="commentsSection" class="col-12">
                     @Html.Partial("_CommentsPartial", Model.Product.ProductComments)
                 </div>
 
                 @if (User.IsInRole(StaticDetail.CustomerRole))
                 {
-
-                    <!-- Form to submit a new comment -->
                     <form id="commentForm">
                         <textarea class="p-2" id="commentText" rows="2" cols="50" placeholder="Write a comment..."></textarea><br />
                         <button id="submitComment" class="btn btn-sm purple-background text-white" type="button">Comment</button>
                     </form>
-
                 }
             </div>
-
         </div>
-        <!-- End of Comment Section -->
-
     </div>
 </form>
 
@@ -112,12 +162,10 @@
             });
         });
 
-        // Submit new reply
         $(".submitReply").click(function () {
             var commentId = $(this).siblings(".commentId").val();
             var replyText = $(this).siblings(".replyText").val();
 
-            // Store a reference to the button that was clicked
             var clickedButton = $(this);
 
             $.ajax({
@@ -126,18 +174,12 @@
                 data: { commentId: commentId, replyText: replyText },
                 success: function (result) {
                     $('#replies_' + commentId).html(result);
-                    // Empty the reply text area after successful submission
-                    clickedButton.siblings(".replyText").val(""); // Use the stored reference to access the reply text area
+                    clickedButton.siblings(".replyText").val("");
                 },
                 error: function (xhr, status, error) {
                     console.error(xhr.responseText);
                 }
             });
         });
-
-
     });
-
-
-
 </script>

@@ -28,9 +28,12 @@ namespace Kheti.Controllers
 
             OrderVm = new()
             {
-                OrderList = _db.Orders.Where(u => u.UserId == userId).ToList(),
+                OrderList = _db.Orders.Where(u => u.UserId == userId)
+                .OrderByDescending(u => u.PaymentStatus)
+                .ThenByDescending(u => u.OrderCreatedDate)
+                .ToList(),
                 OrderItems = _db.OrderItems.Include(o => o.Product).ThenInclude(oi => oi.User).ToList(),
-                /*Order = new()*/
+                
             };
             return View(OrderVm);
         }
@@ -62,6 +65,10 @@ namespace Kheti.Controllers
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var product = _db.Products
+                .Include(p => p.User)
+                .Include(p => p.ProductComments)
+                .FirstOrDefault(p => p.ProductId == reviewVm.ProductId);
 
             var review = new Review
             {
@@ -72,8 +79,9 @@ namespace Kheti.Controllers
                 ProductId = reviewVm.ProductId,
             };
 
-            _db.Reviews.Add(review);
+            product.Reviews.Add(review);
             _db.SaveChanges();
+            TempData["success"] = "Review Added!";
 
             return RedirectToAction("OrderDetails", new { orderId = orderId });
 
@@ -90,6 +98,7 @@ namespace Kheti.Controllers
             return View(reviews);
         }
 
+
         [HttpPost]
         public async Task<IActionResult> Pay(int orderId)
         {
@@ -101,6 +110,7 @@ namespace Kheti.Controllers
 
             var order = _db.Orders.FirstOrDefault(o => o.OrderId == orderId);
             order.PaymentStatus = StaticDetail.PaymentStatusCompleted;
+            order.OrderStatus = StaticDetail.OrderStatusShipped;
             _db.Orders.Update(order);
             _db.SaveChangesAsync();
 

@@ -6,8 +6,6 @@
 
 <style>
     .expert-message {
-        /* border: 1px solid grey; */
-        /* height: 50px; */
         font-weight: 600;
         width: 50%;
         padding: 10px 10px;
@@ -18,7 +16,6 @@
     }
 
     .seller-message {
-        /* height: 50px; */
         font-weight: 600;
         width: 50%;
         padding: 10px 10px;
@@ -30,28 +27,30 @@
         margin-left: auto;
     }
 
-    .markAsSolved{
-        background-color:aliceblue;
-        width:350px;
-        border-radius:15px;
-        color:white;
+    .markAsSolved {
+        background-color: aliceblue;
+        width: 350px;
+        border-radius: 15px;
+        color: white;
     }
 
- 
 </style>
 
 <link rel="stylesheet" href="~/css/queryDetails.css">
 
 
 <form class="d-flex gap-4 ms-2 markAsSolved" method="post" asp-action="MarkAsSolved" asp-route-queryFormId="@Model.Id">
-    <button type="submit" class="btn  btn-sm btn-secondary"><i class="bi bi-check2"></i> Mark As Solved</button>
-    <p class="card-title mt-2 text-secondary">Query Status: @Model.QueryStatus</p>    
+    @if (Model.QueryStatus != StaticDetail.QueryStatusSolved && User.IsInRole("Expert"))
+    {
+        <button type="submit" class="btn  btn-sm btn-secondary"><i class="bi bi-check2"></i> Mark As Solved</button>
+    }
+    <p class="card-title ms-2 mt-2 text-secondary">Query Status: @Model.QueryStatus</p>
 </form>
 
 
 <div class="container-fluid">
-    <div class="row mt-2">      
-        <!-- left side query section -->
+    <div class="row mt-2">
+        @*  <!-- left side query section --> *@
         <div class="col-md-4 left-side">
             <div class="title purple-background d-flex justify-content-center align-items-center">
                 <h5 class="text-center mt-1">QUERY</h5>
@@ -74,6 +73,7 @@
                             <p class="card-title">@Model.ProblemCategory</p>
                             <p class="card-title">@Model.Location</p>
                             <p class="card-title">Urgency Level: @Model.UrgencyLevel</p>
+                            <p class="card-title">selected By: @Model.SelectedExpertId</p>
                         </div>
                         <p class="card-title">@Model.Description</p>
                     </div>
@@ -84,18 +84,18 @@
 
         <!-- right side query section -->
         <div class="col-md-8 right-side">
-          
+
             <div class="title purple-background  d-flex justify-content-center align-items-center">
                 <h5 class="text-center mt-1">MESSAGES</h5>
             </div>
             <hr class="text-white">
 
-            <div class="messages-container mt-4 mb-4">              
-                 <!-- Expert's comment -->
+            <div class="messages-container mt-4 mb-4">
+                <!-- Expert's comment -->
                 @if (Model.QueryComments != null && Model.QueryComments.Any())
                 {
                     @foreach (var comment in ViewBag.pastMessages)
-                    {                        
+                    {
                         @if (comment.IsExpert)
                         {
                             <section class="expert-message">
@@ -109,18 +109,34 @@
                             </section>
                         }
                     }
-                }          
-            </div>            
+                }
+            </div>
 
-            @if(Model.QueryStatus != StaticDetail.QueryStatusSolved)
+            @if (Model.QueryStatus != StaticDetail.QueryStatusSolved)
             {
-            <div class="message-form">
-                <form id="messageForm" class="d-flex gap-4 mt-4">
-                    <input type="hidden" id="queryFormId" name="queryFormId" value="@Model.Id">
-                    <input type="text" id="commentText" name="commentText" class="form-control" placeholder="Type your message...">
-                    <button type="submit" class="btn purple-background white-text">Submit</button>
-                </form>
-            </div>                
+                @if (Model.IsSelected == "true")
+                {
+                    <div class="message-form">
+                        <form id="messageForm" class="d-flex gap-4 mt-4">
+                            <input type="hidden" id="queryFormId" name="queryFormId" value="@Model.Id">
+                            <input type="text" id="commentText" name="commentText" class="form-control" placeholder="Type your message...">
+                            <button type="submit" class="btn purple-background white-text">Submit</button>
+                        </form>
+                    </div>
+                }
+                else
+                {
+                    @if (User.IsInRole("Seller"))
+                    {
+                        <p class="text-center text-success">Your query is under review. <br /> You will hear from our expert shortly!!</p>
+                    }
+                    else
+                    {
+                        <p class="text-center text-danger">Query has not been selected!.</p>
+                        
+                    }
+                }
+
             }
         </div>
     </div>
@@ -139,17 +155,17 @@
             .catch(err => console.error("SignalR Connection Error: ", err.toString()));
 
         connection.on("ReceiveMessage", function (user, message, isExpert) {
-            
+
             const cssClass = isExpert ? "expert-message" : "seller-message";
-            
+
             const messageHTML = `<section class="${cssClass}"><p>${message}</p></section>`;
-            
+
             if (isExpert) {
-                $(".messages-container").append(messageHTML); 
+                $(".messages-container").append(messageHTML);
             } else {
-                $(".messages-container").append(messageHTML); 
+                $(".messages-container").append(messageHTML);
             }
-            
+
             $(".messages-container").scrollTop($(".messages-container")[0].scrollHeight);
         });
 
@@ -168,9 +184,8 @@
                 .catch(err => console.error(err.toString()));
 
             $("#commentText").val("");
-        });        
+        });
 
-    </script>   
+    </script>
 
 }
-       

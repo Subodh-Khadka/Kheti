@@ -71,6 +71,7 @@ input[type="text"]:placeholder-shown {
 }
 
 form label{
+
     color:lightslategrey;
 }
 
@@ -89,4 +90,17 @@ form label{
 .extra_small_grey_text_css {
     font-size: 12px;    
     color: grey;
-}   
+}
+
+/*rating*/
+.stars-container {
+    /* gap:-2px; */
+}
+
+.rated {
+    color: #FFD700;
+}
+
+.actives {
+    font-weight: bolder;
+}

@@ -104,5 +104,11 @@ namespace Kheti.Controllers
 
             return View(queries);
         }
+
+        public IActionResult OrderList()
+        {
+            var order = _db.Orders.ToList();
+            return View(order);
+        }
     }
 }

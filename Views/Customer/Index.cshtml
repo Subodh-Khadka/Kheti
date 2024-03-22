@@ -15,21 +15,16 @@
 </style>
 
 <body>
-
     @* Search Section *@
     <div class="text-end gap-0">
         <form method="get" asp-action="Index" asp-controller="Customer" class="mb-2">
             <input class="search-input" type="text" name="searchInput" placeholder="Search products...." />
-            <button type="submit" class="btn btn-sm search-btn purple-background text-white"><i class="bi bi-search"></i></button>
+            <button style="background-color:#0D9276" type="submit" class="btn btn-sm search-btn text-white"><i class="bi bi-search"></i></button>
         </form>
     </div>
 
     <!-- product section -->    
-    <div class="container-fluid">
-
-        <p class="text text-center fw-bold mt-0">Our Products</p>
-        <div class="grey_line"></div>       
-
+    <div class="container-fluid"> 
         <div class="container-fluid mt-3">
             <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4 mt-3">                
                 @foreach (var product in Model)
@@ -44,7 +39,7 @@
                                 <p class="mb-0 small_grey_text_css">@product.ProductName</p>
                                 @* <p class="card-text mb-0"> @product.ProductDescription</p> *@
                                 <p class="small_grey_text_css mb-2">Rs: @product.Price</p>
-                                <a class="btn btn-success w-100" asp-controller="Customer" asp-action="Details" asp-route-id="@product.ProductId">View Details</a>                        
+                                <a class="btn btn-sm btn-success mb-2 w-100" asp-controller="Customer" asp-action="Details" asp-route-id="@product.ProductId">View Details</a>                        
                             </div>
                         </div>
                     </div>

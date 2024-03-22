@@ -31,6 +31,7 @@ namespace Kheti.Models
         public string? LocalAddress { get; set; }
         [Required]
         public string phoneNumber { get; set; }
+        public bool IsDeleted { get; set; } = false;
 
     }
 }

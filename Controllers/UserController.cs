@@ -21,9 +21,9 @@ namespace Kheti.Controllers
         {
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
-            if (id != null)
+            if (userId != null)
             {
-                var user = _db.KhetiApplicationUsers.FirstOrDefault(u => u.Id == id);
+                var user = _db.KhetiApplicationUsers.FirstOrDefault(u => u.Id == userId);
                 return View(user);
 
             }
@@ -63,9 +63,7 @@ namespace Kheti.Controllers
                 return RedirectToAction("EditInformation");
             }
             else
-            {
-
-            }
+            {}
             {
                 TempData["ErrorMessage"] = "User not found.";
             }

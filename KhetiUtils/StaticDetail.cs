@@ -10,6 +10,7 @@
 
         //OrderStatus
         public const string OrderStatusPending = "Pending";        
+        public const string OrderStatusShipped = "Shipped";        
 
         //Payment Status
         public const string PaymentStatusPending = "Pending";

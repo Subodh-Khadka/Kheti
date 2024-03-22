@@ -1,5 +1,6 @@
 ﻿using Kheti.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.PortableExecutable;
 
 namespace Kheti.Data
 {
@@ -20,6 +21,7 @@ namespace Kheti.Data
         public DbSet<QueryComment> QueryComments { get; set; }
         public DbSet<QueryReply> QueryReplies { get; set; }
         public DbSet<Review> Reviews { get; set; }
+        public DbSet<RentalEquipment> RentalEquipment { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

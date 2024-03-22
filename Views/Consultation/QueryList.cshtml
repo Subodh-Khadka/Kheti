@@ -7,34 +7,61 @@
     .form-select {
         border-radius: 20px;
     }
+
+    .result{
+        width:250px;
+        display:flex;
+        justify-content:center;
+        align-self:center;
+        background-color:aliceblue;
+        border-radius: 20px;
+    }
 </style>
-@* <h2>Query List</h2> *@
+
+<ul class="nav nav-tabs mb-4" id="myTab" role="tablist">
+    <li class="nav-item">
+        <a asp-action="QueryList" asp-route-status="All" class="nav-link text-dark status active" id="home-tab" data-toggle="tab" role="tab" aria-controls="home" aria-selected="true">All</a>
+    </li>
+    <li class="nav-item">
+        <a asp-action="QueryList" asp-route-status="Pending" class="nav-link text-dark status active" id="home-tab" data-toggle="tab" role="tab" aria-controls="Pending" aria-selected="true">Pending</a>
+    </li>
+    <li class="nav-item">
+        <a asp-action="QueryList" asp-route-status="In Process" class="nav-link text-dark status active" id="home-tab" data-toggle="tab" role="tab" aria-controls="InProcess" aria-selected="true">InProcess</a>
+    </li>
+    <li class="nav-item">
+        <a asp-action="QueryList" asp-route-status="Solved" class="nav-link text-dark status active" id="home-tab" data-toggle="tab" role="tab" aria-controls="Solved" aria-selected="true">Solved</a>
+    </li>
+</ul>
 
 <div class="d-flex justify-content-end align-items-center gap-4">
-    <p class="extra_small_grey_text_css">Sort By:</p>
-    <form id="queryStatusForm" class="mb-3" method="get" asp-action="QueryList">
-        <select id="queryStatusFilter" class="form-select w-100" name="status">
-            <option>
-                @if (TempData["defaultName"] != null)
-                {
-                    <p class="text-end disabled">showing @TempData["defaultName"] queries</p>
-                }
-                else
-                {
-                    <p>select</p>
-                }
-                
-             </option>
-            <option value="all">All</option>
-            <option value="pending">Pending</option>
-            <option value="In Process">In Process</option>
-            <option value="solved">Solved</option>
-        </select>
-    </form>
+    @* <p class="extra_small_grey_text_css">Sort By:</p> *@
+    @* <form id="queryStatusForm" class="mb-3" method="get" asp-action="QueryList">
+    <select id="queryStatusFilter" class="form-select w-100" name="status">
+    <option>
+    @if (TempData["defaultName"] != null)
+    {
+    <p class="text-end disabled">showing @TempData["defaultName"] queries</p>
+    }
+    else
+    {
+    <p>select</p>
+    }
+
+    </option>
+    <option value="all">All</option>
+    <option value="pending">Pending</option>
+    <option value="In Process">In Process</option>
+    <option value="solved">Solved</option>
+    </select>
+    </form> *@
 </div>
-   
+
+@* <div class="result p-2 mb-1">
+    <p class="align-self-center">Showing result for @TempData["defaultName"]</p>
+</div> *@
 
 <div class="container">
+
     <div class="row d-flex justify-content-center">
         @foreach (var query in Model)
         {
@@ -62,7 +89,6 @@
                         <p class="card-text">Email: @query.Email</p>
                         <p class="card-text">Category: @query.ProblemCategory</p>
                         <p class="card-text">Location: @query.Location</p>
-                        @* <p class="card-text overflow" data-toggle="tooltip" data-placement="top" title="@query.Description">Description: @query.Description</p> *@
 
                         <p class="card-text">Created: @GetQueryElapsedTime((DateTime)query.DateCreated)</p>
                         @if (query.UrgencyLevel == "High")
@@ -86,7 +112,7 @@
                             <div class=" d-flex gap-2">
                                 <a asp-action="QueryDetails" asp-controller="Consultation" asp-route-queryId="@query.Id" class="btn btn-sm purple-background white-text w-100">Details</a>
 
-                                @if (User.IsInRole("Expert") && query.IsSelected == "false" || query.IsSelected == "0")
+                                @if (User.IsInRole("Expert") && (query.IsSelected == "false" || query.IsSelected == "0"))
                                 {
                                     <a asp-action="MarkQueryAsSelected" asp-controller="Consultation" asp-route-queryId="@query.Id" class="btn btn-sm btn-primary white-text w-100"
                                        data-ajax="true" data-ajax-complete="spotReload">Select</a>
@@ -104,6 +130,26 @@
         }
     </div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var currentPageUrl = window.location.pathname;
+        console.log(currentPageUrl);
+
+        var navLinks = document.querySelectorAll('.nav-link');
+        console.log(navLinks);
+
+        navLinks.forEach(function (navLink) {
+            var navLinkUrl = navLink.getAttribute('href');
+            console.log(navLinkUrl);
+
+            if (currentPageUrl === navLinkUrl) {
+                navLink.classList.add('actives');
+            }
+        });
+    });
+</script>
+
 
 @functions {
     public string GetQueryElapsedTime(DateTime creationTime)

@@ -17,6 +17,7 @@
                             <th>Date</th>
                             <th>OrderStatus</th>
                             <th>PaymentStatus</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
 
@@ -30,13 +31,21 @@
                                 <td>@order.OrderStatus</td>
                                 <td>@order.PaymentStatus</td>
                                 <td class="btn-group d-flex gap-2">
-                                    <a asp-controller="Order" asp-action="OrderDetails" asp-route-orderId="@order.OrderId" class="btn btn-sm btn-primary">Detail</a>
-                                    <a asp-controller="Order" asp-action="OrderDetails" asp-route-orderId="@order.OrderId" class="btn btn-sm btn-success">Pay</a>
+                                    <form id="OrderDetails" method="get" action="@Url.Action("OrderDetails", "Order")">
+                                        <input type="hidden" name="orderId" value="@order.OrderId" />
+                                        <button type="submit" class="btn btn-sm btn-primary w-100">Details</button>
+                                    </form>
                                     <form id="paymentForm" method="post" action="@Url.Action("Pay", "Order")">
                                         <input type="hidden" name="orderId" value="@order.OrderId" />
-                                        <button type="submit" class="btn btn-sm btn-success">Pay</button>
+                                        <button type="submit" class="btn btn-sm btn-danger w-100"><i class="bi bi-x-lg"> Cancel</i></button>
                                     </form>
-                                    <a asp-controller="Order" asp-action="OrderDetails" asp-route-orderId="@order.OrderId" class="btn btn-sm btn-danger">Cancel</a>
+                                    @if (order.PaymentStatus == StaticDetail.PaymentStatusPending)
+                                    {
+                                        <form id="paymentForm" method="post" action="@Url.Action("Pay", "Order")">
+                                            <input type="hidden" name="orderId" value="@order.OrderId" />
+                                            <button type="submit" class="btn btn-sm btn-success w-100">Pay</button>
+                                        </form>
+                                    }
                                 </td>
                             </tr>
                         }
@@ -46,18 +55,3 @@
         </div>
     </div>
 </div>
-
-@* <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        var khaltiPayButtons = document.querySelectorAll(".khaltiPayButton");
-        khaltiPayButtons.forEach(function (button) {
-            button.addEventListener("click", function () {
-                var orderId = this.getAttribute("data-order-id");
-                var amount = this.getAttribute("data-amount");
-
-                // Redirect to Khalti payment URL
-                window.location.href = "https://pay.khalti.com/?orderId=" + orderId + "&amount=" + amount;
-            });
-        });
-    });
-</script> *@

@@ -48,8 +48,8 @@
                 @Html.DisplayFor(modelItem => item.User.Id)
             </td> *@
             <td>
-                <a class="btn btn-sm btn-primary" asp-controller="Product" asp-action="Edit" asp-route-id="@item.ProductId">Edit</a>
-                    <a class="btn btn-sm btn-danger" asp-action="Delete" asp-controller="Product" asp-route-id="@item.ProductId">Delete</a>
+                    <a class="btn btn-sm btn-primary" asp-controller="Product" asp-action="Edit" asp-route-id="@item.ProductId"><i class="bi bi-pencil-square"></i></a>
+                    <a class="btn btn-sm btn-danger" asp-action="Delete" asp-controller="Product" asp-route-id="@item.ProductId"><i class="bi bi-trash"></i></a>
             </td>
         </tr>
 }

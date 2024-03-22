@@ -10,25 +10,27 @@
 
 <link rel="stylesheet" href="/css/EditUserInformation.css" />
 
-<p class="text-secondary mt-2">welcome to your profile,@Model.FirstName.</p>
+@* <p class="text-secondary mt-2">welcome to your profile,@Model.FirstName.</p> *@
 
 <form asp-action="Edit" method="post" enctype="multipart/form-data">
     <div class="container-fluid main-div">
         <div class="row p-2">
             <div class="col-md-3">
+                <di class="rounded-2 ms-3" v id="imagePreview"></di>
+
                 @if (Model.ProfilePictureURL == null)
                 {
                     <i style="font-size:150px" class="bi bi-person-square ms-2"></i>
                     <div class="form-group d-flex flex-wrap gap-2">
-                        <input type="file" id="profilePicture" name="profilePicture" style="font-size:xx-small" class="form-control w-50">
+                        <input type="file" id="profilePicture" name="profilePicture" style="font-size:xx-small" class="form-control w-50" onchange="ImagePreview(event)">
                         <button asp-action="uploadProfile" asp-route-id="@Model.Id" type="submit" class="btn btn-sm btn-secondary" style="font-size:xx-small;border-radius:10px">Upload</button>
                     </div>
                 }
                 else
-                {
+                 {
                     <img src="~/@Model.ProfilePictureURL" class="m-3 user-image img-fluid" />
                     <div class="form-group d-flex flex-column flex-wrap gap-2 text-center">
-                        <input type="file" id="profilePicture" name="profilePicture" style="font-size:xx-small" class="form-control">
+                        <input type="file" id="profilePicture" name="profilePicture" style="font-size:xx-small" class="form-control w-50" onchange="ImagePreview(event)">
                         <button asp-action="updateProfilePicture" asp-route-id="@Model.Id" type="submit" class="btn btn-secondary" style="font-size:xx-small;border-radius:10px">Update</button>
                     </div>
                 }
@@ -103,8 +105,22 @@
 
 
         </div>
+
     </div>
     <p class="text-success mt-1">You can Update your information above!</p>
 </form>
 
+<script type="text/javascript">
+    function ImagePreview(event) {
+        var image = URL.createObjectURL(event.target.files[0]);
+        var imagePreview = document.getElementById('imagePreview');
 
+        imagePreview.innerHTML = '';
+
+        var newImage = document.createElement('img');
+        newImage.src = image;
+        newImage.width = 180;
+        newImage.height = 100;
+        imagePreview.appendChild(newImage);
+    }
+</script>

@@ -1,4 +1,17 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
+﻿
+document.addEventListener("DOMContentLoaded", function () {
+    var currentPageUrl = window.location.pathname;
+    console.log(currentPageUrl);
 
-// Write your JavaScript code.
+    var navLinks = document.querySelectorAll('.nav-link')
+    console.log(navLinks);
+
+    navLinks.forEach(function (navLink) {
+        var navLinkUrl = navLink.getAttribute('href');
+        console.log(navLinkUrl);
+
+        if (currentPageUrl == navLinkUrl) {
+            navLink.classList.add('actives')
+        }
+    });
+});
