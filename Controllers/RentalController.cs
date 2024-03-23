@@ -1,9 +1,11 @@
 ﻿using Kheti.Data;
+using Kheti.KhetiUtils;
 using Kheti.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Kheti.Controllers
 {
@@ -18,7 +20,7 @@ namespace Kheti.Controllers
         }
 
         public IActionResult Index(string searchInput)
-        {   
+        {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var userRole = User.FindFirstValue(ClaimTypes.Role);
 
@@ -29,7 +31,7 @@ namespace Kheti.Controllers
                 products = _db.Products
                     .Include(p => p.Category)
                     .Include(p => p.User)
-                    .Where(p => p.UserId == userId && p.IsDeleted == false);
+                    .Where(p => p.UserId == userId && p.IsDeleted == false && p.Category.Name == "machinery" && p.RentalEquipment.RentalPricePerDay != null);
             }
             else
             {
@@ -62,9 +64,125 @@ namespace Kheti.Controllers
                 .Include(p => p.Reviews)
                 .ThenInclude(p => p.User)
                 .Include(p => p.RentalEquipment)
-                .FirstOrDefault(p => p.ProductId == id);         
+                .FirstOrDefault(p => p.ProductId == id);
 
-            return View(product);
+            Booking booking = new()
+            {
+                Product = product,
+                ProductId = id
+            };
+            return View(booking);
+        }
+
+        [HttpPost]
+        public IActionResult Details(Booking booking)
+        {
+            try
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var userRole = User.FindFirstValue(ClaimTypes.Role);
+
+                booking.UserId = userId;
+                booking.bookingStatus = StaticDetail.BookingStatusPending;
+                booking.PaymentStatus = StaticDetail.PaymentStatusPending;
+                booking.CreatedDate = DateTime.Now;
+
+
+                _db.Add(booking);
+                _db.SaveChanges();
+                TempData["success"] = "Booking Request Sent successfully!";
+
+                return RedirectToAction("Details");
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = "Booking Request Not Sent!";
+                return RedirectToAction("Details");
+            }
+
+        }
+
+        public IActionResult RequestList()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userRole = User.FindFirstValue(ClaimTypes.Role);
+
+            if (userRole == "Seller")
+            {
+                var requestList = _db.Bookings
+                    .Where(b => b.Product.UserId == userId)
+                    .Include(b => b.Product)
+                    .Include(b => b.User)
+                   .OrderByDescending(b => b.CreatedDate)
+                    .ToList();
+                return View(requestList);
+
+            }
+            else
+            {
+                var requestList = _db.Bookings
+                   .Where(b => b.UserId == userId)
+                   .Include(b => b.Product)
+                   .Include(b => b.User)
+                   .OrderByDescending(b => b.CreatedDate)
+                   .ToList();
+                return View(requestList);
+            }
+        }
+
+        public IActionResult RequestDetail(Guid BookingId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userRole = User.FindFirstValue(ClaimTypes.Role);
+
+            if (userRole == "Customer")
+            {
+                var requestList = _db.Bookings
+                    .Include(b => b.Product)
+                    .Include(r => r.Product.RentalEquipment)
+                    .Include(b => b.BookingComments)
+                    .Include(b => b.User)       
+                    .ToList()
+                    .FirstOrDefault(b => b.BookingId == BookingId && b.UserId == userId);
+
+                var pastMessages = requestList.BookingComments.ToList();
+                ViewBag.PastMessages = pastMessages;
+
+                return View(requestList);
+            }
+            else if(userRole == "Seller")
+            {
+                var requestList = _db.Bookings
+                    .Include(b => b.Product)
+                     .Include(r => r.Product.RentalEquipment)
+                    .Include(b => b.BookingComments)
+                    .Include(b => b.User)
+                    .ToList()
+                    .FirstOrDefault(b => b.BookingId == BookingId && b.Product.UserId == userId);
+
+                var pastMessages = requestList.BookingComments.ToList();
+                ViewBag.PastMessages = pastMessages;
+
+                return View(requestList);
+            }
+            else
+            {
+                var requestList = _db.Bookings
+                   .Include(b => b.Product)
+                   .Include(r => r.Product.RentalEquipment)
+                   .Include(b => b.BookingComments)
+                   .Include(b => b.User)
+                   .ToList()
+                   .FirstOrDefault(b => b.BookingId == BookingId);
+
+                var pastMessages = requestList.BookingComments.ToList();
+                ViewBag.PastMessages = pastMessages;
+
+                return View(requestList);
+            }
+            
+
         }
     }
 }
+

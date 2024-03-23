@@ -5,9 +5,9 @@ namespace Kheti.Models
 {
     public class Booking
     {
-        public int BookingId { get; set; }
+        public Guid BookingId { get; set; }
         [ForeignKey ("ProductId")]
-        public int ProductId { get; set; }
+        public Guid ProductId { get; set; }
         public Product Product { get; set; }
             
         [ForeignKey ("UserId")]
@@ -22,6 +22,8 @@ namespace Kheti.Models
         public string bookingStatus { get; set; }
         public string PaymentStatus { get; set; }
 
+        public DateTime? CreatedDate { get; set; }
+        public ICollection<BookingComments> BookingComments { get; set; }
 
     }
 }

@@ -47,5 +47,33 @@ namespace Kheti.Hubs
         {            
             return _db.ExpertProfiles.Any(ep => ep.UserId == userId);
         }
+
+        //forBookingRequest
+        public async Task SendMessageForBooking(string user, string message, Guid bookingId, string userRole)
+        {
+            var userId = Context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            var isSeller = userRole == "Seller";
+
+
+            var booking = _db.Bookings
+                .Include(q => q.BookingComments)
+                .Include(q => q.User)
+                .FirstOrDefault(q => q.BookingId == bookingId);
+
+            var newComment = new BookingComments
+            {
+                CommentText = message,
+                DateCreated = DateTime.Now,
+                BookingId = bookingId,
+                UserId = userId,
+                IsSeller = isSeller,
+            };
+
+            booking.BookingComments.Add(newComment);
+            await _db.SaveChangesAsync();
+
+            await Clients.All.SendAsync("ReceiveMessage", user, message, isSeller);
+        }
     }
 }

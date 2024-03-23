@@ -226,96 +226,96 @@ namespace Kheti.Controllers
             }
         }
 
-        //queryComment post method
-        [HttpPost]
-        public IActionResult QueryDetails(int queryFormId, string commentText)
-        {
-            var claimsIdentity = (ClaimsIdentity)User.Identity;
-            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
-            var userRole = User.FindFirstValue(ClaimTypes.Role);
+        ////queryComment post method
+        //[HttpPost]
+        //public IActionResult QueryDetails(int queryFormId, string commentText)
+        //{
+        //    var claimsIdentity = (ClaimsIdentity)User.Identity;
+        //    var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+        //    var userRole = User.FindFirstValue(ClaimTypes.Role);
 
-            var query = _db.QueryForms
-                   .Include(query => query.QueryComments)
-                .FirstOrDefault(q => q.Id == queryFormId);
-            if (query == null)
-            {
-                return RedirectToAction("Error");
-            }
+        //    var query = _db.QueryForms
+        //           .Include(query => query.QueryComments)
+        //        .FirstOrDefault(q => q.Id == queryFormId);
+        //    if (query == null)
+        //    {
+        //        return RedirectToAction("Error");
+        //    }
 
-            var isExpert = userRole == "Expert";
+        //    var isExpert = userRole == "Expert";
 
-            if (userRole == "Expert")
-            {
-                var queryComment = new QueryComment
-                {
-                    QueryFormId = queryFormId,
-                    UserId = userId,
-                    CommentText = commentText,
-                    DateCreated = DateTime.Now,
-                    IsExpert = true,
-                };
+        //    if (userRole == "Expert")
+        //    {
+        //        var queryComment = new QueryComment
+        //        {
+        //            QueryFormId = queryFormId,
+        //            UserId = userId,
+        //            CommentText = commentText,
+        //            DateCreated = DateTime.Now,
+        //            IsExpert = true,
+        //        };
 
-                query.QueryComments.Add(queryComment);
-                _db.SaveChanges();
-            }
-            else
-            {
-                var queryComment = new QueryComment
-                {
-                    QueryFormId = queryFormId,
-                    UserId = userId,
-                    CommentText = commentText,
-                    DateCreated = DateTime.Now,
-                };
+        //        query.QueryComments.Add(queryComment);
+        //        _db.SaveChanges();
+        //    }
+        //    else
+        //    {
+        //        var queryComment = new QueryComment
+        //        {
+        //            QueryFormId = queryFormId,
+        //            UserId = userId,
+        //            CommentText = commentText,
+        //            DateCreated = DateTime.Now,
+        //        };
 
-                query.QueryComments.Add(queryComment);
-                _db.SaveChanges();
+        //        query.QueryComments.Add(queryComment);
+        //        _db.SaveChanges();
 
-                //send message through signalR
-                var user = isExpert ? "Expert" : "Seller";
-                _hubContext.Clients.All.SendAsync("ReceiveMessage", user, commentText);
-            }
+        //        //send message through signalR
+        //        var user = isExpert ? "Expert" : "Seller";
+        //        _hubContext.Clients.All.SendAsync("ReceiveMessage", user, commentText);
+        //    }
 
-            return RedirectToAction("QueryDetails", new { queryId = queryFormId });
-        }
+        //    return RedirectToAction("QueryDetails", new { queryId = queryFormId });
+        //}
 
-        [HttpPost]
-        public IActionResult SendMessage(int queryFormId, string commentText)
-        {
-            Console.WriteLine("SendMessage action method hit with queryFormId: " + queryFormId + " and commentText: " + commentText);
+        //[HttpPost]
+        //public IActionResult SendMessage(int queryFormId, string commentText)
+        //{
+        //    Console.WriteLine("SendMessage action method hit with queryFormId: " + queryFormId + " and commentText: " + commentText);
 
-            var claimsIdentity = (ClaimsIdentity)User.Identity;
-            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
-            var userRole = User.FindFirstValue(ClaimTypes.Role);
+        //    var claimsIdentity = (ClaimsIdentity)User.Identity;
+        //    var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+        //    var userRole = User.FindFirstValue(ClaimTypes.Role);
 
-            var query = _db.QueryForms
-                .Include(q => q.QueryComments)
-                .FirstOrDefault(q => q.Id == queryFormId);
+        //    var query = _db.QueryForms
+        //        .Include(q => q.QueryComments)
+        //        .FirstOrDefault(q => q.Id == queryFormId);
 
-            if (query == null)
-            {
-                return RedirectToAction("Error");
-            }
+        //    if (query == null)
+        //    {
+        //        return RedirectToAction("Error");
+        //    }
 
-            var isExpert = userRole == "Expert";
+        //    var isExpert = userRole == "Expert";
 
-            var message = new QueryComment
-            {
-                CommentText = commentText,
-                DateCreated = DateTime.Now,
-                QueryFormId = queryFormId,
-                UserId = userId,
-                IsExpert = isExpert
-            };
-            _db.QueryComments.Add(message);
-            _db.SaveChanges();
+        //    var message = new QueryComment
+        //    {
+        //        CommentText = commentText,
+        //        DateCreated = DateTime.Now,
+        //        QueryFormId = queryFormId,
+        //        UserId = userId,
+        //        IsExpert = isExpert
+        //    };
+        //    _db.QueryComments.Add(message);
+        //    _db.SaveChanges();
 
-            // Send message through SignalR
-            var user = isExpert ? "Expert" : "Seller";
-            _hubContext.Clients.All.SendAsync("ReceiveMessage", user, commentText);
+        //    // Send message through SignalR
+        //    var user = isExpert ? "Expert" : "Seller";
+        //    _hubContext.Clients.All.SendAsync("ReceiveMessage", user, commentText);
 
-            return RedirectToAction("QueryDetails", new { queryId = queryFormId });
-        }
+        //    return RedirectToAction("QueryDetails", new { queryId = queryFormId });
+        //}
 
         [Authorize(Roles = "Expert")]
         [HttpPost]

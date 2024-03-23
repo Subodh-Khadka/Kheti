@@ -1,9 +1,8 @@
-﻿@model Product
+﻿@model Booking
 
 @{
     ViewData["Title"] = "Details";
 }
-
 
 <style>
 
@@ -23,30 +22,37 @@
 
         <div class="row mt-2 d-flex gap-5">
             <div class="col-md-5">
-                <img src="~/@Model.ProductImageUrl" alt="@Model.ProductName" height="375px" width="100%">
+                <img src="~/@Model.Product.ProductImageUrl" alt="@Model.Product.ProductName" height="375px" width="100%">
             </div>
             <div class="col-sm-12 col-md-5 small_grey_text_css text d-flex flex-column justify-content-center">
-                <h3 class="">@Model.ProductName</h3>
-                <p class="small_grey_text_css mb-2">Category: @Model.Category.Name</p>
+                <h3 class="">@Model.Product.ProductName</h3>
+                <p class="small_grey_text_css mb-1">Category: @Model.Product.Category.Name</p>
                 @* <p class="small_grey_text_css mb-2">pID: @Model.ProductId</p> *@
-                <p class="small_grey_text_css mb-2">Rs @Model.RentalEquipment.RentalPricePerHour per hour</p>
-                <p class="small_grey_text_css mb-2">Rs @Model.RentalEquipment.RentalPricePerDay per day</p>
+                <p class="small_grey_text_css mb-2">Rs @Model.Product.RentalEquipment.RentalPricePerDay per day</p>
                 @* <p class="small_grey_text_css mb-2">SellerId: @Model.UserId</p> *@
-                <p class="small_grey_text_css mb-2">Terms&Condition: @Model.RentalEquipment.TermsAndCondition</p>
-                <p class="small_grey_text_css mb-2">Description: @Model.ProductDescription</p>
                 <p class="small_grey_text_css mb-2">Average Rating:<span class="fs-6 ms-2 text-success">@ViewData["AverageRating"]</span></p>
                 <p class="small_grey_text_css mb-2">Total Rating:<span class="fs-6 ms-2 text-success">@ViewData["TotalRating"]</span></p>
-                <p class="small_grey_text_css mb-2">Availability Status: @Model.RentalEquipment.IsAvailable</p>
+                <p class="small_grey_text_css mb-2">Availability Status: @Model.Product.RentalEquipment.IsAvailable</p>
+                <p class="small_grey_text_css mb-2">Terms&Condition: @Model.Product.RentalEquipment.TermsAndCondition</p>
+                <p class="small_grey_text_css mb-2">Description: @Model.Product.ProductDescription</p>
 
-                <label class="" for="quanitty">Start Date:</label>
-                <input asp-for="" type="number" min="1" value="1" />
+                <label class="" for="startDate">Start Date:</label>
+                <input class="form-control" asp-for="@Model.RequestStartDate" type="date" min="@DateTime.Now.ToString("yyyy-MM-dd")" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+
+                <label class="" for="endDate">Return Date:</label>
+                <input class="form-control" asp-for="@Model.RequestEndDate" type="date" min="@DateTime.Now.ToString("yyyy-MM-dd")" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+
+                <input asp-for="@Model.BookingId" type="hidden" />
+                <input asp-for="@Model.ProductId" type="hidden" />
+                <input asp-for="@Model.CreatedDate" type="hidden" />
+
 
                 <div class="">
                     <button type="submit" class="favorite-btn" asp-controller="Customer" asp-action="AddToFavorite" asp-route-ProductId="@Model.ProductId"><i class="favorite-icon fs-3 bi bi-heart-fill m"></i></button>
                 </div>
                 @if (User.IsInRole(StaticDetail.CustomerRole) || User.IsInRole(StaticDetail.AdminRole))
                 {
-                    <button type="submit" class="btn btn-success w-100 mt-3">Book Now</button>
+                    <button type="submit" class="btn btn-success w-100 mt-1">Book Now</button>
                 }
                 else
                 {
@@ -60,12 +66,12 @@
         @* Reviews Section *@
         <p class="text text-center fw-bold mt-0 text-success mt-4">Product Reviews</p>
 
-        @if (Model.Reviews.Count > 0)
+        @if (Model.Product.Reviews.Count > 0)
         {
             <div class="row review p-2 bg-light">
 
                 <div class="grey_line"></div>
-                @foreach (var reviews in Model.Reviews)
+                @foreach (var reviews in Model.Product.Reviews)
                 {
                     <div class="col-md-4 mb-2">
                         <div class="card review-card">
@@ -119,9 +125,9 @@
                 }
 
                 <div id="commentsSection" class="col-12">
-                    @Html.Partial("_CommentsPartial", Model.ProductComments)
+                    @Html.Partial("_CommentsPartial", Model.Product.ProductComments)
                 </div>
-
+                    
                 @if (User.IsInRole(StaticDetail.CustomerRole))
                 {
                     <form id="commentForm">

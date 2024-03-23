@@ -22,6 +22,8 @@ namespace Kheti.Data
         public DbSet<QueryReply> QueryReplies { get; set; }
         public DbSet<Review> Reviews { get; set; }
         public DbSet<RentalEquipment> RentalEquipment { get; set; }
+        public DbSet<Booking> Bookings { get; set; }
+        public DbSet<BookingComments> BookingComments { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -83,6 +85,17 @@ namespace Kheti.Data
                 .WithMany()
                 .HasForeignKey(s => s.UserId)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Booking>()
+               .HasOne(s => s.User)
+               .WithMany()
+               .HasForeignKey(s => s.UserId)
+               .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Booking>()
+          .HasOne(s => s.Product).WithMany()
+          .HasForeignKey(s => s.ProductId)
+          .OnDelete(DeleteBehavior.NoAction);
 
             base.OnModelCreating(modelBuilder);
         }

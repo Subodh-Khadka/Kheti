@@ -1,0 +1,102 @@
+﻿@model List<Kheti.Models.Booking>
+
+<link rel="stylesheet" href="~/css/queryList.css" />
+<script src="~/js/queryList.js"></script>
+
+<style>
+    .form-select {
+        border-radius: 20px;
+    }
+
+    .result {
+        width: 250px;
+        display: flex;
+        justify-content: center;
+        align-self: center;
+        background-color: aliceblue;
+        border-radius: 20px;
+    }
+</style>
+
+<div class="d-flex justify-content-end align-items-center gap-4">
+    <div class="container">
+        <div class="row d-flex justify-content-center">
+            @foreach (var booking in Model)
+            {
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <section class="d-flex gap-3">
+                                <h5 class="card-title overflow" data-toggle="tooltip" data-placement="top" title="@booking.Product.ProductName">@booking.Product.ProductName</h5>
+                            </section>
+                            <p class="card-text">UserName: @booking.User.FirstName</p>
+                            @if (booking.CreatedDate != null)
+                            {
+                                <p class="card-text">Created: @GetQueryElapsedTime((DateTime)booking.CreatedDate)</p>
+                            }
+                            <p class="card-text">RequestStartDate: @booking.RequestStartDate</p>
+                            <p class="card-text">RequestEndDate: @booking.RequestEndDate</p>
+
+                            <p style="color:">Query Status: @booking.PaymentStatus</p>
+
+                            <p style="color:">Is selected: @booking.bookingStatus</p>
+
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class=" d-flex gap-2">
+                                    <a asp-action="RequestDetail" asp-controller="Rental" asp-route-BookingId="@booking.BookingId" class="btn btn-sm purple-background white-text w-100">Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var currentPageUrl = window.location.pathname;
+        console.log(currentPageUrl);
+
+        var navLinks = document.querySelectorAll('.nav-link');
+        console.log(navLinks);
+
+        navLinks.forEach(function (navLink) {
+            var navLinkUrl = navLink.getAttribute('href');
+            console.log(navLinkUrl);
+
+            if (currentPageUrl === navLinkUrl) {
+                navLink.classList.add('actives');
+            }
+        });
+    });
+</script>
+
+
+@functions {
+    public string GetQueryElapsedTime(DateTime creationTime)
+    {
+        TimeSpan timeDifference = DateTime.Now - creationTime;
+
+        if (timeDifference.TotalDays >= 1)
+        {
+            string daysText = (int)timeDifference.TotalDays == 1 ? "day" : "days";
+            return $"{(int)timeDifference.TotalDays} {daysText} ago";
+        }
+        else if (timeDifference.TotalHours >= 1)
+        {
+            string hoursText = (int)timeDifference.TotalHours == 1 ? "hour" : "hours";
+            return $"{(int)timeDifference.TotalHours} {hoursText} ago";
+        }
+        else if (timeDifference.TotalMinutes >= 1)
+        {
+            string minutesText = (int)timeDifference.TotalMinutes == 1 ? "minute" : "minutes";
+            return $"{(int)timeDifference.TotalMinutes} {minutesText} ago";
+        }
+        else
+        {
+            return "Just now";
+        }
+    }
+}
