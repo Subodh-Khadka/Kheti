@@ -50,6 +50,6 @@ app.MapHub<ChatHub>("/ChatHub");
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=product}/{action=Index}/{id?}");
 
 app.Run();

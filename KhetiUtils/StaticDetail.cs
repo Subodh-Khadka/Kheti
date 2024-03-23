@@ -10,7 +10,12 @@
 
         //OrderStatus
         public const string OrderStatusPending = "Pending";        
-        public const string OrderStatusShipped = "Shipped";        
+        public const string OrderStatusShipped = "Shipped";  
+        
+        //booking status
+        public const string BookingStatusPending = "Pending";        
+        public const string BookingStatusApproved = "Approved";        
+        public const string BookingStatusConfirmed = "Confirmed";        
 
         //Payment Status
         public const string PaymentStatusPending = "Pending";

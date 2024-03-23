@@ -28,4 +28,11 @@
     <Folder Include="wwwroot\Images\ProductImages\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="Views\Rental\Index.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

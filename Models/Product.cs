@@ -45,6 +45,8 @@ namespace Kheti.Models
         public bool IsDeleted { get; set; } = false;
 
         public ICollection<Review> Reviews { get; set; } = new List<Review>();
+
+        public RentalEquipment RentalEquipment { get; set; }
     }
 
 }

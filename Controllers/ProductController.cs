@@ -60,7 +60,6 @@ namespace Kheti.Controllers
 
                 if (imageFile != null && imageFile.Length > 0)
                 {
-
                     //Save the image to wwwroot/Images/ProductImages
                     var imagePath = Path.Combine(_webHostEnvironment.WebRootPath, "Images", "ProductImages");
                     var uniqueFileName = Guid.NewGuid().ToString() + "_" + imageFile.FileName;
@@ -75,9 +74,31 @@ namespace Kheti.Controllers
                     product.ProductImageUrl = Path.Combine("Images", "ProductImages", uniqueFileName);
                 }
 
+                if (product.CategoryId == 3)
+                {
+                    RentalEquipment rentalEquipment = new RentalEquipment
+                    {
+                        RentalDuration = product.RentalEquipment.RentalDuration,
+                        RentalPricePerHour = product.RentalEquipment.RentalPricePerHour,
+                        RentalPricePerDay = product.RentalEquipment.RentalPricePerDay,
+                        AvailabilityStartDate = product.RentalEquipment.AvailabilityStartDate,
+                        AvailabilityEndDate = product.RentalEquipment.AvailabilityEndDate,
+                        DepositAmount = product.RentalEquipment.DepositAmount,
+                        IsAvailable = true,
+                        ProductId = product.ProductId,
+                        Location = product.RentalEquipment.Location,
+                        TermsAndCondition = product.RentalEquipment.TermsAndCondition,
+                        UserId = product.UserId,
+                    };
+                   product.RentalEquipment = rentalEquipment;
+                }
+                else
+                {
+                    product.RentalEquipment = null;
+                }
+
                 _db.Products.Add(product);
                 _db.SaveChanges();
-
                 TempData["success"] = "Product added successfully!";
 
                 return RedirectToAction("Index");

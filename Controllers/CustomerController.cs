@@ -39,7 +39,7 @@ namespace Kheti.Controllers
                 products = _db.Products
                     .Include(p => p.Category)
                     .Include(p => p.User)
-                    .Where(p => p.IsDeleted == false); ;
+                    .Where(p => p.IsDeleted == false && p.Category.Name != "machinery");
             }
 
             if (!string.IsNullOrEmpty(searchInput))

@@ -7,9 +7,15 @@ namespace Kheti.Models
     {
         [Key]
         public Guid Id { get; set; }
+
         [ForeignKey("ProductId")]
         public Guid ProductId { get; set; }
         public Product Product { get; set; }
+
+
+        [ForeignKey("UserId")]
+        public String UserId { get; set; }
+        public KhetiApplicationUser khetiApplicationUser { get; set; }
 
         [Required]
         public int RentalDuration { get; set; }
@@ -29,6 +35,7 @@ namespace Kheti.Models
         public string Location {  get; set; }
 
         public decimal? DepositAmount { get; set; }
+
         
     }
 }

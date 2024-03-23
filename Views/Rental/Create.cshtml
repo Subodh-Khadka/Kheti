@@ -1,0 +1,79 @@
+﻿@model Kheti.Models.RentalEquipment
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<link rel="stylesheet" href="~/css/create.css" asp-append-version="true" />
+
+<div class="row d-flex justify-content-center">
+    <a asp-action="Index" class="text-md-start text-decoration-none gap-3"><i class="bi bi-arrow-left pe-2 back-icon"></i>Back To list</i></a>
+    <div class="col-md-4 create-form">
+        <h6 class="text-success">Add a new rental equipment</h6>
+        <hr />
+        <form asp-action="Create" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="ProductId" class="control-label"></label>
+                <select asp-for="ProductId" class="form-select" asp-items="ViewBag.ProductList">
+                    <option value="">Select product</option>
+                </select>
+                <span asp-validation-for="ProductId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RentalDuration" class="control-label"></label>
+                <input asp-for="RentalDuration" class="form-control" />
+                <span asp-validation-for="RentalDuration" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RentalPricePerHour" class="control-label"></label>
+                <input asp-for="RentalPricePerHour" class="form-control" />
+                <span asp-validation-for="RentalPricePerHour" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RentalPricePerDay" class="control-label"></label>
+                <input asp-for="RentalPricePerDay" class="form-control" />
+                <span asp-validation-for="RentalPricePerDay" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Location" class="control-label"></label>
+                <input asp-for="Location" class="form-control" />
+                <span asp-validation-for="Location" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AvailabilityStartDate" class="control-label"></label>
+                <input asp-for="AvailabilityStartDate" class="form-control" />
+                <span asp-validation-for="AvailabilityStartDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AvailabilityEndDate" class="control-label"></label>
+                <input asp-for="AvailabilityEndDate" class="form-control" />
+                <span asp-validation-for="AvailabilityEndDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="IsAvailable" class="control-label"></label>
+                <input asp-for="IsAvailable" class="form-check-input" />
+                <span asp-validation-for="IsAvailable" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TermsAndCondition" class="control-label"></label>
+                <textarea asp-for="TermsAndCondition" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="TermsAndCondition" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DepositAmount" class="control-label"></label>
+                <input asp-for="DepositAmount" class="form-control" />
+                <span asp-validation-for="DepositAmount" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-3">
+                <input type="submit" value="Add" class="btn btn-sm w-100 purple-background text-white" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

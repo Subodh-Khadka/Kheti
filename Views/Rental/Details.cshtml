@@ -1,4 +1,4 @@
-﻿@model ShoppingCart
+﻿@model Product
 
 @{
     ViewData["Title"] = "Details";
@@ -16,38 +16,41 @@
 
     <input hidden asp-for="ProductId" />
 
-    <div class="container mt-4 mb-4  justify-content-center align-items-center position-relative">
+    <div class="container mt-2 mb-4  justify-content-center align-items-center position-relative">
         <div class="fs-6">
-            <a asp-action="Index" class="mt-4 mb-4 text-md-start small_grey_text_css text-decoration-none gap-3"><i class="bi bi-arrow-left pe-2 back-icon"></i>Back To Home</a>
+            <a asp-action="Index" class="mt-4 mb-2 text-md-start small_grey_text_css text-decoration-none gap-3"><i class="bi bi-arrow-left pe-2 back-icon"></i>Back To Home</a>
         </div>
 
-        <div class="row mt-4 d-flex gap-5">
+        <div class="row mt-2 d-flex gap-5">
             <div class="col-md-5">
-                <img src="~/@Model.Product.ProductImageUrl" alt="@Model.Product.ProductName" height="375px" width="100%">
+                <img src="~/@Model.ProductImageUrl" alt="@Model.ProductName" height="375px" width="100%">
             </div>
             <div class="col-sm-12 col-md-5 small_grey_text_css text d-flex flex-column justify-content-center">
-                <h3 class="">@Model.Product.ProductName</h3>
-                <p class="small_grey_text_css mb-2">Category: @Model.Product.Category.Name</p>
-                <p class="small_grey_text_css mb-2">pID: @Model.Product.ProductId</p>
-                <p class="small_grey_text_css mb-2">Price: Rs @Model.Product.Price</p>
-                <p class="small_grey_text_css mb-2">SellerId: @Model.Product.UserId</p>
-                <p class="small_grey_text_css mb-2">@Model.Product.ProductDescription</p>
+                <h3 class="">@Model.ProductName</h3>
+                <p class="small_grey_text_css mb-2">Category: @Model.Category.Name</p>
+                @* <p class="small_grey_text_css mb-2">pID: @Model.ProductId</p> *@
+                <p class="small_grey_text_css mb-2">Rs @Model.RentalEquipment.RentalPricePerHour per hour</p>
+                <p class="small_grey_text_css mb-2">Rs @Model.RentalEquipment.RentalPricePerDay per day</p>
+                @* <p class="small_grey_text_css mb-2">SellerId: @Model.UserId</p> *@
+                <p class="small_grey_text_css mb-2">Terms&Condition: @Model.RentalEquipment.TermsAndCondition</p>
+                <p class="small_grey_text_css mb-2">Description: @Model.ProductDescription</p>
                 <p class="small_grey_text_css mb-2">Average Rating:<span class="fs-6 ms-2 text-success">@ViewData["AverageRating"]</span></p>
                 <p class="small_grey_text_css mb-2">Total Rating:<span class="fs-6 ms-2 text-success">@ViewData["TotalRating"]</span></p>
+                <p class="small_grey_text_css mb-2">Availability Status: @Model.RentalEquipment.IsAvailable</p>
 
-                <div class="d-flex align-items-center gap-2">
-                    <label class="" for="quanitty">Add Quantity</label>
-                    <input asp-for="Quantity" type="number" min="1" value="1" />
-                    <button type="submit" class="favorite-btn" asp-controller="Customer" asp-action="AddToFavorite" asp-route-ProductId="@Model.Product.ProductId"><i class="favorite-icon fs-3 bi bi-heart-fill ms-4"></i></button>
+                <label class="" for="quanitty">Start Date:</label>
+                <input asp-for="" type="number" min="1" value="1" />
+
+                <div class="">
+                    <button type="submit" class="favorite-btn" asp-controller="Customer" asp-action="AddToFavorite" asp-route-ProductId="@Model.ProductId"><i class="favorite-icon fs-3 bi bi-heart-fill m"></i></button>
                 </div>
                 @if (User.IsInRole(StaticDetail.CustomerRole) || User.IsInRole(StaticDetail.AdminRole))
                 {
-                    <button type="submit" class="btn btn-sm btn-success w-100 mt-3">Add To Cart</button>
-                    <a asp-action="Index" class="signup_btn btn-sm continue mt-2 text-center">Buy Now</a>
+                    <button type="submit" class="btn btn-success w-100 mt-3">Book Now</button>
                 }
                 else
                 {
-                    <button type="submit" class="btn btn-success w-100 mt-5 disabled">Add To Cart</button>
+                    <button type="submit" class="btn btn-success w-100 mt-5 disabled">Book Now</button>
                 }
 
             </div>
@@ -57,12 +60,12 @@
         @* Reviews Section *@
         <p class="text text-center fw-bold mt-0 text-success mt-4">Product Reviews</p>
 
-        @if (Model.Product.Reviews.Count > 0)
+        @if (Model.Reviews.Count > 0)
         {
             <div class="row review p-2 bg-light">
 
                 <div class="grey_line"></div>
-                @foreach (var reviews in Model.Product.Reviews)
+                @foreach (var reviews in Model.Reviews)
                 {
                     <div class="col-md-4 mb-2">
                         <div class="card review-card">
@@ -94,12 +97,6 @@
                             </div>
                         </div>
                     </div>
-                    @*
-            <p>@reviews.DateReviewed</p>
-            <p>@reviews.Rating</p>
-            <p>@reviews.Comment</p>
-            </div> *@
-
                 }
             </div>
         }
@@ -107,8 +104,6 @@
         {
             <p class="text-center">No Reviews</p>
         }
-
-
 
         <!-- Comment Section -->
         <div class="row comment-section">
@@ -124,7 +119,7 @@
                 }
 
                 <div id="commentsSection" class="col-12">
-                    @Html.Partial("_CommentsPartial", Model.Product.ProductComments)
+                    @Html.Partial("_CommentsPartial", Model.ProductComments)
                 </div>
 
                 @if (User.IsInRole(StaticDetail.CustomerRole))
@@ -143,7 +138,7 @@
     $(document).ready(function () {
         // Submit new comment
         $("#submitComment").click(function () {
-            var productId = "@Model.Product.ProductId";
+            var productId = "@Model.ProductId";
             var commentText = $("#commentText").val();
 
             $.ajax({

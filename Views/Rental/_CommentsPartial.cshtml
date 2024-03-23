@@ -25,7 +25,19 @@
             <!-- Display Replies -->
             <div id="replies_@comment.Id" class="repliesSection">
                 @Html.Partial("_RepliesPartial", comment.Replies)
-            </div>  
+            </div>
+        
+
+        @*  <div class="d-flex gap-4 bg-light p-2">
+    <p style="max-width:420px;">@comment.CommentText</p>
+    <p>@comment.CommentDate.ToString("yyyy-MM-dd")</p>
+    </div> *@
+
+       @*  <!-- Display Replies -->
+        <div id="replies_@comment.Id" class="repliesSection">
+            <!-- Render replies for this comment -->
+            @Html.Partial("_RepliesPartial", comment.Replies)
+        </div> *@
 
         @if (User.IsInRole(StaticDetail.SellerRole))
         {
