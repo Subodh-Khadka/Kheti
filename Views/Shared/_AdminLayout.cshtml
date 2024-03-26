@@ -24,31 +24,31 @@
         </button>
     </div>
     <div class="sidebar" id="sidebar">
-            <ul class="nav flex-column h-100 mt-5">
-                <li class="nav-item">
-                    <a asp-action="Index" asp-controller="Admin" class="nav-link "><i class="bi bi-graph-down-arrow fs-6 "></i> Dashboard</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="CategoryList"><i class="bi bi-diagram-3-fill fs-6"></i> Category</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="UserList"><i class="bi bi-people fs-6"></i> Users</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="QueryList"><i class="bi bi-person-raised-hand fs-6"></i> Queries</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="OrderList"><i class="bi bi-postcard"></i> Orders</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index"><i class="bi bi-house-door-fill fs-6"></i> Home</a>
-                </li>
-                <li class="nav-item logout-li">
-                    <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-                        <button id="logout" type="submit" class="nav-link logout-btn border-0"><i class="bi bi-box-arrow-left ms-2 me-2"></i> Logout</button>
-                    </form>
-                </li>
-            </ul>        
+        <ul class="nav flex-column h-100 mt-5">
+            <li class="nav-item">
+                <a class="nav-link" asp-action="Index" asp-controller="Admin"><i class="bi bi-graph-down-arrow fs-6 "></i> Dashboard</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="CategoryList"><i class="bi bi-diagram-3-fill fs-6"></i> Category</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="UserList"><i class="bi bi-people fs-6"></i> Users</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="QueryList"><i class="bi bi-person-raised-hand fs-6"></i> Queries</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="OrderList"><i class="bi bi-postcard"></i> Orders</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index"><i class="bi bi-house-door-fill fs-6"></i> Home</a>
+            </li>
+            <li class="nav-item logout-li">
+                <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                    <button id="logout" type="submit" class="nav-link logout-btn border-0"><i class="bi bi-box-arrow-left ms-2 me-2"></i> Logout</button>
+                </form>
+            </li>
+        </ul>
     </div>
 
     <div class="main-content">
@@ -82,7 +82,8 @@
     </script>
 
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    @* <script src="~/js/adminSite.js" asp-append-version="true"></script> *@
+    <script src="~/js/adminsite.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 
     <script>

@@ -19,7 +19,7 @@ namespace Kheti.Controllers
         }
 
         //retrieves the order list of the customer
-        public IActionResult OrderList()
+        public IActionResult OrderList(string pidx, string status)
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
@@ -104,17 +104,32 @@ namespace Kheti.Controllers
         {
             int purchaseOrderId = orderId;
 
-            string returnUrl = "https://localhost:7108/Order/OrderList";
+            string returnUrl = "https://localhost:7108/Order/OrderPaymentConfirmationPage";
             int totalAmountInPaisa = 1000;
-            string paymentUrl = await Kheti.KhetiUtils.KhaltiPayment.InitiatePayment(purchaseOrderId, totalAmountInPaisa, returnUrl);
-
-            var order = _db.Orders.FirstOrDefault(o => o.OrderId == orderId);
-            order.PaymentStatus = StaticDetail.PaymentStatusCompleted;
-            order.OrderStatus = StaticDetail.OrderStatusShipped;
-            _db.Orders.Update(order);
-            _db.SaveChangesAsync();
-
+            string paymentUrl = await Kheti.KhetiUtils.KhaltiPayment.InitiateOrderPayment(purchaseOrderId, totalAmountInPaisa, returnUrl);
             return Redirect(paymentUrl);
+        }
+
+        public IActionResult OrderPaymentConfirmationPage(string pidx, string status, string transaction_id, 
+            int purchase_order_id, string purchase_order_name, string total_amount)
+        {
+            if(status == "Completed")
+            {
+                var order = _db.Orders.FirstOrDefault(o => o.OrderId == purchase_order_id);
+                order.PaymentStatus = StaticDetail.PaymentStatusCompleted;
+                order.OrderStatus = StaticDetail.OrderStatusShipped;
+                _db.Orders.Update(order);
+                _db.SaveChanges();
+            }
+
+            ViewData["Pidx"] = pidx;
+            ViewData["Status"] = status;
+            ViewData["TransactionId"] = transaction_id;
+            ViewData["PurchaseOrderId"] = purchase_order_id;
+            ViewData["PurchaseOrderName"] = purchase_order_name;
+            ViewData["TotalAmount"] = total_amount;
+
+            return View();
         }
     }
 }

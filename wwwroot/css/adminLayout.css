@@ -96,3 +96,7 @@ body {
 .logout-li{
     /*margin-top:150px;*/
 }
+
+.admin-actives {
+    font-weight:bolder;
+}

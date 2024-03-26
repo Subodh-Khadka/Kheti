@@ -1,0 +1,30 @@
+﻿@{
+    ViewData["Title"] = "Payment Confirmation";
+}
+
+<style>
+    p{
+        margin: 5px 0px;
+    }
+</style>
+
+<div class="d-flex container justify-content-center">
+    <div class="card text-center w-50">
+        <div class="card-header purple-background text-white">
+            Order Payment
+        </div>
+        <div class="card-body">
+            <i class="bi bi-check2-circle text-success fs-4"></i>
+            <h5 class="card-title text-success">Payment Completed!</h5>
+            <p>Payment Index: @ViewData["Pidx"]</p>
+            <p>Status: @ViewData["Status"]</p>
+            <p>Transaction ID: @ViewData["TransactionId"]</p>
+            <p>Purchase Order ID: @ViewData["PurchaseOrderId"]</p>
+            <p>Purchase Order Name: @ViewData["PurchaseOrderName"]</p>
+            <p>Total Amount: @ViewData["TotalAmount"]</p>
+            <a asp-action="OrderList" class="btn btn-sm btn-success">Back to orderList</a>
+        </div>
+        <div class="card-footer text-body-secondary purple-background text-white">
+            Thank you!
+        </div>
+    </div>

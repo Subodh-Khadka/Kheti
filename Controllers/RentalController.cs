@@ -141,7 +141,7 @@ namespace Kheti.Controllers
                     .Include(b => b.Product)
                     .Include(r => r.Product.RentalEquipment)
                     .Include(b => b.BookingComments)
-                    .Include(b => b.User)       
+                    .Include(b => b.User)
                     .ToList()
                     .FirstOrDefault(b => b.BookingId == BookingId && b.UserId == userId);
 
@@ -150,7 +150,7 @@ namespace Kheti.Controllers
 
                 return View(requestList);
             }
-            else if(userRole == "Seller")
+            else if (userRole == "Seller")
             {
                 var requestList = _db.Bookings
                     .Include(b => b.Product)
@@ -180,8 +180,58 @@ namespace Kheti.Controllers
 
                 return View(requestList);
             }
-            
+        }
 
+        [Authorize(Roles = "Seller")]
+        [HttpPost]
+        public IActionResult MarkAsApproved(Guid bookingId)
+        {
+            var booking = _db.Bookings.FirstOrDefault(b => b.BookingId == bookingId);
+            if (booking != null)
+            {
+                booking.bookingStatus = StaticDetail.BookingStatusApproved;
+                _db.SaveChanges();
+
+                TempData["success"] = "Booking Approved by Seller";
+            }
+            else
+            {
+                TempData["error"] = "Error marking booking as Approved.";
+            }
+            return RedirectToAction("RequestDetail", new { BookingId = bookingId});
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Pay(Guid bookingId)
+        {
+            Guid rental_booking_Id = bookingId;
+            string returnUrl = "https://localhost:7108/Order/BookingPaymentConfirmationPage";
+            int totalAmountInPaisa = 1000;
+            string paymentUrl = await Kheti.KhetiUtils.KhaltiPayment.InitiateBookingPayment(rental_booking_Id, totalAmountInPaisa, returnUrl);
+
+            return Redirect(paymentUrl);
+        }
+
+        public IActionResult BookingPaymentConfirmationPage(string pidx, string status, string transaction_id,
+           Guid purchase_order_id, string purchase_order_name, string total_amount)
+        {
+            if (status == "Completed")
+            {
+                var booking = _db.Bookings.FirstOrDefault(o => o.BookingId == purchase_order_id);
+                booking.PaymentStatus = StaticDetail.PaymentStatusCompleted;
+                booking.bookingStatus = StaticDetail.BookingStatusConfirmed;
+                _db.Bookings.Update(booking);
+                _db.SaveChangesAsync();
+            }
+
+            ViewData["Pidx"] = pidx;
+            ViewData["Status"] = status;
+            ViewData["TransactionId"] = transaction_id;
+            ViewData["PurchaseOrderId"] = purchase_order_id;
+            ViewData["PurchaseOrderName"] = purchase_order_name;
+            ViewData["TotalAmount"] = total_amount;
+
+            return View();
         }
     }
 }
