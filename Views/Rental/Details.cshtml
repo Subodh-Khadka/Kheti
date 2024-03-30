@@ -37,10 +37,10 @@
                 <p class="small_grey_text_css mb-2">Description: @Model.Product.ProductDescription</p>
 
                 <label class="" for="startDate">Start Date:</label>
-                <input class="form-control" asp-for="@Model.RequestStartDate" type="date" min="@DateTime.Now.ToString("yyyy-MM-dd")" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                <input class="form-control" asp-for="@Model.RequestStartDate" type="datetime-local" min="@DateTime.Now.ToString("yyyy-MM-dd")" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")" />
 
                 <label class="" for="endDate">Return Date:</label>
-                <input class="form-control" asp-for="@Model.RequestEndDate" type="date" min="@DateTime.Now.ToString("yyyy-MM-dd")" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                <input class="form-control" asp-for="@Model.RequestEndDate" type="datetime-local" min="@DateTime.Now.ToString("yyyy-MM-dd")" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")" />
 
                 <input asp-for="@Model.BookingId" type="hidden" />
                 <input asp-for="@Model.ProductId" type="hidden" />

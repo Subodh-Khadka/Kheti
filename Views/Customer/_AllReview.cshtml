@@ -1,0 +1,59 @@
+﻿<!-- Modal -->
+<div style="font-size:smaller" class="modal fade" id="AllReview" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen">
+        <div class="modal-content">
+            <div class="modal-header purple-background text-white">
+                <h6 class="modal-title" id="exampleModalLabel">Reviews</h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-body ">
+                    <div class="row">
+                        @if (Model.Product.Reviews.Count > 0)
+                        {
+                            foreach (var review in Model.Product.Reviews)
+                            {
+                                <div class="card mb-3 col-md-4">
+                                    <div class="card-body">
+                                        @if (review.User?.ProfilePictureURL != null)
+                                        {
+                                            <img src="~/@review.User.ProfilePictureURL" height="60px" width="60px" />
+                                            <p class="align-self-center">@review.User.FirstName @review.User.LastName</p>
+                                            <p>@review.DateReviewed.ToShortDateString()</p>
+                                        }
+                                        else
+                                        {
+                                            <p class="mt-2">No profile picture available</p>
+                                        }
+
+                                        <div class="stars-container mb-3">
+                                            @for (int i = 0; i < review.Rating; i++)
+                                            {
+                                                <i class="bi bi-star-fill fs-6 m-0 p-0 rated" data-rating="1"></i>
+                                            }
+                                            @for (int i = review.Rating; i < 5; i++)
+                                            {
+                                                <i class="bi bi-star-fill fs-6 m-0 p-0" data-rating="1"></i>
+                                            }
+
+                                        </div>
+                                        <div class="toBeEllipsed d-flex align-items-center">
+                                            <p class="card-text">@review.Comment</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <p class="text-center">No Reviews</p>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

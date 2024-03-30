@@ -1,0 +1,69 @@
+﻿@model Booking;
+
+<link rel="stylesheet" href="~/css/initiateReturn.css" asp-append-version="true" />
+
+<div class="container">
+    <div class="row">
+        <div class="card p-0">
+            <div class="card-header purple-background text-white">
+                <h5 class="text-center mb-0">Return Equipment</h5>
+            </div>
+
+            <div class="card-body">
+                <h6>Booking Information</h6>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p class="form-control">Booking ID: @Model.BookingId</p>
+                        <p class="form-control">Product Name: @Model.Product.ProductName</p>
+                        <p class="form-control">Rented From: @Model.Product.User.FirstName @Model.Product.User.LastName </p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="form-control">Predicted Start Date: @Model.ActualRequestStartDate</p>
+                        <p class="form-control">Predicted End Date: @Model.RequestEndDate</p>
+                        <p class="form-control">Rental Start Date: @Model.ActualRequestStartDate</p>
+                    </div>
+                </div>
+
+                <form class="mt-4" method="post" asp-action="UpdateBookingInformation" asp-controller="Rental" enctype="multipart/form-data">
+                    <input asp-for="BookingId" hidden />
+                    <input hidden asp-for="ProductId" />
+                    <input hidden asp-for="UserId" />
+                    <input hidden asp-for="RequestStartDate" />
+                    <input hidden asp-for="RequestEndDate" />
+                    <input hidden asp-for="BookingStatus" />
+                    <input hidden asp-for="PaymentStatus" />
+                    <input hidden asp-for="RentStatus" />
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Return Details</h6>
+                            <div class="form-group">
+                                <label asp-for="@Model.ActualRequestStartDate">Rental Start Date:</label>
+                                <input class="form-control" asp-for="@Model.ActualRequestStartDate" />
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="@Model.ActualRequestEndDate">Rental End Date:</label>
+                                <input class="form-control" asp-for="@Model.ActualRequestEndDate" />
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="DamageDescription">Damage Description:</label><br />
+                                <textarea class="form-control" asp-for="DamageDescription" placeholder="If any....."></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Damaged Parts Image</h6>
+                            <div class="form-group">
+                                <label asp-for="DamagedImageUrl" class="control-label">Damaged Image:</label><br />
+                                <input asp-for="DamagedImageUrl" type="file" name="imageFile" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex mt-3 justify-content-center">
+                        @* <input name="bookingId" value="@Model.BookingId"  hidden/> *@
+                        <button class="btn btn-sm btn-primary w-25 text-center" type="submit">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,122 @@
+﻿@model Booking;
+
+<link rel="stylesheet" href="~/css/initiateReturn.css" asp-append-version="true" />
+
+<div class="container">
+    <div class="row">
+        <div class="card p-0">
+            <div class="card-header purple-background text-white">
+                <h5 class="text-center mb-0">Return Summary </h5>
+            </div>
+
+            <div class="card-body">
+                <h6>Booking Information</h6>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p class="form-control">Booking ID: @Model.BookingId</p>
+                        <p class="form-control">Product Name: @Model.Product.ProductName</p>
+                        <p class="form-control">Rented From: @Model.Product.User.FirstName @Model.Product.User.LastName </p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="form-control">Predicted Start Date: @Model.ActualRequestStartDate</p>
+                        <p class="form-control">Predicted End Date: @Model.RequestEndDate</p>
+                        <p class="form-control">Rental Start Date: @Model.ActualRequestStartDate</p>
+                    </div>
+                </div>
+
+                <form class="mt-4" method="post" asp-action="MarkAsReturned" asp-controller="Rental" enctype="multipart/form-data">
+                    <input asp-for="BookingId" hidden />
+                    <input hidden asp-for="ProductId" />
+                    <input hidden asp-for="UserId" />
+                    <input hidden asp-for="RequestStartDate" />
+                    <input hidden asp-for="RequestEndDate" />
+                    <input hidden asp-for="BookingStatus" />
+                    <input hidden asp-for="PaymentStatus" />
+                    <input hidden asp-for="RentStatus" />
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Return Details</h6>
+                            <div class="form-group">
+                                <label asp-for="@Model.ActualRequestStartDate">Rental Start Date:</label>
+                                <input class="form-control bg-white" asp-for="@Model.ActualRequestStartDate" disabled />
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="@Model.ActualRequestEndDate">Rental End Date:</label>
+                                <input class="form-control bg-white" asp-for="@Model.ActualRequestEndDate" disabled />
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="DamageDescription">Damage Description:</label><br />
+                                <input class="form-control bg-white" asp-for="DamageDescription" placeholder="If any....." disabled />
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="@Model.InitialTotalAmount">Initial Total Amount:</label>
+                                <input class="form-control bg-white" asp-for="@Model.InitialTotalAmount" disabled />
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="@Model.InitialTotalAmount">Actual Total Amount:</label>
+                                <input class="form-control bg-white" asp-for="@Model.ActualTotalAmountWithoutFine" disabled />
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="@Model.InitialAmountPaid">InitialAmountPaid:</label>
+                                <input class="form-control bg-white" asp-for="@Model.InitialAmountPaid" disabled />
+                            </div>
+
+                        </div>
+                        <div class="col-md-6 mt-md-4">
+                            <div class="form-group">
+                                <label asp-for="@Model.FineAmount">FineAmount:</label>
+                                <input class="form-control bg-white" asp-for="@Model.FineAmount" disabled />
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="@Model.TotalAmountAfterFine">TotalAmountAfterFine:</label>
+                                <input class="form-control bg-white" asp-for="@Model.TotalAmountAfterFine" disabled />
+                            </div>
+                            <div class="form-group">
+                                <label>Remaining Amount To Pay:</label>
+                                <input class="form-control bg-white disabled" value="@ViewData["remainingAmount"]" />
+                            </div>
+                            <h6>Damaged Parts Image</h6>
+                            <div class="form-group" hidden>
+                                <label asp-for="DamagedImageUrl" class="control-label">Damaged Image:</label><br />
+                                <input asp-for="DamagedImageUrl" type="file" name="imageFile" class="form-control" />
+                            </div>
+                            <img src="~/@Model.DamagedImageUrl" height="147px" width="300px" />
+                        </div>
+                    </div>
+                    @if (User.IsInRole("Seller") && Model.RentStatus != StaticDetail.RentStatusCompleted)
+                    {
+                        <div class="d-flex mt-3 justify-content-center">
+                            <button class="btn btn-sm btn-primary w-25 text-center" type="submit">Submit</button>
+                        </div>
+                    }
+                </form>
+
+                @if (User.IsInRole("Seller") && Model.PaymentStatus == StaticDetail.PaymentStatusCompleted && Model.RentStatus != StaticDetail.RentStatusCompleted)
+                {
+                    <form id="paymentForm" method="post" action="@Url.Action("MarkAsCompleted", "Rental")">
+                        <input type="hidden" name="bookingId" value="@Model.BookingId" />
+                        <button type="submit" class="btn ms-2 btn-sm btn-success">Mark As Completed</button>
+                    </form>
+                }
+
+                @if (User.IsInRole("Customer") && Model.RemainingAmountToPayAfterFine > 0 && Model.RentStatus != StaticDetail.RentStatusCompleted)
+                {
+                    <form id="paymentForm" method="post" action="@Url.Action("RemainingPay", "Rental")">
+                        <input type="hidden" name="bookingId" value="@Model.BookingId" />
+                        <input type="hidden" name="remainingAmount" value="@Model.RemainingAmountToPayAfterFine" />
+                        <button type="submit" class="btn ms-2 btn-sm btn-success">Pay Remaining Amount</button>
+                    </form>
+                }
+                else if ((User.IsInRole("Customer") && Model.RemainingAmountToPayAfterFine < 1 && Model.RentStatus != StaticDetail.RentStatusCompleted))
+                {
+                    <form id="paymentForm" method="post" action="@Url.Action("NoFine", "Rental")">
+                        <input type="hidden" name="bookingId" value="@Model.BookingId" />
+                        <input type="hidden" name="remainingAmount" value="@Model.RemainingAmountToPayAfterFine" />
+                        <button type="submit" class="btn ms-2 btn-sm btn-success">Mark as Payment Completion</button>
+                    </form>
+                }
+            </div>
+        </div>  
+    </div>
+</div>

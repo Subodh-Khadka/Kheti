@@ -4,6 +4,7 @@ using Kheti.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Kheti.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240326163605_addRentStatusInBooking")]
+    partial class addRentStatusInBooking
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,9 +37,6 @@ namespace Kheti.Migrations
                     b.Property<DateTime?>("ActualRequestStartDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<decimal?>("ActualTotalAmountWithoutFine")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<string>("BookingStatus")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -44,33 +44,12 @@ namespace Kheti.Migrations
                     b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("DamageDescription")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DamagedImageUrl")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal?>("FineAmount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("InitialAmountPaid")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("InitialTotalAmount")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<string>("PaymentStatus")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal?>("RemainingAmountPaid")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("RemainingAmountToPayAfterFine")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("RentStatus")
                         .IsRequired()
@@ -81,12 +60,6 @@ namespace Kheti.Migrations
 
                     b.Property<DateTime>("RequestStartDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<decimal?>("TotalAmountAfterFine")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("TotalAmountPaid")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("UserId")
                         .IsRequired()

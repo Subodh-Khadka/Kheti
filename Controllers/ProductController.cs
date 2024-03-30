@@ -90,7 +90,7 @@ namespace Kheti.Controllers
                         TermsAndCondition = product.RentalEquipment.TermsAndCondition,
                         UserId = product.UserId,
                     };
-                   product.RentalEquipment = rentalEquipment;
+                    product.RentalEquipment = rentalEquipment;
                 }
                 else
                 {
@@ -110,8 +110,10 @@ namespace Kheti.Controllers
 
         public IActionResult Edit(Guid id)
         {
-            var product = _db.Products.Include(c => c.Category).FirstOrDefault(p => p.ProductId == id);
-
+            var product = _db.Products
+                .Include(c => c.Category)
+                .Include(r => r.RentalEquipment)
+                .FirstOrDefault(p => p.ProductId == id);
             var categories = _db.Categories.ToList();
             SelectList categoryList = new SelectList(categories, "Id", "Name");
             ViewBag.CategoryList = categoryList;
@@ -119,12 +121,76 @@ namespace Kheti.Controllers
             return View(product);
         }
 
+        //[HttpPost]
+        //public IActionResult Edit(Guid id, Product product, RentalEquipment rentalEquipment, IFormFile? imageFile)
+        //{
+        //    // Retrieve the userId from the current user's Claims
+        //    var claimsIdentity = (ClaimsIdentity)User.Identity;
+        //    product.UserId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        //    if (imageFile != null && imageFile.Length > 0)
+        //    {
+
+        //        // Example: Save the image to wwwroot/Images/ProductImages
+        //        var imagePath = Path.Combine(_webHostEnvironment.WebRootPath, "Images", "ProductImages");
+        //        var uniqueFileName = Guid.NewGuid().ToString() + "_" + imageFile.FileName;
+        //        var filePath = Path.Combine(imagePath, uniqueFileName);
+
+        //        using (var stream = new FileStream(filePath, FileMode.Create))
+        //        {
+        //            imageFile.CopyTo(stream);
+        //        }
+
+        //        product.ProductImageUrl = Path.Combine("Images", "ProductImages", uniqueFileName);
+        //    }
+        //    else
+        //    {
+        //        //added as no tracking
+        //        var existingProduct = _db.Products.AsNoTracking().FirstOrDefault(p => p.ProductId == id);
+        //        if (existingProduct != null)
+        //        {
+        //            product.ProductImageUrl = existingProduct.ProductImageUrl;
+        //        }
+        //    }
+
+        //    _db.Entry(product).State = EntityState.Modified;
+        //    /*_db.Products.Update(product);*/
+        //    _db.SaveChanges();
+        //    return RedirectToAction("Index");
+        //}
+
         [HttpPost]
-        public IActionResult Edit(Guid id, Product product, IFormFile? imageFile)
+        public IActionResult Edit(Guid id, Product product, RentalEquipment rentalEquipment, IFormFile? imageFile)
         {
-            // Retrieve the userId from the current user's Claims
             var claimsIdentity = (ClaimsIdentity)User.Identity;
-            product.UserId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            product.UserId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            var existingProduct = _db.Products
+                .Include(p => p.RentalEquipment)
+                .Include(p => p.Category)
+                .FirstOrDefault(p => p.ProductId == id);
+
+            if (existingProduct == null)
+            {
+                return NotFound();
+            }
+
+            existingProduct.ProductName = product.ProductName;
+            existingProduct.ProductDescription = product.ProductDescription;
+            existingProduct.Price = product.Price;
+            existingProduct.CategoryId = product.CategoryId;
+
+            if (existingProduct.Category.Name == "Machinery")
+            {
+                existingProduct.RentalEquipment.RentalDuration = rentalEquipment.RentalDuration;
+                existingProduct.RentalEquipment.RentalPricePerDay = rentalEquipment.RentalPricePerDay;
+                existingProduct.RentalEquipment.TermsAndCondition = rentalEquipment.TermsAndCondition;
+                existingProduct.RentalEquipment.AvailabilityStartDate = rentalEquipment.AvailabilityStartDate;
+                existingProduct.RentalEquipment.AvailabilityEndDate = rentalEquipment.AvailabilityEndDate;
+                existingProduct.RentalEquipment.Location = rentalEquipment.Location;
+                existingProduct.RentalEquipment.DepositAmount = rentalEquipment.DepositAmount;
+
+            }
 
             if (imageFile != null && imageFile.Length > 0)
             {
@@ -139,20 +205,18 @@ namespace Kheti.Controllers
                     imageFile.CopyTo(stream);
                 }
 
-                product.ProductImageUrl = Path.Combine("Images", "ProductImages", uniqueFileName);
+                existingProduct.ProductImageUrl = Path.Combine("Images", "ProductImages", uniqueFileName);
+                _db.Products.Update(existingProduct);
+                _db.SaveChanges();
             }
             else
             {
-                //added as no tracking
-                var existingProduct = _db.Products.AsNoTracking().FirstOrDefault(p => p.ProductId == id);
                 if (existingProduct != null)
                 {
                     product.ProductImageUrl = existingProduct.ProductImageUrl;
                 }
             }
 
-            _db.Entry(product).State = EntityState.Modified;
-            /*_db.Products.Update(product);*/
             _db.SaveChanges();
             return RedirectToAction("Index");
         }

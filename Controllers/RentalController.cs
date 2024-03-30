@@ -1,5 +1,6 @@
 ﻿using Kheti.Data;
 using Kheti.KhetiUtils;
+using Kheti.Migrations;
 using Kheti.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,6 +10,7 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Kheti.Controllers
 {
+    [Authorize]
     public class RentalController : Controller
     {
         private readonly ApplicationDbContext _db;
@@ -83,14 +85,15 @@ namespace Kheti.Controllers
                 var userRole = User.FindFirstValue(ClaimTypes.Role);
 
                 booking.UserId = userId;
-                booking.bookingStatus = StaticDetail.BookingStatusPending;
+                booking.BookingStatus = StaticDetail.BookingStatusPending;
                 booking.PaymentStatus = StaticDetail.PaymentStatusPending;
+                booking.RentStatus = StaticDetail.RentStatusPending;
                 booking.CreatedDate = DateTime.Now;
 
 
                 _db.Add(booking);
                 _db.SaveChanges();
-                TempData["success"] = "Booking Request Sent successfully!";
+                TempData["success"] = "Booking request sent!";
 
                 return RedirectToAction("Details");
             }
@@ -189,7 +192,7 @@ namespace Kheti.Controllers
             var booking = _db.Bookings.FirstOrDefault(b => b.BookingId == bookingId);
             if (booking != null)
             {
-                booking.bookingStatus = StaticDetail.BookingStatusApproved;
+                booking.BookingStatus = StaticDetail.BookingStatusApproved;
                 _db.SaveChanges();
 
                 TempData["success"] = "Booking Approved by Seller";
@@ -198,14 +201,14 @@ namespace Kheti.Controllers
             {
                 TempData["error"] = "Error marking booking as Approved.";
             }
-            return RedirectToAction("RequestDetail", new { BookingId = bookingId});
+            return RedirectToAction("RequestDetail", new { BookingId = bookingId });
         }
 
         [HttpPost]
         public async Task<IActionResult> Pay(Guid bookingId)
         {
             Guid rental_booking_Id = bookingId;
-            string returnUrl = "https://localhost:7108/Order/BookingPaymentConfirmationPage";
+            string returnUrl = "https://localhost:7108/Rental/BookingPaymentConfirmationPage";
             int totalAmountInPaisa = 1000;
             string paymentUrl = await Kheti.KhetiUtils.KhaltiPayment.InitiateBookingPayment(rental_booking_Id, totalAmountInPaisa, returnUrl);
 
@@ -218,10 +221,15 @@ namespace Kheti.Controllers
             if (status == "Completed")
             {
                 var booking = _db.Bookings.FirstOrDefault(o => o.BookingId == purchase_order_id);
-                booking.PaymentStatus = StaticDetail.PaymentStatusCompleted;
-                booking.bookingStatus = StaticDetail.BookingStatusConfirmed;
+                booking.PaymentStatus = StaticDetail.PaymentStatusPartialPaid;
+                booking.BookingStatus = StaticDetail.BookingStatusConfirmed;
+                if (decimal.TryParse(total_amount, out decimal initialTotalAmountPaid))
+                {
+                    booking.InitialAmountPaid = initialTotalAmountPaid;
+                }
+
                 _db.Bookings.Update(booking);
-                _db.SaveChangesAsync();
+                _db.SaveChanges();
             }
 
             ViewData["Pidx"] = pidx;
@@ -232,6 +240,276 @@ namespace Kheti.Controllers
             ViewData["TotalAmount"] = total_amount;
 
             return View();
+        }
+
+        public async Task<IActionResult> RemainingPay(Guid bookingId, decimal remainingAmount)
+        {
+            decimal remain = remainingAmount;
+            Guid rental_booking_Id = bookingId;
+            string returnUrl = "https://localhost:7108/Rental/FinalBookingPaymentConfirmationPage";
+            int totalAmountInPaisa = 1000;
+            string paymentUrl = await Kheti.KhetiUtils.KhaltiPayment.InitiateRemainingBokkingPayment(rental_booking_Id, totalAmountInPaisa, returnUrl);
+
+            return Redirect(paymentUrl);
+        }
+
+        public IActionResult FinalBookingPaymentConfirmationPage(string pidx, string status, string transaction_id,
+           Guid purchase_order_id, string purchase_order_name, string total_amount)
+        {
+
+            if (status == "Completed")
+            {
+                var booking = _db.Bookings.FirstOrDefault(o => o.BookingId == purchase_order_id);
+              
+                //if (decimal.TryParse(total_amount, out decimal remainningAmountPaid))
+                //{
+                //    booking.RemainingAmountPaid = remainningAmountPaid;
+                //}
+                if(total_amount  != null)
+                {
+                    booking.RemainingAmountPaid = booking.RemainingAmountToPayAfterFine;
+                    booking.TotalAmountPaid = booking.InitialAmountPaid + booking.RemainingAmountPaid;
+                    booking.RemainingAmountToPayAfterFine = 0;
+                }
+                booking.PaymentStatus = StaticDetail.PaymentStatusCompleted;
+                booking.BookingStatus = StaticDetail.BookingStatusCompleted;
+                _db.Bookings.Update(booking);
+                _db.SaveChanges();
+            }
+
+            ViewData["Pidx"] = pidx;
+            ViewData["Status"] = status;
+            ViewData["TransactionId"] = transaction_id;
+            ViewData["PurchaseOrderId"] = purchase_order_id;
+            ViewData["PurchaseOrderName"] = purchase_order_name;
+            ViewData["TotalAmount"] = total_amount;
+
+            return View();
+        }
+
+        public IActionResult MarkAsRentStarted(Guid bookingId)
+        {
+            var booking = _db.Bookings.FirstOrDefault(o => o.BookingId == bookingId);
+
+            if (bookingId != null)
+            {
+                booking.RentStatus = StaticDetail.RentStatusInProcess;
+                booking.ActualRequestStartDate = DateTime.Now;
+                _db.SaveChanges();
+            }
+
+            TempData["success"] = "Rental Period Started";
+            return RedirectToAction("RequestDetail", new { BookingId = bookingId });
+        }
+
+        public IActionResult InitiateReturnProcess(Guid bookingId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userRole = User.FindFirstValue(ClaimTypes.Role);
+
+            var booking = _db.Bookings
+                .Include(p => p.Product)
+                .ThenInclude(p => p.User)
+                .Include(u => u.User)
+                .FirstOrDefault(b => b.BookingId == bookingId);
+
+            return View(booking);
+        }
+
+        [HttpPost]
+        public IActionResult UpdateBookingInformation(Guid bookingId, Booking updateBooking, IFormFile? imageFile)
+        {
+            if (!ModelState.IsValid)
+            {
+                var existingBooking = _db.Bookings
+                    .Include(p => p.Product)
+                    .ThenInclude(u => u.User)
+                    .Include(u => u.User)
+                    .Include(p => p.Product.RentalEquipment)
+                    .FirstOrDefault(b => b.BookingId == bookingId);
+                if (existingBooking == null)
+                {
+                    return RedirectToAction("Error", "Home");
+                }
+
+                existingBooking.ActualRequestStartDate = updateBooking.ActualRequestStartDate;
+                existingBooking.ActualRequestEndDate = updateBooking.ActualRequestEndDate;
+                existingBooking.DamageDescription = updateBooking.DamageDescription;
+
+                //calculate the initial Total Amount
+                TimeSpan initialRentalPeriod = existingBooking.RequestEndDate - existingBooking.RequestStartDate;
+                decimal initialTotalAmount = initialRentalPeriod.Days * existingBooking.Product.RentalEquipment.RentalPricePerDay;
+                existingBooking.InitialTotalAmount = initialTotalAmount;
+
+
+                //calculate the Final Total Amount
+                TimeSpan actualRentalPeriod = existingBooking.ActualRequestEndDate.Value - existingBooking.ActualRequestStartDate.Value;
+                decimal actualTotalAmount = actualRentalPeriod.Days * existingBooking.Product.RentalEquipment.RentalPricePerDay;
+                decimal totalAmount = actualRentalPeriod.Days * existingBooking.Product.RentalEquipment.RentalPricePerDay;
+
+                existingBooking.ActualTotalAmountWithoutFine = actualTotalAmount;
+
+
+                //calcualte fine if returned late
+                bool checkDate = existingBooking.ActualRequestEndDate > existingBooking.RequestEndDate;
+                if (checkDate)
+                {
+                    TimeSpan lateReturnedPeriod = existingBooking.ActualRequestEndDate.Value - existingBooking.RequestEndDate;
+                    decimal fineAmount = lateReturnedPeriod.Days * 500;
+                    decimal remainingAmountToPay = existingBooking.TotalAmountAfterFine - existingBooking.InitialAmountPaid ?? 0;
+                    totalAmount = totalAmount + fineAmount;
+                    existingBooking.FineAmount = fineAmount;
+                    existingBooking.RemainingAmountToPayAfterFine = remainingAmountToPay;
+                    existingBooking.TotalAmountAfterFine = totalAmount;
+
+                }
+                else
+                {
+                    existingBooking.ActualTotalAmountWithoutFine = initialTotalAmount;
+                }
+
+                //existingBooking.TotalAmountAfterFine = totalAmount;
+
+                if (imageFile != null && imageFile.Length > 0)
+                {
+                    //Save the image to wwwroot/Images/ProductImages
+                    var imagePath = Path.Combine(_webHostEnvironment.WebRootPath, "Images", "BookingImages");
+                    var uniqueFileName = Guid.NewGuid().ToString() + "_" + imageFile.FileName;
+                    var filePath = Path.Combine(imagePath, uniqueFileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        imageFile.CopyTo(stream);
+                    }
+
+                    existingBooking.DamagedImageUrl = Path.Combine("Images", "BookingImages", uniqueFileName);
+                }
+                else
+                {
+                    updateBooking.DamagedImageUrl = existingBooking.DamagedImageUrl;
+                }
+
+                _db.Bookings.Update(existingBooking);
+                _db.SaveChanges();
+                TempData["success"] = "Booking Information Updated!";
+
+                return RedirectToAction("FinalReturnSummaryBeforeRentCompletion", new { bookingId = bookingId });
+            }
+
+            // If ModelState is not valid, return to the same view with validation errors
+            return View();
+        }
+        public IActionResult FinalReturnSummaryBeforeRentCompletion(Guid bookingId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userRole = User.FindFirstValue(ClaimTypes.Role);
+
+
+            var booking = _db.Bookings
+                .Include(b => b.Product)
+                .ThenInclude(b => b.User)
+                .Include(b => b.Product.RentalEquipment)
+                .Include(b => b.User)
+
+                .FirstOrDefault(o => o.BookingId == bookingId);
+
+            decimal remainingAmountToPay = 0;
+
+            if (booking.FineAmount != null && booking.FineAmount != 0)
+            {
+                // Calculate remaining amount to pay if there's a fine
+                remainingAmountToPay = booking.TotalAmountAfterFine - booking.InitialAmountPaid ?? 0;
+            }
+
+            ViewData["remainingAmount"] = remainingAmountToPay;
+            booking.RemainingAmountToPayAfterFine = remainingAmountToPay;
+            _db.Bookings.Update(booking);
+            _db.SaveChanges(); 
+            return View(booking);
+        }
+
+        public IActionResult FinalReturnSummaryAfterRentCompletion(Guid bookingId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userRole = User.FindFirstValue(ClaimTypes.Role);
+
+
+            var booking = _db.Bookings
+                .Include(b => b.Product)
+                .ThenInclude(b => b.User)
+                .Include(b => b.Product.RentalEquipment)
+                .Include(b => b.User)
+
+                .FirstOrDefault(o => o.BookingId == bookingId);
+
+            //decimal remainingAmountToPay = 0;
+
+            //if (booking.FineAmount != null && booking.FineAmount != 0)
+            //{
+            //    // Calculate remaining amount to pay if there's a fine
+            //    remainingAmountToPay = booking.TotalAmountAfterFine - booking.InitialAmountPaid ?? 0;
+            //}
+
+            //ViewData["remainingAmount"] = remainingAmountToPay;
+            //booking.RemainingAmountToPayAfterFine = remainingAmountToPay;
+            //_db.Bookings.Update(booking);
+            //_db.SaveChanges();
+            return View(booking);
+        }
+
+        public IActionResult MarkAsReturned(Guid bookingId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userRole = User.FindFirstValue(ClaimTypes.Role);
+
+
+            var booking = _db.Bookings
+                .Include(b => b.Product)
+                .ThenInclude(b => b.User)
+                .Include(b => b.Product.RentalEquipment)
+                .Include(b => b.User)
+
+                .FirstOrDefault(o => o.BookingId == bookingId);
+
+            if (booking != null)
+            {
+                booking.RentStatus = StaticDetail.RentStatusReturned;
+                _db.Bookings.Update(booking);
+                _db.SaveChanges();
+            }
+
+            TempData["success"] = "Rent Status changed to returned!";
+            return RedirectToAction("RequestDetail", new { BookingId = bookingId });
+        }
+        public IActionResult MarkAsCompleted(Guid bookingId)
+        {
+            var booking = _db.Bookings.FirstOrDefault(o => o.BookingId == bookingId);
+
+            if (bookingId != null)
+            {
+                booking.RentStatus = StaticDetail.RentStatusCompleted;
+                booking.BookingStatus = StaticDetail.BookingStatusCompleted;
+                //booking.ActualRequestStartDate = DateTime.Now;
+                _db.SaveChanges();
+            }
+
+            TempData["success"] = "Rental Completed";
+            //return RedirectToAction("RequestDetail", new { BookingId = bookingId });
+            return RedirectToAction("RequestList");
+        }
+
+        public IActionResult NoFine(Guid bookingId)
+        {
+            var booking = _db.Bookings.FirstOrDefault(o => o.BookingId == bookingId);
+
+            if(bookingId != null) 
+            {
+                booking.PaymentStatus = StaticDetail.PaymentStatusCompleted;
+                booking.TotalAmountPaid = booking.InitialAmountPaid + booking.RemainingAmountPaid;
+            }
+            _db.SaveChanges(true);
+            return RedirectToAction("RequestDetail", new {BookingId = bookingId});
+
         }
     }
 }

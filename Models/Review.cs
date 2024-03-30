@@ -18,7 +18,6 @@ namespace Kheti.Models
         [ForeignKey("UserId")]
         public string UserId { get; set; }
         public KhetiApplicationUser User { get; set; }
-
         public DateTime DateReviewed { get; set; }
 
 

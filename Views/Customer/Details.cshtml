@@ -11,7 +11,6 @@
 
 <link rel="stylesheet" href="~/css/details.css" asp-append-version="true" />
 
-
 <form method="post" asp-action="Details">
 
     <input hidden asp-for="ProductId" />
@@ -62,43 +61,58 @@
             <div class="row review p-2 bg-light">
 
                 <div class="grey_line"></div>
-                @foreach (var reviews in Model.Product.Reviews)
-                {
-                    <div class="col-md-4 mb-2">
-                        <div class="card review-card">
-                            <div class="card-body">
-                                <div class="d-flex gap-3 align-content-center">
-                                    @if (reviews.User?.ProfilePictureURL != null)
-                                    {
-                                        <img src="~/@reviews.User.ProfilePictureURL" height="60px" width="60px" />
-                                        <p class="align-self-center">@reviews.User.FirstName @reviews.User.LastName</p>
-                                    }
-                                    else
-                                    {
-                                        <p class="mt-2">No profile picture available</p>
-                                    }
 
-                                </div>
-                                <div class="stars-container mb-3">
-                                    @for (int i = 0; i < reviews.Rating; i++)
-                                    {
-                                        <i class="bi bi-star-fill fs-6 m-0 p-0 rated" data-rating="1"></i>
-                                    }
-                                    @for (int i = reviews.Rating; i < 5; i++)
-                                    {
-                                        <i class="bi bi-star-fill fs-6 m-0 p-0" data-rating="1"></i>
-                                    }
+                @{
 
+                    int reviewCount = 0;
+
+                    @foreach (var reviews in Model.Product.Reviews)
+                    {
+                        <div class="col-md-4 mb-2">
+                            <div class="card review-card">
+                                <div class="card-body">
+                                    <div class="d-flex gap-3 align-content-center">
+                                        @if (reviews.User?.ProfilePictureURL != null)
+                                        {
+                                            <img src="~/@reviews.User.ProfilePictureURL" height="60px" width="60px" />
+                                            <p class="align-self-center">@reviews.User.FirstName @reviews.User.LastName</p>
+                                        }
+                                        else
+                                        {
+                                            <p class="mt-2">No profile picture available</p>
+                                        }
+
+                                    </div>
+                                            <p>@reviews.DateReviewed.ToShortDateString()</p>
+                                    <div class="stars-container mb-3">
+                                        @for (int i = 0; i < reviews.Rating; i++)
+                                        {
+                                            <i class="bi bi-star-fill fs-6 m-0 p-0 rated" data-rating="1"></i>
+                                        }
+                                        @for (int i = reviews.Rating; i < 5; i++)
+                                        {
+                                            <i class="bi bi-star-fill fs-6 m-0 p-0" data-rating="1"></i>
+                                        }
+
+                                    </div>
+                                    <p class="card-text ellps">@reviews.Comment</p>
                                 </div>
-                                <p class="card-text ellps">@reviews.Comment</p>
                             </div>
                         </div>
+                        reviewCount++;
+
+                        if (reviewCount >= 6)
+                        {
+                            break;
+                        }
+                    }
+
+                    <!-- Button trigger modal -->
+                    <div class="ms-1">
+                        <button type="button" class="btn btn-sm btn-primary w-25 purple-background text-white" data-bs-toggle="modal" data-bs-target="#AllReview">
+                            View All Reviews
+                        </button>
                     </div>
-                    @*
-            <p>@reviews.DateReviewed</p>
-            <p>@reviews.Rating</p>
-            <p>@reviews.Comment</p>
-            </div> *@
 
                 }
             </div>
@@ -138,6 +152,7 @@
         </div>
     </div>
 </form>
+@Html.Partial("_AllReview.cshtml")
 
 <script>
     $(document).ready(function () {
@@ -180,4 +195,8 @@
             });
         });
     });
+
+    $('#myModal').on('shown.bs.modal', function () {
+        $('#myInput').trigger('focus')
+    })
 </script>

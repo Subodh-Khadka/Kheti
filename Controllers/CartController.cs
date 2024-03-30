@@ -1,7 +1,10 @@
 ﻿using Kheti.Data;
+using Kheti.KhetiUtils;
 using Kheti.Models;
 using Kheti.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -11,10 +14,15 @@ namespace Kheti.Controllers
     public class CartController : Controller
     {
         private readonly ApplicationDbContext _db;
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly IEmailSender _emailSender;
         public ShoppingCartVM ShoppingCartVm { get; set; }
-        public CartController(ApplicationDbContext db)
+
+        public CartController(ApplicationDbContext db, UserManager<IdentityUser> userManager, IEmailSender emailSender)
         {
             _db = db;
+            _userManager = userManager;
+            _emailSender = emailSender; 
         }
 
         [Authorize(Roles = "Customer")]
@@ -22,6 +30,7 @@ namespace Kheti.Controllers
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+
 
             ShoppingCartVm = new()
             {
@@ -36,7 +45,7 @@ namespace Kheti.Controllers
             }
 
             return View(ShoppingCartVm);
-        }
+        }   
 
         private decimal CalculateOrderTotal(IEnumerable<ShoppingCart> shoppingCartItems)
         {
@@ -192,12 +201,15 @@ namespace Kheti.Controllers
 
         [HttpPost]
         [ActionName("CartSummary")]
-        public IActionResult CartSummaryPost(ShoppingCartVM shoppingCartVM)
+        public   IActionResult CartSummaryPost(ShoppingCartVM shoppingCartVM)
         {
             try
             {
                 var claimsIdentity = (ClaimsIdentity)User.Identity;
                 var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+                var user = _db.KhetiApplicationUsers.FirstOrDefault(u => u.Id == userId);
+                var userEmail = user.Email;
 /*
                 if (shoppingCartVM == null || shoppingCartVM.Orders == null || shoppingCartVM.ShoppingCartList == null)
                 {
@@ -254,6 +266,9 @@ namespace Kheti.Controllers
                 //removing the items from the shopping cart
                 _db.ShoppingCarts.RemoveRange(ShoppingCartVm.ShoppingCartList);
                 _db.SaveChanges();
+
+                //send email of order placed 
+                _emailSender.SendEmailAsync(userEmail, $"Order Placed Successfully", $"Your order with ID {ShoppingCartVm.Orders.OrderId} has been placed successfully. Thank you for shopping with us!");
 
                 //clear shoppingCartVm
                 ShoppingCartVm = new ShoppingCartVM
