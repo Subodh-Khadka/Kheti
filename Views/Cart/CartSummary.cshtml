@@ -1,95 +1,185 @@
 ﻿@model Kheti.ViewModels.ShoppingCartVM
 
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Summary</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/css/summary.css" />
-    <style>
+@* <link rel="stylesheet" href="/css/summary.css" /> *@
 
-    </style>
-</head>
+<link rel="stylesheet" href="~/css/initiateReturn.css" asp-append-version="true" />
 
-<body>
-    <div class="container mt-2">
-        <h3 class="text-center m-2 p-2">Order Summary</h3>
-        <a asp-action="Index" class="mt-4 mb-4 text-md-start text-decoration-none gap-3"><i class="bi bi-arrow-left pe-2 back-icon"></i>Back To Home</a>
-    </div>
 
-    <form asp-controller="Cart" asp-action="CartSummary" method="post">
-        <input asp-for="Orders.OrderTotal" type="hidden" />
-        <div class="row rows mt-2 p-2">
-            @*  Customer Details Section *@
-            <div class="col-md-4">
-                <div class="customer-details">
-                    <h5>Customer Details</h5>
-                    <input asp-for="@Model.Orders.CustomerName" type="text" class="editable-field mb-2" placeholder="Name">
-                    <span asp-validation-for="Orders.CustomerName"></span>
-                    <input asp-for="@Model.Orders.phoneNumber" class="editable-field" placeholder="Phone Number">
-                    <input asp-for="@Model.Orders.phoneNumber" class="editable-field" placeholder="Phone Number">
-                    <span asp-validation-for="Orders.phoneNumber"></span>
-                    <input asp-for="@Model.Orders.User.Email" class="editable-field" placeholder="Phone Number">
-                    <span asp-validation-for="Orders.User.Email"></span>
-                    <input asp-for="@Model.Orders.LocalAddress" class="editable-field" placeholder="Enter local Address">
-                    <span asp-validation-for="Orders.LocalAddress"></span>
-                    
 
-                </div>
-
-                @*  Shipping Details Section  *@
-                <div class="shipping-details mt-4">
-                    <h5>Shipping Details</h5>
-                    <input asp-for="@Model.Orders.Address" class="editable-field" placeholder="Shipping Address">
-                    <span asp-validation-for="Orders.Address"></span>
-                </div>
-                <div class="shipping-details mt-4">
-                    <h6 class="text-success" style="font-size:small">You can edit your details above!</h6>
-                </div>
+<div class="container">
+    <div class="row">
+        <div class="card p-0">
+            <div class="card-header purple-background text-white">
+                <h5 class="text-center mb-0">Cart Summary </h5>
             </div>
 
-            @* Order Details Section *@
-            <div class="col-md-8">
-                <div class="">
-                    <h5>Order Details</h5>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Product</th>
-                                <th>Quantity</th>
-                                <th>Price</th>
-                                <th>Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model.ShoppingCartList)
-                            {
-                                <tr>
-                                    <td class="truncate" data-toggle="tooltip" data-placement="top" title="@item.Product.ProductName">@item.Product.ProductName</td>
-                                    <td>@item.Quantity</td>
-                                    <td>@item.Product.Price</td>
-                                    <td>@(item.Quantity * item.Product.Price)</td>
-                                </tr>
+            <form asp-controller="Cart" asp-action="CartSummary" method="post">
+                <input asp-for="Orders.OrderTotal" type="hidden" />
+                <input asp-for="Orders.OrderId" type="hidden" />
 
-                            }
-                        </tbody>
-                    </table>
-                    <a class="fs-6 text-end">Total: Rs @Model.Orders.OrderTotal</a>
+                <div class="card-body ">
+                    @* <h6>Booking Information</h6> *@
+                    <div class="row">
+                        <div class="col-md-4 p-3 rounded-3 bg-light">
+                            <h6 class="text-success">Customer Details</h6>
+                            <div class="form-group">
+                                <label asp-for="@Model.Orders.CustomerName">Name</label>
+                                <input class="form-control bg-white" asp-for="@Model.Orders.CustomerName" />
+                                <span asp-validation-for="Orders.CustomerName"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="@Model.Orders.phoneNumber">Phone</label>
+                                <input class="form-control bg-white" asp-for="@Model.Orders.phoneNumber" />
+                                <span asp-validation-for="Orders.phoneNumber"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="@Model.Orders.User.Email"></label>
+                                <input class="form-control bg-white" asp-for="@Model.Orders.User.Email" />
+                                <span asp-validation-for="Orders.User.Email"></span>
+                            </div>
+
+
+                            @*  Shipping Details Section  *@
+                            <div class="shipping-details text-success mt-4">
+                                <h5>Shipping Details</h5>
+                                <label asp-for="@Model.Orders.Address"></label>
+                                <input asp-for="@Model.Orders.Address" class="form-control bg-white" placeholder="Shipping Address">
+                                <span asp-validation-for="Orders.Address"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="@Model.Orders.LocalAddress"></label>
+                                <input class="form-control bg-white" asp-for="@Model.Orders.LocalAddress" />
+                                <span asp-validation-for="Orders.LocalAddress"></span>
+                            </div>
+                            <div class="shipping-details mt-4">
+                                <h6 class="text-success" style="font-size:small">You can edit your details above!</h6>
+                            </div>
+                        </div>
+
+                        <div class="col-md-8">
+                            <div class="">
+                                <h5 class="text-success">Order Details</h5>
+                                <table class="table table-bordered table-hover table-responsive-sm">
+                                    <thead>
+                                        <tr class="text-success">
+                                            <th>Product</th>
+                                            <th>Quantity</th>
+                                            <th>Price</th>
+                                            <th>Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.ShoppingCartList)
+                                        {
+                                            <tr class="text-secondary">
+                                                <td class="truncate " data-toggle="tooltip" data-placement="top" title="@item.Product.ProductName">@item.Product.ProductName</td>
+                                                <td>@item.Quantity</td>
+                                                <td>@item.Product.Price</td>
+                                                <td>@(item.Quantity * item.Product.Price)</td>
+                                            </tr>
+
+                                        }
+                                    </tbody>
+                                </table>
+                                <div class="text-end">
+                                    <p class="text-success">Total: Rs @Model.Orders.OrderTotal</p>
+
+                                    @if (Model.ShoppingCartList.Any())
+                                    {
+                                        <button type="submit" class="btn btn-sm btn-primary">Place Order</button>
+
+                                    }
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <button type="submit" class="btn purple-background order-btn">Place Order</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+
+@*
+<div class="container mt-2">
+    <h3 class="text-center m-2 p-2">Order Summary</h3>
+    <a asp-action="Index" class="mt-4 mb-4 text-md-start text-decoration-none gap-3"><i class="bi bi-arrow-left pe-2 back-icon"></i>Back To Home</a>
+</div>
+
+<form asp-controller="Cart" asp-action="CartSummary" method="post">
+    <input asp-for="Orders.OrderTotal" type="hidden" />
+    <div class="row rows mt-2 p-2">
+
+        <div class="col-md-4">
+            <div class="customer-details">
+                <h5>Customer Details</h5>
+                <input asp-for="@Model.Orders.CustomerName" type="text" class="editable-field mb-2" placeholder="Name">
+                <span asp-validation-for="Orders.CustomerName"></span>
+                <input asp-for="@Model.Orders.phoneNumber" class="editable-field" placeholder="Phone Number">
+                <input asp-for="@Model.Orders.phoneNumber" class="editable-field" placeholder="Phone Number">
+                <span asp-validation-for="Orders.phoneNumber"></span>
+                <input asp-for="@Model.Orders.User.Email" class="editable-field" placeholder="Phone Number">
+                <span asp-validation-for="Orders.User.Email"></span>
+                <input asp-for="@Model.Orders.LocalAddress" class="editable-field" placeholder="Enter local Address">
+                <span asp-validation-for="Orders.LocalAddress"></span>
+
+
+            </div>
+
+
+            <div class="shipping-details mt-4">
+                <h5>Shipping Details</h5>
+                <input asp-for="@Model.Orders.Address" class="editable-field" placeholder="Shipping Address">
+                <span asp-validation-for="Orders.Address"></span>
+            </div>
+            <div class="shipping-details mt-4">
+                <h6 class="text-success" style="font-size:small">You can edit your details above!</h6>
             </div>
         </div>
-    </form>
+
+
+        <div class="col-md-8">
+            <div class="">
+                <h5>Order Details</h5>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.ShoppingCartList)
+                        {
+                            <tr>
+                                <td class="truncate" data-toggle="tooltip" data-placement="top" title="@item.Product.ProductName">@item.Product.ProductName</td>
+                                <td>@item.Quantity</td>
+                                <td>@item.Product.Price</td>
+                                <td>@(item.Quantity * item.Product.Price)</td>
+                            </tr>
+
+                        }
+                    </tbody>
+                </table>
+                <a class="fs-6 text-end">Total: Rs @Model.Orders.OrderTotal</a>
+            </div>
+            <button type="submit" class="btn purple-background order-btn">Place Order</button>
+        </div>
+    </div>
+</form>
     </div>
 
-    <script>
-        $(document).ready(function () {
-            $('[data-toggle="tooltip"]').tooltip();
-        });
-    </script>
-</body>
+<script>
+    $(document).ready(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+</script>
 
-</html>
+
+ *@

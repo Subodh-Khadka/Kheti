@@ -56,7 +56,7 @@
 
     @if ((User.IsInRole("Customer") || User.IsInRole("Seller")) && Model.RentStatus == StaticDetail.RentStatusCompleted)
     {
-        <form id="paymentForm" method="post" action="@Url.Action("FinalReturnSummary", "Rental")">
+        <form id="paymentForm" method="post" action="@Url.Action("FinalReturnSummaryAfterRentCompletion", "Rental")">
             <input type="hidden" name="bookingId" value="@Model.BookingId" />
             <button type="submit" class="btn ms-2 btn-sm btn-success">View Return Summary</button>
         </form>

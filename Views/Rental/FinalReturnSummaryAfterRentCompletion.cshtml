@@ -10,8 +10,8 @@
             </div>
 
             <div class="card-body">
-                <h6>Booking Information</h6>
-                <div class="row">
+                <h6 class="text-success">Booking Information</h6>
+                <div class="row bg-light p-3">
                     <div class="col-md-6">
                         <p class="form-control">Booking ID: @Model.BookingId</p>
                         <p class="form-control">Product Name: @Model.Product.ProductName</p>
@@ -34,9 +34,9 @@
                     <input hidden asp-for="PaymentStatus" />
                     <input hidden asp-for="RentStatus" />
 
-                    <div class="row">
+                    <h6 class="text-success">Return Details</h6>
+                    <div class="row bg-light p-3">
                         <div class="col-md-6">
-                            <h6>Return Details</h6>
                             <div class="form-group">
                                 <label asp-for="@Model.ActualRequestStartDate">Rental Start Date:</label>
                                 <input class="form-control bg-white" asp-for="@Model.ActualRequestStartDate" disabled />
@@ -47,7 +47,7 @@
                             </div>
                             <div class="form-group">
                                 <label asp-for="DamageDescription">Damage Description:</label><br />
-                                <input class="form-control bg-white" asp-for="DamageDescription" placeholder="If any....." disabled />
+                                <input class="form-control bg-white" asp-for="DamageDescription" disabled />
                             </div>
                             <div class="form-group">
                                 <label asp-for="@Model.InitialTotalAmount">Initial Total Amount:</label>
@@ -58,30 +58,33 @@
                                 <input class="form-control bg-white" asp-for="@Model.ActualTotalAmountWithoutFine" disabled />
                             </div>
                             <div class="form-group">
-                                <label asp-for="@Model.InitialAmountPaid">InitialAmountPaid:</label>
+                                <label asp-for="@Model.InitialAmountPaid">Initial Amount Paid:</label>
                                 <input class="form-control bg-white" asp-for="@Model.InitialAmountPaid" disabled />
                             </div>
 
                         </div>
                         <div class="col-md-6 mt-md-4">
                             <div class="form-group">
-                                <label asp-for="@Model.FineAmount">FineAmount:</label>
+                                <label asp-for="@Model.FineAmount">Fine Amount:</label>
                                 <input class="form-control bg-white" asp-for="@Model.FineAmount" disabled />
                             </div>
                             <div class="form-group">
-                                <label asp-for="@Model.TotalAmountAfterFine">TotalAmountAfterFine:</label>
+                                <label asp-for="@Model.TotalAmountAfterFine">Total Amount After Fine:</label>
                                 <input class="form-control bg-white" asp-for="@Model.TotalAmountAfterFine" disabled />
                             </div>
                             <div class="form-group">
                                 <label>Remaining Amount To Pay:</label>
-                                <input class="form-control bg-white disabled" value="@ViewData["remainingAmount"]" />
+                                <input class="form-control bg-white disabled" value="@ViewData["remainingAmount"]" disabled />
                             </div>
-                            <h6>Damaged Parts Image</h6>
                             <div class="form-group" hidden>
                                 <label asp-for="DamagedImageUrl" class="control-label">Damaged Image:</label><br />
                                 <input asp-for="DamagedImageUrl" type="file" name="imageFile" class="form-control" />
                             </div>
-                            <img src="~/@Model.DamagedImageUrl" height="147px" width="300px" />
+                            @if (Model.DamagedImageUrl != null)
+                            {
+                                <h6>Damaged Parts Image</h6>
+                                <img src="~/@Model.DamagedImageUrl" height="147px" width="300px" />
+                            }
                         </div>
                     </div>
                     @if (User.IsInRole("Seller") && Model.RentStatus != StaticDetail.RentStatusCompleted)
@@ -117,6 +120,6 @@
                     </form>
                 }
             </div>
-        </div>  
+        </div>
     </div>
 </div>

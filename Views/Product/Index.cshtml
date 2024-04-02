@@ -5,11 +5,11 @@
 }
 
 <p>
-    <a class="btn purple-background btn-sm text-white" asp-action="Create">Create New Product</a>
+    <a style="font-size:smaller" class="btn purple-background btn-sm text-white p-2" asp-action="Create">Create New Product</a>
 </p>
-<table class="table">
+<table class="table table-bordered text-secondary" style="font-size:smaller;" >
     <thead>
-        <tr>
+        <tr class="bg-light text-dark">
             <th>
                 @Html.DisplayNameFor(model => model.ProductName)
             </th>
@@ -23,16 +23,18 @@
             <th>
                 @Html.DisplayNameFor(model => model.Category)
             </th>
-            <th></th>
+            <th>
+                Actions
+            </th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
         <tr>
-            <td>
+            <td class="toBeEllipsed">
                 @Html.DisplayFor(modelItem => item.ProductName)
             </td>
-            <td>
+            <td class="toBeEllipsed"> 
                 @Html.DisplayFor(modelItem => item.ProductDescription)
             </td>
             <td>

@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="IronPdf" Version="2023.12.6" />
     <PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid.EntityFrameworkAdapter" Version="8.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.0" />
@@ -24,6 +25,7 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\Images\BookingImages\" />
+    <Folder Include="wwwroot\Images\ReportImages\" />
     <Folder Include="wwwroot\Images\UserImages\" />
     <Folder Include="wwwroot\Images\QueryImages\" />
     <Folder Include="wwwroot\Images\ProductImages\" />

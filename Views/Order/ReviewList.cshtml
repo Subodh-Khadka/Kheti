@@ -12,7 +12,7 @@
     }
 </style>
 <h5 class="text-center text-success">Review Details</h5>
-<hr class="m-0 text-black" />
+
 <div class="container review-container extra_small_grey_text_css pt-2">
     @{
         int count = 0;
@@ -21,8 +21,8 @@
     @foreach (var review in Model)
     {
         count++;
-        <p class="text-secondary">Item @count</p>
-        <div class="review-item d-flex justify-content-between align-items-center mb-3">
+        <p class="text-success">Item @count</p>
+        <div class="review-item d-flex justify-content-between align-items-center mb-3 bg-light text-secondary">
             <img src="~/@review.Product.ProductImageUrl" width="70px" height="70px" />
             <div class="toBeEllipsed">
                 <p class="product-name" title="@review.Product.ProductName">@review.Product.ProductName</p>

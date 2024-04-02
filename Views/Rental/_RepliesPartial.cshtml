@@ -1,12 +1,38 @@
 ﻿@model IEnumerable<ProductReply>
 
 @if (Model != null)
-{
+{   
     @foreach (var reply in Model)
+    {
+        <div class="comment col-md-6 bg-red p-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex gap-3 align-content-center">
+                        @if (reply.User?.ProfilePictureURL != null)
+                        {
+                            <img src="~/@reply.User.ProfilePictureURL" height="60px" width="60px" />
+                            <p class="align-self-center">@reply.User.FirstName @reply.User.LastName</p>
+                            <p class="align-self-center">@reply.ReplyDate.ToShortDateString()</p>
+                        }
+                        else
+                        {
+                            <p class="mt-2">No profile picture available</p>
+                        }
+
+                    </div>
+                    <p style="max-width:420px;">@reply.ReplyText</p>
+                </div>
+            </div>
+
+        </div>
+
+    }
+
+   @*  @foreach (var reply in Model)
     {
         <div class="d-flex gap-3 reply">
             <p>@reply.ReplyText </p>
             <p>Posted by: @reply.User.FirstName on @reply.ReplyDate</p>
         </div>
-    }
+    } *@
 }

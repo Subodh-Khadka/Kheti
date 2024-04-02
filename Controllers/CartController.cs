@@ -276,8 +276,11 @@ namespace Kheti.Controllers
                     ShoppingCartList = new List<ShoppingCart>(),
                     Orders = new Order()
                 };
+                int orderId = shoppingCartVM.Orders.OrderId;
+                int orderIds = ShoppingCartVm.Orders.OrderId;
 
-                return RedirectToAction("OrderConformation", new {orderId = ShoppingCartVm.Orders.OrderId});
+                return RedirectToAction("OrderConformation", new { orderId = ShoppingCartVm.Orders.OrderId });
+                //return RedirectToAction("OrderConformation", new {orderId = shoppingCartVM.Orders.OrderId});
 
             }
             catch (Exception ex)
@@ -288,7 +291,7 @@ namespace Kheti.Controllers
             return View(shoppingCartVM);
         }
 
-        public IActionResult OrderConformation(int orderID)
+        public IActionResult OrderConformation(int orderId)
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
@@ -297,7 +300,9 @@ namespace Kheti.Controllers
             .Where(u => u.UserId == userId)
             .ToList();
 
-            return View(orderID);
+            ViewData["orderId"] = orderId;
+
+            return View();
         }
 
 

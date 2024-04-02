@@ -11,26 +11,26 @@
 }*/
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
-.form-control:focus {    
+.form-control:focus {
     box-shadow: 0 0 0 1px green;
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
 }
 
 .purple-background {
@@ -46,13 +46,13 @@ body {
     }
 
 .purple-text {
-    color: #5b62f4;    
+    color: #5b62f4;
 }
 
 .white-text {
     color: white;
-    font-size:small;
-    padding:0.6rem 1.5rem;
+    font-size: small;
+    padding: 0.6rem 1.5rem;
 }
 
 /*bootstrap form css*/
@@ -70,9 +70,8 @@ input[type="text"]:placeholder-shown {
     color: grey;
 }
 
-form label{
-
-    color:lightslategrey;
+form label {
+    color: lightslategrey;
 }
 
 .form-select {
@@ -82,13 +81,13 @@ form label{
 
 /* small grey text css */
 .small_grey_text_css {
-    font-size: small;    
+    font-size: small;
     color: grey;
 }
 
 /* extra-small grey text css */
 .extra_small_grey_text_css {
-    font-size: 12px;    
+    font-size: 12px;
     color: grey;
 }
 
@@ -106,8 +105,13 @@ form label{
 }
 
 .toBeEllipsed {
-    width: 200px;
+    /*width: 200px;*/
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    max-width: 100px;
 }
+
+/*white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;*/

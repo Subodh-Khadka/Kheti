@@ -10,7 +10,11 @@
 
         //OrderStatus
         public const string OrderStatusPending = "Pending";        
-        public const string OrderStatusShipped = "Shipped";  
+        public const string OrderStatusShipped = "Shipped";
+
+        //machinery availability status
+        public const bool stausAvailable = true;
+        public const bool statusUnavailable = false;
         
         //booking status
         public const string BookingStatusPending = "Pending";        
@@ -34,6 +38,10 @@
         //Query Status
         public const string QueryStatusPending = "Pending";
         public const string QueryStatusInProcess = "In Process";
-        public const string QueryStatusSolved = "Solved";      
+        public const string QueryStatusSolved = "Solved";
+
+        //Report Status
+        public const string ReportStatusPending = "Pending";
+        public const string ReportStatusSolved = "Solved";
     }
 }

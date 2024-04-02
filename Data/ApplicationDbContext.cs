@@ -24,6 +24,7 @@ namespace Kheti.Data
         public DbSet<RentalEquipment> RentalEquipment { get; set; }
         public DbSet<Booking> Bookings { get; set; }
         public DbSet<BookingComments> BookingComments { get; set; }
+        public DbSet<Report> Reports { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

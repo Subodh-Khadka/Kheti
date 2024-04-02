@@ -1,30 +1,23 @@
 ﻿@model int
+<style>
+    p {
+        margin: 5px 0px;
+    }
+</style>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Confirmation</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <style>
-        /* Add custom styles here */
-    </style>
-</head>
-<body>
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Order Confirmation</h5>
-                        <p class="card-text">Your order has been successfully placed.</p>
-                        <p class="card-text">Order ID: @Model</p>
-                        <a href="/" class="btn btn-primary">Continue Shopping</a>
-                    </div>
-                </div>
-            </div>
+<div class="d-flex container justify-content-center">
+    <div class="card text-center w-50">
+        <div class="card-header purple-background text-white">
+            Order Payment
+        </div>
+        <div class="card-body">
+            <i class="bi bi-check2-circle text-success fs-4"></i>
+            <h5 class="card-title text-success">Order Placed!</h5>
+            <p>Order has been placed successfully</p>
+            <a style="font-size:10px;" asp-action="OrderList" asp-controller="Order" class="btn btn-sm btn-success">Go to orderList</a>
+        </div>
+        <div class="card-footer text-body-secondary purple-background text-white">
+            Thank you!
         </div>
     </div>
-</body>
-</html>
+</div>

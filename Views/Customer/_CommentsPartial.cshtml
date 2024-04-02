@@ -1,8 +1,10 @@
 ﻿@model IEnumerable<ProductComment>
 
-@foreach (var comment in Model)
-{
-    <div class="comment col-md-6 bg-light p-2">
+
+
+    @foreach (var comment in Model)
+    {
+        <div class="col-md-4 bg-light p-2">
             <div class="card">
                 <div class="card-body">
                     <div class="d-flex gap-3 align-content-center">
@@ -18,24 +20,27 @@
                         }
 
                     </div>
-                    <p style="max-width:420px;">@comment.CommentText</p>
+                    <p style="max-width:420px;" class="ellps" title="@comment.CommentText">@comment.CommentText</p>
                 </div>
             </div>
 
             <!-- Display Replies -->
             <div id="replies_@comment.Id" class="repliesSection">
                 @Html.Partial("_RepliesPartial", comment.Replies)
-            </div>  
+            </div>
 
-        @if (User.IsInRole(StaticDetail.SellerRole))
-        {
-            <!-- Form for adding reply -->
-            <form class="replyForm">
-                <input type="hidden" class="commentId" value="@comment.Id" />
-                <textarea class="replyText p-2" rows="2" cols="50" placeholder="Write a reply"></textarea><br />
-                <button type="button" class="submitReply btn btn-sm purple-background text-white">Reply</button>
-            </form>
-        }
-        <hr />
-    </div>
-}
+            @if (User.IsInRole(StaticDetail.SellerRole))
+            {
+                <!-- Form for adding reply -->
+                <form class="replyForm mt-1">
+                    <input type="hidden" class="commentId" value="@comment.Id" />
+                    <textarea class="replyText p-2" rows="2" cols="50" placeholder="Write a reply"></textarea><br />
+                    <button type="button" class="submitReply btn btn-sm purple-background text-white">Reply</button>
+                </form>
+            }
+        </div>
+
+        
+
+    }
+

@@ -25,11 +25,11 @@
                 <img src="~/@Model.Product.ProductImageUrl" alt="@Model.Product.ProductName" height="375px" width="100%">
             </div>
             <div class="col-sm-12 col-md-5 small_grey_text_css text d-flex flex-column justify-content-center">
-                <h3 class="">@Model.Product.ProductName</h3>
+                <h3 class="text-success">@Model.Product.ProductName</h3>
                 <p class="small_grey_text_css mb-2">Category: @Model.Product.Category.Name</p>
-                <p class="small_grey_text_css mb-2">pID: @Model.Product.ProductId</p>
+                @* <p class="small_grey_text_css mb-2">pID: @Model.Product.ProductId</p> *@
                 <p class="small_grey_text_css mb-2">Price: Rs @Model.Product.Price</p>
-                <p class="small_grey_text_css mb-2">SellerId: @Model.Product.UserId</p>
+                @* <p class="small_grey_text_css mb-2">SellerId: @Model.Product.UserId</p> *@
                 <p class="small_grey_text_css mb-2">@Model.Product.ProductDescription</p>
                 <p class="small_grey_text_css mb-2">Average Rating:<span class="fs-6 ms-2 text-success">@ViewData["AverageRating"]</span></p>
                 <p class="small_grey_text_css mb-2">Total Rating:<span class="fs-6 ms-2 text-success">@ViewData["TotalRating"]</span></p>
@@ -54,7 +54,7 @@
         <hr class="text-secondary" />
 
         @* Reviews Section *@
-        <p class="text text-center fw-bold mt-0 text-success mt-4">Product Reviews</p>
+        <p class="text text-center fw-bold text-success mt-4">Product Reviews</p>
 
         @if (Model.Product.Reviews.Count > 0)
         {
@@ -109,7 +109,7 @@
 
                     <!-- Button trigger modal -->
                     <div class="ms-1">
-                        <button type="button" class="btn btn-sm btn-primary w-25 purple-background text-white" data-bs-toggle="modal" data-bs-target="#AllReview">
+                        <button style="width:100px;font-size:10px" type="button" class="btn btn-sm btn-primary purple-background text-white" data-bs-toggle="modal" data-bs-target="#AllReview">
                             View All Reviews
                         </button>
                     </div>
@@ -123,33 +123,25 @@
         }
 
 
-
         <!-- Comment Section -->
-        <div class="row comment-section">
-            <div class="mt-5">
-
-                @if (User.IsInRole(StaticDetail.CustomerRole))
-                {
-                    <h6 class="text-success">Leave your questions below</h6>
-                }
-                else
-                {
-                    <h3>Comment of users </h3>
-                }
-
-                <div id="commentsSection" class="col-12">
+        @if (User.IsInRole(StaticDetail.CustomerRole))
+        {
+            <h6 class="text-success mt-5">Leave your questions below</h6>
+        }
+        else
+        {
+            <h6 class="text-success mt-5">Comment of Users</h6>
+        }
+        <div class="row d-flex flex-column mt-2 comment-section bg-light">
                     @Html.Partial("_CommentsPartial", Model.Product.ProductComments)
-                </div>
-
-                @if (User.IsInRole(StaticDetail.CustomerRole))
-                {
-                    <form id="commentForm">
-                        <textarea class="p-2" id="commentText" rows="2" cols="50" placeholder="Write a comment..."></textarea><br />
-                        <button id="submitComment" class="btn btn-sm purple-background text-white" type="button">Comment</button>
-                    </form>
-                }
-            </div>
         </div>
+        @if (User.IsInRole(StaticDetail.CustomerRole))
+        {
+            <form id="commentForm">
+                <textarea class="p-2 mt-2" id="commentText" rows="2" cols="50" placeholder="Write a comment..."></textarea><br />
+                <button id="submitComment" class="btn btn-sm purple-background text-white" type="button">Comment</button>
+            </form>
+        }
     </div>
 </form>
 @Html.Partial("_AllReview.cshtml")

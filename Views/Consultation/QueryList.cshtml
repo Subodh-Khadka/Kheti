@@ -16,6 +16,12 @@
         background-color:aliceblue;
         border-radius: 20px;
     }
+
+    p{
+        margin-bottom:8px;
+        font-size:smaller;
+        color:lightslategrey;
+    }
 </style>
 
 <ul class="nav nav-tabs mb-4" id="myTab" role="tablist">
@@ -91,6 +97,11 @@
                         <p class="card-text">Location: @query.Location</p>
 
                         <p class="card-text">Created: @GetQueryElapsedTime((DateTime)query.DateCreated)</p>
+                      
+                        <p style="color:">Query Status: @query.QueryStatus</p>
+
+                        <p style="color:">Is selected: @query.IsSelected</p>
+
                         @if (query.UrgencyLevel == "High")
                         {
                             <p style="color:red">Urgency level: @query.UrgencyLevel</p>
@@ -104,9 +115,6 @@
 
                             <p style="color:darkcyan">Urgency level: @query.UrgencyLevel</p>
                         }
-                        <p style="color:">Query Status: @query.QueryStatus</p>
-
-                        <p style="color:">Is selected: @query.IsSelected</p>
 
                         <div class="d-flex justify-content-between align-items-center">
                             <div class=" d-flex gap-2">

@@ -3,41 +3,29 @@
 @foreach (var comment in Model)
 {
     <div class="comment col-md-6 bg-light p-2">
-            <div class="card">
-                <div class="card-body">
-                    <div class="d-flex gap-3 align-content-center">
-                        @if (comment.User?.ProfilePictureURL != null)
-                        {
-                            <img src="~/@comment.User.ProfilePictureURL" height="60px" width="60px" />
-                            <p class="align-self-center">@comment.User.FirstName @comment.User.LastName</p>
-                            <p class="align-self-center">@comment.CommentDate.ToString("yyyy-MM-dd")</p>
-                        }
-                        else
-                        {
-                            <p class="mt-2">No profile picture available</p>
-                        }
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex gap-3 align-content-center">
+                    @if (comment.User?.ProfilePictureURL != null)
+                    {
+                        <img src="~/@comment.User.ProfilePictureURL" height="60px" width="60px" />
+                        <p class="align-self-center">@comment.User.FirstName @comment.User.LastName</p>
+                        <p class="align-self-center">@comment.CommentDate.ToString("yyyy-MM-dd")</p>
+                    }
+                    else
+                    {
+                        <p class="mt-2">No profile picture available</p>
+                    }
 
-                    </div>
-                    <p style="max-width:420px;">@comment.CommentText</p>
                 </div>
+                <p style="max-width:420px;">@comment.CommentText</p>
             </div>
+        </div>
 
-            <!-- Display Replies -->
-            <div id="replies_@comment.Id" class="repliesSection">
-                @Html.Partial("_RepliesPartial", comment.Replies)
-            </div>
-        
-
-        @*  <div class="d-flex gap-4 bg-light p-2">
-    <p style="max-width:420px;">@comment.CommentText</p>
-    <p>@comment.CommentDate.ToString("yyyy-MM-dd")</p>
-    </div> *@
-
-       @*  <!-- Display Replies -->
-        <div id="replies_@comment.Id" class="repliesSection">
-            <!-- Render replies for this comment -->
+        <!-- Display Replies -->
+        <div id="replies_@comment.Id" class="repliesSection comment-section bg-light">
             @Html.Partial("_RepliesPartial", comment.Replies)
-        </div> *@
+        </div>
 
         @if (User.IsInRole(StaticDetail.SellerRole))
         {

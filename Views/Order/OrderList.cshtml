@@ -13,7 +13,6 @@
                         <tr>
                             <th>Id</th>
                             <th>OrderTotal</th>
-                            @* <th>Name</th> *@
                             <th>Date</th>
                             <th>OrderStatus</th>
                             <th>PaymentStatus</th>
@@ -28,9 +27,20 @@
                                 <td>@order.OrderId</td>
                                 <td>@order.OrderTotal</td>
                                 <td>@order.OrderCreatedDate.ToString("yyyy-MM-dd")</td>
-                                <td>@order.OrderStatus</td>
-                                <td>@order.PaymentStatus</td>
+                                <td class="text-dark">@order.OrderStatus</td>
+                                <td class="text-dark">@order.PaymentStatus
+                                    @if (order.PaymentStatus == "Completed")
+                                    {
+                                    <i class="bi bi-check2-all text-success"></i>
+                                    }
+                                </td>
                                 <td class="btn-group d-flex gap-2">
+
+                                    <form method="post" action="@Url.Action("GenerateInvoice", "Order")">
+                                        <input type="hidden" name="orderId" value="@order.OrderId" />
+                                        <button type="submit" class="btn btn-sm btn-info text-white">Invoice</button>
+                                    </form>
+
                                     <form id="OrderDetails" method="get" action="@Url.Action("OrderDetails", "Order")">
                                         <input type="hidden" name="orderId" value="@order.OrderId" />
                                         <button type="submit" class="btn btn-sm btn-primary w-100">Details</button>
@@ -47,6 +57,7 @@
                                         </form>
                                     }
                                 </td>
+                                 
                             </tr>
                         }
                     </tbody>

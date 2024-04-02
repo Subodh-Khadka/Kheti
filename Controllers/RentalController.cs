@@ -489,6 +489,7 @@ namespace Kheti.Controllers
             {
                 booking.RentStatus = StaticDetail.RentStatusCompleted;
                 booking.BookingStatus = StaticDetail.BookingStatusCompleted;
+                //booking.Product.RentalEquipment.IsAvailable = StaticDetail.stausAvailable;
                 //booking.ActualRequestStartDate = DateTime.Now;
                 _db.SaveChanges();
             }

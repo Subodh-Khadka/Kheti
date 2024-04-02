@@ -110,5 +110,15 @@ namespace Kheti.Controllers
             var order = _db.Orders.ToList();
             return View(order);
         }
+
+        public IActionResult ReportList()
+        {
+            var reports = _db.Reports
+                .OrderByDescending(r => r.CreatedAt)
+                .ToList();
+            return View(reports);
+        }
+
+
     }
 }

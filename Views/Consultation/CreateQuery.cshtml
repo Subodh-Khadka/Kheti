@@ -6,79 +6,84 @@
 <link rel="stylesheet" href="~/css/query.css" asp-append-version="true" />
 
 
-<div class="container m-2">
-
-    <div>
-        <h6 class="text-center text-success">Query Form</h6>
-
-    </div>
-    <form asp-action="CreateQuery" enctype="multipart/form-data">
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        <input asp-for="DateCreated" hidden />
-        <input asp-for="QueryStatus" hidden />
-        <div class="row query-box">
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label asp-for="Title">Title</label>
-                    <input asp-for=Title type="text" class="form-control" placeholder="Enter Title">
-                    <span asp-validation-for="Title" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="Email">Email</label>
-                    <input asp-for="Email" type="text" class="form-control" placeholder="Enter Email">
-                    <span asp-validation-for="Email" class="text-danger"></span>
-                </div>
-
-                <div class="form-group">
-                    <label asp-for="Location">Location</label>
-                    <input asp-for="Location" type="text" class="form-control" placeholder="Enter Location">
-                    <span asp-validation-for="Location" class="text-danger"></span>
-                </div>
-                <div class="form-group mt-2 mb-0">
-                    <label asp-for="ImageUrl" class="control-label"></label>
-                    <input asp-for=ImageUrl type="file" name="imageFile" class="form-control" />
-                    <span asp-validation-for="ImageUrl" class="text-danger"></span>
-                </div>               
-
+<div class="container">
+    <div class="row">
+        <div class="card p-0">
+            <div class="card-header purple-background text-white">
+                <h6 class="text-center mb-0">Query</h6>
             </div>
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label asp-for="ProblemCategory">select Query Category</label>
-                    @* <select asp-for="ProblemCategory" class="form-control" asp-items="ViewBag.CategoryList"> *@
-                    <select asp-for="ProblemCategory" class="form-select">
-                        <option disabled selected>Select</option>
-                        <option>Crop</option>
-                        <option>Fertilizer</option>
-                        <option>Equipment</option>
-                    </select>
-                    <span asp-validation-for="ProblemCategory" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="UrgencyLevel">select Urgency Level</i></label>
-                    <select asp-for=UrgencyLevel class="form-select">
-                        <option disabled selected>Select</option>
-                        <option>Low</option>
-                        <option>Medium</option>
-                        <option>High</option>
-                    </select>
-                    <span asp-validation-for="UrgencyLevel" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label for="">Description</label>
-                    <textarea asp-for=Description class="form-control" rows="5" placeholder="Enter description"></textarea>
-                </div>              
 
-                          
-            </div>
-            <div class="d-flex justify-content-center align-items-center w-100">
-                <input type="submit" value="Submit Query" class="btn purple-background white-text w-25" />
+            <div class="card-body">
+                <div class="row">
+                    <form asp-action="CreateQuery" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input asp-for="DateCreated" hidden />
+                        <input asp-for="QueryStatus" hidden />
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="Title">Title</label>
+                                    <input asp-for=Title type="text" class="form-control" placeholder="Enter Title">
+                                    <span asp-validation-for="Title" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="Email">Email</label>
+                                    <input asp-for="Email" type="text" class="form-control" placeholder="Enter Email">
+                                    <span asp-validation-for="Email" class="text-danger"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label asp-for="Location">Location</label>
+                                    <input asp-for="Location" type="text" class="form-control" placeholder="Enter Location">
+                                    <span asp-validation-for="Location" class="text-danger"></span>
+                                </div>
+                                <div class="form-group mt-2 mb-0">
+                                    <label asp-for="ImageUrl" class="control-label"></label>
+                                    <input asp-for=ImageUrl type="file" name="imageFile" class="form-control" />
+                                    <span asp-validation-for="ImageUrl" class="text-danger"></span>
+                                </div>
+
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="ProblemCategory">select Query Category</label>
+                                    @* <select asp-for="ProblemCategory" class="form-control" asp-items="ViewBag.CategoryList"> *@
+                                    <select asp-for="ProblemCategory" class="form-select">
+                                        <option disabled selected>Select</option>
+                                        <option>Crop</option>
+                                        <option>Fertilizer</option>
+                                        <option>Equipment</option>
+                                    </select>
+                                    <span asp-validation-for="ProblemCategory" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="UrgencyLevel">select Urgency Level</i></label>
+                                    <select asp-for=UrgencyLevel class="form-select">
+                                        <option disabled selected>Select</option>
+                                        <option>Low</option>
+                                        <option>Medium</option>
+                                        <option>High</option>
+                                    </select>
+                                    <span asp-validation-for="UrgencyLevel" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="">Description</label>
+                                    <textarea asp-for=Description class="form-control" rows="5" placeholder="Enter description"></textarea>
+                                </div>
+
+
+                            </div>
+                            <div class="d-flex justify-content-center align-items-center w-100">
+                                <input type="submit" value="Submit Query" class="btn btn-sm btn-primary w-25" />
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-    </form>
-    <p class="mt-1 text-danger">Please fill all the information before submission!</p>
-
+    </div>
 </div>
-
+<p class="mt-1 text-danger">Please fill all the information before submission!</p>
 
 
 @section Scripts {

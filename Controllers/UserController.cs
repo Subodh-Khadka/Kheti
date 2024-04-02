@@ -1,10 +1,13 @@
 ﻿using Kheti.Data;
+using Kheti.KhetiUtils;
 using Kheti.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-
+using System.Security.Claims;
 namespace Kheti.Controllers
 {
+    [Authorize]
     public class UserController : Controller
     {
         private readonly ApplicationDbContext _db;
@@ -16,7 +19,7 @@ namespace Kheti.Controllers
         }
 
 
-        /*[HttpGet]*/
+        
         public IActionResult EditInformation(string id)
         {
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
@@ -130,7 +133,52 @@ namespace Kheti.Controllers
                 TempData["delete"] = "No Image Selected";
                 return RedirectToAction("EditInformation");
             }
+        }
 
+        public IActionResult CreateReport()
+        {
+            return View();
+        }
+
+
+        [HttpPost]
+        public IActionResult SubmitReport(Report report, IFormFile imageFile)
+        {
+            if (!ModelState.IsValid)
+            {
+                var claimsIdentity = (ClaimsIdentity)User.Identity;
+                var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+                if (imageFile != null && imageFile.Length > 0)
+                {
+                    var imagePath = Path.Combine(_webHostEnvironment.WebRootPath, "Images", "ReportImages");
+                    var uniqueFileName = Guid.NewGuid().ToString() + "_" + imageFile.FileName;
+                    var filePath = Path.Combine(imagePath, uniqueFileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        imageFile.CopyTo(stream);
+                    }
+
+                    report.UserId = userId;
+                    report.ContactEmail = report.ContactEmail;
+                    report.SeverityLevel = report.SeverityLevel;
+                    report.IssueType = report.IssueType;
+                    report.CreatedAt = DateTime.Now;
+                    report.ReportImageUrl = Path.Combine("Images", "ReportImages", uniqueFileName);
+                    report.ReportStatus = StaticDetail.ReportStatusPending;
+                    report.AdditionalInformation = report.AdditionalInformation;
+
+                }
+
+                _db.Reports.Add(report);
+                _db.SaveChanges();
+
+                TempData["success"] = "Report submitted!";
+                return RedirectToAction("CreateReport");
+            }
+
+            return View();
         }
 
     }
