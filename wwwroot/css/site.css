@@ -30,7 +30,12 @@ html {
 }
 
 body {
+    font-size: small;
     margin-bottom: 60px;
+}
+
+.nav-link {
+    color: lightgray;
 }
 
 .purple-background {
@@ -110,6 +115,10 @@ form label {
     white-space: nowrap;
     text-overflow: ellipsis;
     max-width: 100px;
+}
+
+.dropdown-menu a {
+    font-size: small;
 }
 
 /*white-space: nowrap;

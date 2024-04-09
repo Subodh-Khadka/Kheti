@@ -1,7 +1,4 @@
-﻿@* @{
-    Layout = "_AdminLayout";
-} *@
-
+﻿
 @{
     ViewData["Title"] = "Home Page";
 }
@@ -9,18 +6,18 @@
 <link rel="stylesheet" href="~/css/index.css" asp-append-version="true" />
 
 <body>
-    <div class="container-fluid home_page_row1 d-flex justify-content-center align-items-center">
+    <div class="container home_page_row1">
         <div class="text-center">
-            <P class="small_grey_text_css mb-2 mt-4"> Empowering Farmers, Cultivating Progress</P>
+            <P class="small_grey_text_css mb-2 mt-0"> Empowering Farmers, Cultivating Progress</P>
             <p class="black_text m-0 ">
                 Welcome to <span class="text-success">Organic</span> Kheti
             </p>
-            <p class="green_text text-success mt-0 mb-0">Community</span></p>
+            <p class="green_text text-success mt-0 mb-0">Community</p>
 
             <div class="row">
                 <div class="col-12 col-md-3"></div>
                 <div class="col-12 col-md-6 extra_small_grey_text_css">
-                    <p class="mt-0">                        
+                    <p class="mt-0">
                         Reimagine farming, rewrite the future – experience the agricultural revolution
                         with Kheti
                         Where
@@ -48,6 +45,27 @@
                 <div class="col-3">
                     <img src="~/Images/HomePage/Untitled.svg" height="" class="img-fluid" />
                 </div>
+            </div>
+        </div>
+    </div>
+
+
+    @* About Us Section *@
+    <div class="d-flex flex-column  align-items-center">
+        <h5 class="mt-3 text-dark text-center">About Us</h5>
+        <hr class="line mt-1 text-center" />
+    </div>
+    <div class="container bg-light">
+        <div class="row me-2 ms-2">
+            <div class="col-md-5 mt-3">
+                <h4>Our Founding Story</h4>
+                <p class="text-secondary extra_small_grey_text_css">
+                    Founded in 2024 by a team of passionate agronomists and technologists,
+                    Kheti was born out of a desire to address the challenges faced by farmers
+                    and enhance their productivity through technology-driven solutions.
+                </p>
+            </div>
+            <div class="col-md-5">
             </div>
         </div>
     </div>

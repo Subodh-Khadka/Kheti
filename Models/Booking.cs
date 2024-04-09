@@ -24,6 +24,7 @@ namespace Kheti.Models
         public string RentStatus { get; set; }
         public string? DamageDescription { get; set; }
         public string? DamagedImageUrl { get; set; }
+        public decimal? PricePerDay { get; set; }
         public DateTime? CreatedDate { get; set; }
         public decimal? InitialAmountPaid { get; set; }
         public decimal? InitialTotalAmount { get; set; }
@@ -32,7 +33,6 @@ namespace Kheti.Models
         public decimal? TotalAmountAfterFine { get; set; }
         public decimal? RemainingAmountToPayAfterFine { get; set; }
         public decimal? RemainingAmountPaid { get; set; }
-
         public decimal? TotalAmountPaid { get; set;}
         public ICollection<BookingComments> BookingComments { get; set; }
 

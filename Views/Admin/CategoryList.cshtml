@@ -2,35 +2,24 @@
 @{
     Layout = "_AdminLayout";
 }
-
 @{
     ViewData["Title"] = "Index";
 }
-
 <style>
     .table{
         font-size:smaller;
     }
-    
-    .button{
-        font-size:small;
-        width:50px;
-    }
-    .btn{
-        width:100px;
-        font-size:small;
-    }
+   
 </style>
 
 <div class="container">
-    <h6 class="text-center">Product Categories</h6>
-    <hr />
+    <h6>Product Categories</h6>
 
-    <p>
-        <a class="btn purple-background btn-sm text-white" asp-action="CreateCategory" asp-controller="Admin">Create New</a>
+    <p class="text-end">
+        <a class="btn btn-primary btn-sm text-white" asp-action="CreateCategory" asp-controller="Admin">Create</a>
     </p>
 
-    <table class="table table-striped">
+    <table class="table table-bordered table-hover">
         <thead>
             <tr>
                 <th>Name</th>
@@ -43,15 +32,9 @@
                 <tr>
                     <td>@Html.DisplayFor(modelItem => item.Name)</td>
                     <td>
-                        <div class="d-flex gap-3">
-                            <form asp-action="EditCategory" asp-controller="Admin" method="get">
-                                <input type="hidden" id="id" name="id" value="@item.Id" />
-                                <button type="submit" class="btn btn-primary text-white mt-1 mb-1 btn-sm"><i class="bi bi-pencil-square"></i></button>
-                            </form>
-                            <form asp-action="DeleteCategory" asp-controller="Admin" method="post">
-                                <input type="hidden" id="id" name="id" value="@item.Id" />
-                                <button type="submit" class="btn btn-danger text-white mt-1 mb-1 btn-sm"><i class="bi bi-trash3"></i></button>
-                            </form>                            
+                        <div class="d-flex gap-1">
+                            <a class="btn btn-sm btn-primary" asp-action="EditCategory" asp-controller="Admin" asp-route-id="@item.Id"><i class="bi bi-pencil"></i></a>
+                            <a class="btn btn-sm btn-danger" asp-action="DeleteCategory" asp-controller="Admin" asp-route-id="@item.Id"><i class="bi bi-trash3"></i></a>
                         </div>
                     </td>
                 </tr>

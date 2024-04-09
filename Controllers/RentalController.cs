@@ -2,6 +2,7 @@
 using Kheti.KhetiUtils;
 using Kheti.Migrations;
 using Kheti.Models;
+using Kheti.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -77,19 +78,21 @@ namespace Kheti.Controllers
         }
 
         [HttpPost]
-        public IActionResult Details(Booking booking)
+        public IActionResult Details(Booking booking, Guid productId)
         {
             try
             {
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 var userRole = User.FindFirstValue(ClaimTypes.Role);
 
+                var product = _db.Products.Include(p => p.RentalEquipment).FirstOrDefault(b => b.ProductId == productId);
+
                 booking.UserId = userId;
                 booking.BookingStatus = StaticDetail.BookingStatusPending;
                 booking.PaymentStatus = StaticDetail.PaymentStatusPending;
                 booking.RentStatus = StaticDetail.RentStatusPending;
                 booking.CreatedDate = DateTime.Now;
-
+                booking.PricePerDay = product.RentalEquipment.RentalPricePerDay;
 
                 _db.Add(booking);
                 _db.SaveChanges();
@@ -102,7 +105,6 @@ namespace Kheti.Controllers
                 TempData["error"] = "Booking Request Not Sent!";
                 return RedirectToAction("Details");
             }
-
         }
 
         public IActionResult RequestList()
@@ -207,10 +209,14 @@ namespace Kheti.Controllers
         [HttpPost]
         public async Task<IActionResult> Pay(Guid bookingId)
         {
-            Guid rental_booking_Id = bookingId;
+            var booking = _db.Bookings.Include(b => b.User).FirstOrDefault(o => o.BookingId == bookingId);
+
+            Guid purchaseOrderId = bookingId;
+
             string returnUrl = "https://localhost:7108/Rental/BookingPaymentConfirmationPage";
             int totalAmountInPaisa = 1000;
-            string paymentUrl = await Kheti.KhetiUtils.KhaltiPayment.InitiateBookingPayment(rental_booking_Id, totalAmountInPaisa, returnUrl);
+            string purchase_order_name = booking.User.FirstName + " " + booking.User.LastName;
+            string paymentUrl = await Kheti.KhetiUtils.KhaltiPayment.InitiateBookingPayment(purchaseOrderId, totalAmountInPaisa, returnUrl, purchase_order_name);
 
             return Redirect(paymentUrl);
         }
@@ -218,37 +224,76 @@ namespace Kheti.Controllers
         public IActionResult BookingPaymentConfirmationPage(string pidx, string status, string transaction_id,
            Guid purchase_order_id, string purchase_order_name, string total_amount)
         {
+            var booking = _db.Bookings.FirstOrDefault(o => o.BookingId == purchase_order_id);
+
+            if (booking.PaymentStatus == StaticDetail.PaymentStatusPartialPaid)
+            {
+                TempData["suceess"] = "Partial Payment Completed!";
+                return RedirectToAction("RequestList");
+            }
+
             if (status == "Completed")
             {
-                var booking = _db.Bookings.FirstOrDefault(o => o.BookingId == purchase_order_id);
+
+                TimeSpan rentalPeriod = booking.RequestEndDate - booking.RequestStartDate;
+                int numOfDays = rentalPeriod.Days;
+
+                var numberOfDays = numOfDays >= 1 ? numOfDays : 1;
+
+                var initialTotalAmount = numberOfDays * booking.PricePerDay;
+
+                var initialAmountPaid = initialTotalAmount * 0.3m;
+
                 booking.PaymentStatus = StaticDetail.PaymentStatusPartialPaid;
                 booking.BookingStatus = StaticDetail.BookingStatusConfirmed;
-                if (decimal.TryParse(total_amount, out decimal initialTotalAmountPaid))
-                {
-                    booking.InitialAmountPaid = initialTotalAmountPaid;
-                }
+                booking.InitialTotalAmount = initialTotalAmount;
+                booking.InitialAmountPaid = initialAmountPaid;
+                //if (decimal.TryParse(total_amount, out decimal initialTotalAmountPaid))
+                //{
+                //    booking.InitialAmountPaid = initialTotalAmountPaid;
+                //}
 
                 _db.Bookings.Update(booking);
                 _db.SaveChanges();
+
+                Payment payment = new Payment
+                {
+                    UserId = booking.UserId,
+                    TransactionId = transaction_id,
+                    PaymentMethod = StaticDetail.khaltiPayment,
+                    Amount = (decimal)booking.InitialAmountPaid,
+                    PaymentDate = DateTime.Now,
+                    OrderId = null,
+                    BookingId = purchase_order_id,
+
+                };
+
+                _db.Payments.Add(payment);
+                _db.SaveChanges();
+
+                ViewData["Pidx"] = pidx;
+                ViewData["Status"] = status;
+                ViewData["TransactionId"] = transaction_id;
+                ViewData["PurchaseOrderId"] = purchase_order_id;
+                ViewData["PurchaseOrderName"] = purchase_order_name;
+                ViewData["TotalAmount"] = initialAmountPaid;
             }
 
-            ViewData["Pidx"] = pidx;
-            ViewData["Status"] = status;
-            ViewData["TransactionId"] = transaction_id;
-            ViewData["PurchaseOrderId"] = purchase_order_id;
-            ViewData["PurchaseOrderName"] = purchase_order_name;
-            ViewData["TotalAmount"] = total_amount;
-
+            TempData["success"] = "Payment Completed";
             return View();
+
         }
 
         public async Task<IActionResult> RemainingPay(Guid bookingId, decimal remainingAmount)
         {
+            var booking = _db.Bookings.Include(b => b.User).FirstOrDefault(o => o.BookingId == bookingId);
+
             decimal remain = remainingAmount;
-            Guid rental_booking_Id = bookingId;
+            Guid purchaseOrderId = bookingId;
             string returnUrl = "https://localhost:7108/Rental/FinalBookingPaymentConfirmationPage";
             int totalAmountInPaisa = 1000;
-            string paymentUrl = await Kheti.KhetiUtils.KhaltiPayment.InitiateRemainingBokkingPayment(rental_booking_Id, totalAmountInPaisa, returnUrl);
+            string purchase_order_name = booking.User.FirstName + " " + booking.User.LastName;
+            string paymentUrl = await Kheti.KhetiUtils.KhaltiPayment.InitiateRemainingBokkingPayment(purchaseOrderId, totalAmountInPaisa, returnUrl, purchase_order_name);
 
             return Redirect(paymentUrl);
         }
@@ -260,32 +305,56 @@ namespace Kheti.Controllers
             if (status == "Completed")
             {
                 var booking = _db.Bookings.FirstOrDefault(o => o.BookingId == purchase_order_id);
-              
+
                 //if (decimal.TryParse(total_amount, out decimal remainningAmountPaid))
                 //{
                 //    booking.RemainingAmountPaid = remainningAmountPaid;
                 //}
-                if(total_amount  != null)
+
+                if (booking.PaymentStatus == StaticDetail.PaymentStatusCompleted)
+                {
+                    return View();
+                }
+
+                if (total_amount != null)
                 {
                     booking.RemainingAmountPaid = booking.RemainingAmountToPayAfterFine;
                     booking.TotalAmountPaid = booking.InitialAmountPaid + booking.RemainingAmountPaid;
-                    booking.RemainingAmountToPayAfterFine = 0;
                 }
                 booking.PaymentStatus = StaticDetail.PaymentStatusCompleted;
                 booking.BookingStatus = StaticDetail.BookingStatusCompleted;
                 _db.Bookings.Update(booking);
+
+                Payment payment = new Payment
+                {
+                    UserId = booking.UserId,
+                    TransactionId = transaction_id,
+                    PaymentMethod = StaticDetail.khaltiPayment,
+                    Amount = (decimal)booking.RemainingAmountToPayAfterFine,
+                    PaymentDate = DateTime.Now,
+                    OrderId = null,
+                    BookingId = purchase_order_id,
+
+                };
+
+                _db.Payments.Add(payment);
                 _db.SaveChanges();
+
+                ViewData["Pidx"] = pidx;
+                ViewData["Status"] = status;
+                ViewData["TransactionId"] = transaction_id;
+                ViewData["PurchaseOrderId"] = purchase_order_id;
+                ViewData["PurchaseOrderName"] = purchase_order_name;
+                ViewData["TotalAmount"] = booking.TotalAmountPaid;
             }
 
-            ViewData["Pidx"] = pidx;
-            ViewData["Status"] = status;
-            ViewData["TransactionId"] = transaction_id;
-            ViewData["PurchaseOrderId"] = purchase_order_id;
-            ViewData["PurchaseOrderName"] = purchase_order_name;
-            ViewData["TotalAmount"] = total_amount;
-
+            TempData["success"] = "Payment Completed";
             return View();
+
+
         }
+
+
 
         public IActionResult MarkAsRentStarted(Guid bookingId)
         {
@@ -336,15 +405,15 @@ namespace Kheti.Controllers
                 existingBooking.ActualRequestEndDate = updateBooking.ActualRequestEndDate;
                 existingBooking.DamageDescription = updateBooking.DamageDescription;
 
-                //calculate the initial Total Amount
-                TimeSpan initialRentalPeriod = existingBooking.RequestEndDate - existingBooking.RequestStartDate;
-                decimal initialTotalAmount = initialRentalPeriod.Days * existingBooking.Product.RentalEquipment.RentalPricePerDay;
-                existingBooking.InitialTotalAmount = initialTotalAmount;
+                ////calculate the initial Total Amount
+                //TimeSpan initialRentalPeriod = existingBooking.RequestEndDate - existingBooking.RequestStartDate;
+                //decimal initialTotalAmount = initialRentalPeriod.Days * existingBooking.Product.RentalEquipment.RentalPricePerDay;
+                //existingBooking.InitialTotalAmount = initialTotalAmount;
 
 
                 //calculate the Final Total Amount
                 TimeSpan actualRentalPeriod = existingBooking.ActualRequestEndDate.Value - existingBooking.ActualRequestStartDate.Value;
-                decimal actualTotalAmount = actualRentalPeriod.Days * existingBooking.Product.RentalEquipment.RentalPricePerDay;
+                var actualTotalAmount = (decimal)actualRentalPeriod.Days * existingBooking.PricePerDay;
                 decimal totalAmount = actualRentalPeriod.Days * existingBooking.Product.RentalEquipment.RentalPricePerDay;
 
                 existingBooking.ActualTotalAmountWithoutFine = actualTotalAmount;
@@ -363,11 +432,10 @@ namespace Kheti.Controllers
                     existingBooking.TotalAmountAfterFine = totalAmount;
 
                 }
-                else
-                {
-                    existingBooking.ActualTotalAmountWithoutFine = initialTotalAmount;
-                }
-
+                //else
+                //{
+                //    existingBooking.ActualTotalAmountWithoutFine = initialTotalAmount;
+                //}
                 //existingBooking.TotalAmountAfterFine = totalAmount;
 
                 if (imageFile != null && imageFile.Length > 0)
@@ -396,7 +464,6 @@ namespace Kheti.Controllers
                 return RedirectToAction("FinalReturnSummaryBeforeRentCompletion", new { bookingId = bookingId });
             }
 
-            // If ModelState is not valid, return to the same view with validation errors
             return View();
         }
         public IActionResult FinalReturnSummaryBeforeRentCompletion(Guid bookingId)
@@ -424,7 +491,7 @@ namespace Kheti.Controllers
             ViewData["remainingAmount"] = remainingAmountToPay;
             booking.RemainingAmountToPayAfterFine = remainingAmountToPay;
             _db.Bookings.Update(booking);
-            _db.SaveChanges(); 
+            _db.SaveChanges();
             return View(booking);
         }
 
@@ -503,14 +570,13 @@ namespace Kheti.Controllers
         {
             var booking = _db.Bookings.FirstOrDefault(o => o.BookingId == bookingId);
 
-            if(bookingId != null) 
+            if (bookingId != null)
             {
                 booking.PaymentStatus = StaticDetail.PaymentStatusCompleted;
                 booking.TotalAmountPaid = booking.InitialAmountPaid + booking.RemainingAmountPaid;
             }
             _db.SaveChanges(true);
-            return RedirectToAction("RequestDetail", new {BookingId = bookingId});
-
+            return RedirectToAction("RequestDetail", new { BookingId = bookingId });
         }
     }
 }

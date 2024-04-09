@@ -4,9 +4,10 @@
 {
     @foreach (var reply in Model)
     {
-        <div class="d-flex gap-3 reply">
+        <div class="card d-flex flex-row gap-2 bg-light text-secondary mt-1 mb-1 p-2 reply">
             <p>@reply.ReplyText </p>
-            <p>Posted by: @reply.User.FirstName on @reply.ReplyDate</p>
+            @* <p>Posted by: @reply.User.FirstName on @reply.ReplyDate</p> *@
+            @* <p>Posted by: Seller</p> *@
         </div>
     }
 }

@@ -19,6 +19,8 @@ namespace Kheti.Models
         public string UserId { get; set; }
         public KhetiApplicationUser User { get; set; }
         public DateTime DateReviewed { get; set; }
+        public bool? IsDeleted { get; set; } = false;
+
 
 
     }

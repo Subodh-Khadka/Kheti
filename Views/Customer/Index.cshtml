@@ -8,44 +8,41 @@
 
 <style>
     .pimage {
-        width: 100%; 
-        height: 150px; 
-        object-fit: fill; 
-    }   
+        width: 100%;
+        height: 150px;
+        object-fit: fill;
+    }
 </style>
 
 <body>
     @* Search Section *@
-    <div class="text-end gap-0">
+    <div class="text-end gap-0 me-md-4">
         <form method="get" asp-action="Index" asp-controller="Customer" class="mb-2">
             <input class="search-input" type="text" name="searchInput" placeholder="Search products...." />
             <button style="background-color:#0D9276" type="submit" class="btn btn-sm search-btn text-white"><i class="bi bi-search"></i></button>
         </form>
     </div>
 
-    <!-- product section -->    
-    <div class="container-fluid"> 
-        <div class="container-fluid mt-3">
-            <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4 mt-3">                
+    <!-- product section -->
+    <div class="container">
+        <div class="row mt-4">
                 @foreach (var product in Model)
                 {
-                    <div class="col pb-4 mb-0">
+                    <div class="col-md-3 pb-4 mb-0">
                         <div class="card border-0 pb-0 mb-0">
                             <div class="">
                                 <img class="pimage" src="@product.ProductImageUrl" alt="@product.ProductId" />
-                             </div>
-                            
+                            </div>
+
                             <div class="card-body text-center pb-0 mb-0">
                                 <p class="mb-0 small_grey_text_css">@product.ProductName</p>
                                 @* <p class="card-text mb-0"> @product.ProductDescription</p> *@
                                 <p class="small_grey_text_css mb-2">Rs: @product.Price</p>
-                                <a class="btn btn-sm btn-success mb-2 w-100" asp-controller="Customer" asp-action="Details" asp-route-id="@product.ProductId">View Details</a>                        
+                                <a class="btn btn-sm btn-success mb-2 w-100" asp-controller="Customer" asp-action="Details" asp-route-id="@product.ProductId">View Details</a>
                             </div>
                         </div>
                     </div>
                 }
-            </div>
         </div>
-
     </div>
 </body>

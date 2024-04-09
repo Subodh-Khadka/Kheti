@@ -1,6 +1,6 @@
 
 body {
-    font-size: small;
+    font-size: smaller;
 }
 
 * {
@@ -9,24 +9,42 @@ body {
     font-family: "Poppins", sans-serif;
 }
 
+.table th {
+    background-color: royalblue;
+    color: white;
+}
+
+
+.table {
+    font-size: x-small;
+    border: 1px solid #dddddd;
+}
+
+td {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100px;
+}
+
 .sidebar {
     border-right:1px solid gray;
     position: fixed;
-    top: 45px;
+    top: 0px;
     left: 0;
     height: 100%;
     width: 200px;
     background-color: white;
     /*background-color: #27296d;*/
     /*padding-top: 10px;*/
-    overflow-y: auto;
+    /*overflow-y: auto;*/
     transition: width 0.3s ease;
     padding:8px;
 }
 
 .main-content {
     margin-left: 200px;
-    padding-top: 80px;
+    padding-top: 20px;
 }
 
 .header {
@@ -45,7 +63,7 @@ body {
     }
 
 .nav-link {
-    margin: 5px 10px;
+    margin: 3px 10px;
     border-radius: 0px;
     color:black;
     /*background-color: #8f71ff;*/
@@ -99,4 +117,22 @@ body {
 
 .admin-actives {
     font-weight:bolder;
+}
+
+
+.search-input {
+    margin: 0;
+    /*background-color:white;*/
+    padding: 0.4rem 1rem;
+    margin-right: 0;
+    border: 1px solid royalblue;
+    border-radius: 5px;
+}
+
+    .search-input:hover {
+    }
+
+.search-btn {
+    padding: 0.4rem 0.7rem;
+    margin: 0;
 }

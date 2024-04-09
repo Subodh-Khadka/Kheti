@@ -63,6 +63,9 @@ namespace Kheti.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<decimal?>("PricePerDay")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier");
 
@@ -213,6 +216,29 @@ namespace Kheti.Migrations
                     b.ToTable("Favorites");
                 });
 
+            modelBuilder.Entity("Kheti.Models.Invoice", b =>
+                {
+                    b.Property<Guid>("InvoiceId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PaymentStatus")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("InvoiceId");
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("Invoices");
+                });
+
             modelBuilder.Entity("Kheti.Models.Order", b =>
                 {
                     b.Property<int>("OrderId")
@@ -300,6 +326,47 @@ namespace Kheti.Migrations
                     b.ToTable("OrderItems");
                 });
 
+            modelBuilder.Entity("Kheti.Models.Payment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid?>("BookingId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("PaymentDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PaymentMethod")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TransactionId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookingId");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Payments");
+                });
+
             modelBuilder.Entity("Kheti.Models.Product", b =>
                 {
                     b.Property<Guid>("ProductId")
@@ -313,7 +380,7 @@ namespace Kheti.Migrations
                         .IsRequired()
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("IsDeleted")
+                    b.Property<bool?>("IsDeleted")
                         .HasColumnType("bit");
 
                     b.Property<decimal?>("Price")
@@ -486,6 +553,9 @@ namespace Kheti.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("IsSelected")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -635,7 +705,6 @@ namespace Kheti.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ContactEmail")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
@@ -654,7 +723,6 @@ namespace Kheti.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ReportStatus")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SeverityLevel")
@@ -685,6 +753,9 @@ namespace Kheti.Migrations
                     b.Property<DateTime>("DateReviewed")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier");
 
@@ -707,6 +778,42 @@ namespace Kheti.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Reviews");
+                });
+
+            modelBuilder.Entity("Kheti.Models.SellerProfile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CitizenShipImage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CompanyName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsVerified")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("PanNo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("SellerProfiles");
                 });
 
             modelBuilder.Entity("Kheti.Models.ShoppingCart", b =>
@@ -963,6 +1070,9 @@ namespace Kheti.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -1053,6 +1163,17 @@ namespace Kheti.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Kheti.Models.Invoice", b =>
+                {
+                    b.HasOne("Kheti.Models.Order", "Order")
+                        .WithMany()
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+                });
+
             modelBuilder.Entity("Kheti.Models.Order", b =>
                 {
                     b.HasOne("Kheti.Models.KhetiApplicationUser", "User")
@@ -1081,6 +1202,29 @@ namespace Kheti.Migrations
                     b.Navigation("Order");
 
                     b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Kheti.Models.Payment", b =>
+                {
+                    b.HasOne("Kheti.Models.Booking", "Booking")
+                        .WithMany()
+                        .HasForeignKey("BookingId");
+
+                    b.HasOne("Kheti.Models.Order", "Order")
+                        .WithMany()
+                        .HasForeignKey("OrderId");
+
+                    b.HasOne("Kheti.Models.KhetiApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Booking");
+
+                    b.Navigation("Order");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Kheti.Models.Product", b =>
@@ -1253,6 +1397,17 @@ namespace Kheti.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Kheti.Models.SellerProfile", b =>
+                {
+                    b.HasOne("Kheti.Models.KhetiApplicationUser", "User")
+                        .WithOne("SellerProfile")
+                        .HasForeignKey("Kheti.Models.SellerProfile", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Kheti.Models.ShoppingCart", b =>
                 {
                     b.HasOne("Kheti.Models.Product", "Product")
@@ -1366,6 +1521,9 @@ namespace Kheti.Migrations
                     b.Navigation("ProductComments");
 
                     b.Navigation("Replies");
+
+                    b.Navigation("SellerProfile")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

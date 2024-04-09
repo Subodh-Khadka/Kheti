@@ -19,8 +19,8 @@ namespace Kheti.Models
         public string? ContactEmail { get; set; }
         public string? ReportStatus { get; set; }
         public DateTime CreatedAt{ get; set; }
-        [ForeignKey("UserId")]
         public String UserId { get; set; }
+        [ForeignKey("UserId")]
         public KhetiApplicationUser User;
 
 

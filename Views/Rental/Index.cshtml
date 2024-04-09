@@ -16,7 +16,7 @@
 
 <body>
     @* Search Section *@
-    <div class="text-end gap-0">
+    <div class="container text-end gap-0">
         <form method="get" asp-action="Index" asp-controller="Rental" class="mb-2">
             <input class="search-input" type="text" name="searchInput" placeholder="Search products...." />
             <button style="background-color:#0D9276" type="submit" class="btn btn-sm search-btn text-white"><i class="bi bi-search"></i></button>
@@ -24,7 +24,7 @@
     </div>
 
     <!-- product section -->    
-    <div class="container-fluid"> 
+    <div class="container"> 
         <div class="container-fluid mt-3">
             <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4 mt-3">                
                 @foreach (var product in Model)

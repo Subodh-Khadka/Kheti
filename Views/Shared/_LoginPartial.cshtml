@@ -72,7 +72,7 @@
                         <a class="nav-link text-secondary" asp-area="" asp-controller="Customer" asp-action="FavoriteListing"><i class="bi bi-heart ms-2 me-2"></i> Favorite </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-secondary" asp-area="" asp-controller="Rental" asp-action="RequestList"><i class="bi bi-star ms-2 me-2"></i>Request</a>
+                        <a class="nav-link text-secondary" asp-area="" asp-controller="Rental" asp-action="RequestList"><i class="bi bi-card-list ms-2 me-2"></i>Request</a>
                     </li>
                 }
 
@@ -84,14 +84,14 @@
                     </li>
 
                 }
-
+           
                 <li class="nav-item">
                     <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
                         <button id="logout" type="submit" class="nav-link btn btn-link text-secondary border-0"><i class="bi bi-box-arrow-left ms-2 me-2"></i> Logout</button>
                     </form>
                 </li>
 
-               
+
             </ul>
         </li>
 
@@ -105,12 +105,12 @@
     else
     {
         <section class="login_signup_btn">
-        <li class="nav-item">
-            <a class="signup_btn nav-item text-decoration-none" id="register" asp-area="Identity" asp-page="/Account/Register">Register</a>
-        </li>
-        <li class="nav-item">
-            <a class="login_btn nav-item text-decoration-none" id="login" asp-area="Identity" asp-page="/Account/Login">Login</a>
-        </li>
+            <li class="nav-item">
+                <a class="signup_btn nav-item text-decoration-none" id="register" asp-area="Identity" asp-page="/Account/Register">Register</a>
+            </li>
+            <li class="nav-item">
+                <a class="login_btn nav-item text-decoration-none" id="login" asp-area="Identity" asp-page="/Account/Login">Login</a>
+            </li>
         </section>
     }
 </ul>

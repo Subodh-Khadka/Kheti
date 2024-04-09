@@ -1,0 +1,86 @@
+﻿@model List<Kheti.Models.Booking>
+@{
+    Layout = "_AdminLayout";
+}
+
+<style>
+
+</style>
+
+<div class="container-fluid">
+
+    <div class="dropdown text-end mb-2">
+        <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+            Filter
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+            <li><a asp-action="BookingList" asp-route-status="all" class="dropdown-item">all</a></li>
+            <li><a asp-action="BookingList" asp-route-status="Pending" class="dropdown-item">pending</a></li>
+            <li><a asp-action="BookingList" asp-route-status="approved" class="dropdown-item">approved</a></li>
+            <li><a asp-action="BookingList" asp-route-status="confrimend" class="dropdown-item">confirmed</a></li>
+            <li><a asp-action="BookingList" asp-route-status="completed" class="dropdown-item">completed</a></li>
+            <li><a asp-action="BookingList" asp-route-status="canceled" class="dropdown-item">canceled</a></li>
+        </ul>
+    </div>
+
+    <h6 class="">Bookings</h6>
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>BookingId</th>
+                <th>Customer</th>
+                <th>Product</th>
+                <th>RStartDate</th>
+                <th>REndDate</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>BookingStatus</th>
+                <th>PaymentStatus</th>
+                <th>RentStatus</th>
+                <th>InitialAmount</th>
+                <th>InitialPaid</th>
+                <th>RemainPay</th>
+                <th>TotalAmount</th>
+                <th>TotalPaid</th>
+                <th>Fine</th>
+                <th>Date</th>
+                <th>Actions</th>
+             
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var bookings in Model)
+            {
+                @if (bookings.BookingId != null)
+                {
+                    <tr>
+                        <td>@bookings.BookingId</td>
+                        <td title="@bookings.User.FirstName">@bookings.User.FirstName</td>
+                        <td title="@bookings.Product.ProductName">@bookings.Product.ProductName</td>
+                        <td title="@bookings.RequestStartDate">@bookings.RequestStartDate</td>
+                        <td title="@bookings.RequestEndDate">@bookings.RequestEndDate</td>
+                        <td title="@bookings.ActualRequestStartDate">@bookings.ActualRequestStartDate   </td>
+                        <td title="@bookings.ActualRequestEndDate">@bookings.ActualRequestEndDate</td>
+                        <td >@bookings.BookingStatus</td>
+                        <td >@bookings.PaymentStatus</td>
+                        <td >@bookings.RentStatus</td>
+                        <td >@bookings.InitialTotalAmount</td>
+                        <td >@bookings.InitialAmountPaid</td>
+                        <td >@bookings.RemainingAmountToPayAfterFine</td>
+                        <td >@bookings.TotalAmountAfterFine</td>
+                        <td >@bookings.TotalAmountPaid</td>
+                        <td >@bookings.FineAmount</td>
+                        <td >@bookings.CreatedDate</td>
+                      
+                        <td>
+                            <a class="btn btn-sm btn-primary" asp-action="EditInformation" asp-controller="User" asp-route-id="@bookings.BookingId"><i class="bi bi-pencil"></i></a>
+                            <a class="btn btn-sm btn-danger text-white" asp-action="EditInformation" asp-controller="User" asp-route-id=""><i class="bi bi-shield-x"></i></a>
+                        </td>
+                    </tr>
+                }
+
+            }
+        </tbody>
+    </table>
+</div>

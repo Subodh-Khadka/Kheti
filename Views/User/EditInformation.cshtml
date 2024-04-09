@@ -3,17 +3,13 @@
 @{
     ViewData["Title"] = "Edit User Information";
 }
-@if (User.IsInRole("Admin"))
-{
-    Layout = "_AdminLayout";
-}
 
 <link rel="stylesheet" href="/css/EditUserInformation.css" />
 
 @* <p class="text-secondary mt-2">welcome to your profile,@Model.FirstName.</p> *@
 
-<form asp-action="Edit" method="post" enctype="multipart/form-data">
-    <div class="container-fluid main-div">
+<form asp-action="Edit" method="post" enctype="multipart/form-data" class="mt-5">
+    <div class="container main-div bg-light">
         <div class="row p-2">
             <div class="col-md-3">
                 <di class="rounded-2 ms-3" v id="imagePreview"></di>
@@ -27,7 +23,7 @@
                     </div>
                 }
                 else
-                 {
+                {
                     <img src="~/@Model.ProfilePictureURL" class="m-3 user-image img-fluid" />
                     <div class="form-group d-flex flex-column flex-wrap gap-2 text-center">
                         <input type="file" id="profilePicture" name="profilePicture" style="font-size:xx-small" class="form-control w-50" onchange="ImagePreview(event)">
@@ -38,7 +34,7 @@
             </div>
 
             <div class="col-md-4">
-                <input type="hidden" asp-for="Id" />                
+                <input type="hidden" asp-for="Id" />
                 <input type="hidden" asp-for="Email" />
                 <input type="hidden" asp-for="PhoneNumber" />
 
@@ -68,7 +64,7 @@
             </div>
 
             <div class="col-md-4">
-                <input type="hidden" asp-for="Id" />                
+                <input type="hidden" asp-for="Id" />
                 <input type="hidden" asp-for="Email" />
                 <input type="hidden" asp-for="PhoneNumber" />
 
@@ -102,12 +98,10 @@
                     <button type="submit" class="btn mt-4 w-100 purple-background text-white">Save</button>
                 </div>
             </div>
-
-
         </div>
 
+        @* <p class="text-success mt-1">You can Update your information above!</p> *@
     </div>
-    <p class="text-success mt-1">You can Update your information above!</p>
 </form>
 
 <script type="text/javascript">

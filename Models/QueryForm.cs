@@ -43,6 +43,7 @@ namespace Kheti.Models
 
         public string IsSolved { get; set; }
         public string? SelectedExpertId { get; set; }
+        public bool? IsDeleted { get; set; } = false;
 
     }
 }

@@ -1,15 +1,19 @@
-﻿using Kheti.Data;
+﻿using Grpc.Core;
+using Kheti.Data;
 using Kheti.KhetiUtils;
 using Kheti.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Security.Claims;
 
 namespace Kheti.Controllers
 {
     [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
+
         private readonly ApplicationDbContext _db;
         public AdminController(ApplicationDbContext db)
         {
@@ -49,11 +53,11 @@ namespace Kheti.Controllers
         }
 
         [HttpGet]
-        public IActionResult EditCategory(int id) 
+        public IActionResult EditCategory(int id)
         {
             var category = _db.Categories.FirstOrDefault(c => c.Id == id);
 
-                return View(category);
+            return View(category);
         }
 
         [HttpPost]
@@ -61,7 +65,7 @@ namespace Kheti.Controllers
         {
             var currentCategory = _db.Categories.FirstOrDefault(x => x.Id == category.Id);
 
-            if (currentCategory != null) 
+            if (currentCategory != null)
             {
                 currentCategory.Name = category.Name;
                 _db.Categories.Update(currentCategory);
@@ -73,13 +77,13 @@ namespace Kheti.Controllers
             return NotFound();
         }
 
-        public IActionResult DeleteCategory(int id) 
+        public IActionResult DeleteCategory(int id)
         {
             var catergory = _db.Categories.FirstOrDefault(c => c.Id == id);
-            
-            if( catergory != null )
+
+            if (catergory != null)
             {
-                _db.Categories.Remove( catergory );
+                _db.Categories.Remove(catergory);
                 _db.SaveChanges();
                 TempData["delete"] = "Category Deleted";
                 return RedirectToAction("CategoryList");
@@ -89,36 +93,263 @@ namespace Kheti.Controllers
 
         }
 
-        public IActionResult UserList()
+        public IActionResult UserList(string searchInput)
         {
-            var users = _db.KhetiApplicationUsers.ToList(); 
+            var users = _db.KhetiApplicationUsers.ToList();
+
+            if (!string.IsNullOrEmpty(searchInput))
+            {
+                var lowerCaseSearchInput = searchInput.ToLower();
+                users = _db.KhetiApplicationUsers.Where(u => u.FirstName.ToLower().Contains(lowerCaseSearchInput)).ToList();
+            }
 
             return View(users);
         }
 
-        public IActionResult QueryList()
+        public IActionResult EditUserInformation(string id)
         {
-            var queries = _db.QueryForms
-                .Include(q => q.User)
-                .ToList();
+            //var userId = _db.KhetiApplicationUsers.FirstOrDefault(u => u.Id == id);
 
-            return View(queries);
+            if (id != null)
+            {
+                var user = _db.KhetiApplicationUsers.FirstOrDefault(u => u.Id == id);
+                return View(user);
+
+            }
+            else
+            {
+                return NotFound();
+            }
         }
 
-        public IActionResult OrderList()
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult EditUserInformation(string id, KhetiApplicationUser updatedUser)
         {
-            var order = _db.Orders.ToList();
-            return View(order);
+            if (id != updatedUser.Id)
+            {
+                return NotFound();
+            }
+            var currentUser = _db.KhetiApplicationUsers.FirstOrDefault(u => u.Id == id);
+
+            if (currentUser != null)
+            {
+                currentUser.FirstName = updatedUser.FirstName;
+                currentUser.LastName = updatedUser.LastName;
+                currentUser.District = updatedUser.District;
+                currentUser.Address = updatedUser.Address;
+                currentUser.Email = updatedUser.Email;
+                currentUser.PhoneNumber = updatedUser.PhoneNumber;
+                currentUser.LocalAddress = updatedUser.LocalAddress;
+                currentUser.province = updatedUser.province;
+                currentUser.AdditionalPhoneNumber = updatedUser.AdditionalPhoneNumber;
+
+                _db.SaveChanges();
+
+                TempData["Success"] = "Information updated!";
+
+                return RedirectToAction("EditUserInformation", new { id = id });
+            }
+            else
+            { }
+            {
+                TempData["ErrorMessage"] = "User not found.";
+            }
+
+            TempData["ErrorMessage"] = "Concurrency error occurred.";
+            return RedirectToAction("Index");
         }
 
-        public IActionResult ReportList()
+        public IActionResult DeleteUser(string id)
         {
-            var reports = _db.Reports
-                .OrderByDescending(r => r.CreatedAt)
-                .ToList();
-            return View(reports);
+            //var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var user = _db.KhetiApplicationUsers.FirstOrDefault(u => u.Id == id);
+            if (user != null)
+            {
+                user.IsDeleted = true;
+            }
+
+            _db.KhetiApplicationUsers.Update(user);
+            _db.SaveChanges();
+
+            TempData["delete"] = "User Deleted";
+            return RedirectToAction("Userlist");
         }
 
+        public IActionResult LockUser(string id)
+        {
+            //var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
+            var user = _db.KhetiApplicationUsers.FirstOrDefault(u => u.Id == id);
+            if (user != null)
+            {
+                user.LockoutEnd = DateTime.Now.AddYears(1000);
+            }
+
+            _db.SaveChanges();
+
+            TempData["delete"] = "User has been locked!";
+            return RedirectToAction("Userlist");
+        }
+
+        public IActionResult UnlockUser(string id)
+        {
+            //var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var user = _db.KhetiApplicationUsers.FirstOrDefault(u => u.Id == id);
+            if (user != null)
+            {
+                user.LockoutEnd = DateTime.Now;
+            }
+
+            _db.SaveChanges();
+
+            TempData["success"] = "User has been unlocked!";
+            return RedirectToAction("Userlist");
+        }
+
+        public IActionResult QueryList(string status)
+        {
+
+            IQueryable<QueryForm> queries = _db.QueryForms.Include(U => U.User);
+
+
+            if (!string.IsNullOrEmpty(status))
+            {
+                switch (status.ToLower())
+                {
+                    case "pending":
+                        queries = queries.Where(o => o.QueryStatus == StaticDetail.QueryStatusPending);
+                        break;
+                    case "inProcess":
+                        queries = queries.Where(o => o.QueryStatus == StaticDetail.QueryStatusInProcess);
+                        break;
+                    case "solved":
+                        queries = queries.Where(o => o.QueryStatus == StaticDetail.QueryStatusSolved);
+                        break;
+                    default:
+                        queries = queries;
+                        break;
+                }
+            }
+
+            return View(queries.ToList());
+        }
+
+        public IActionResult OrderList(string status)
+        {
+            IQueryable<Order> orders = _db.Orders.Include(U => U.User);
+
+
+            if (!string.IsNullOrEmpty(status))
+            {
+                switch (status.ToLower())
+                {
+                    case "pending":
+                        orders = orders.Where(o => o.OrderStatus == StaticDetail.OrderStatusPending);
+                        break;
+                    case "completed":
+                        orders = orders.Where(o => o.OrderStatus == StaticDetail.OrderStatusShipped);
+                        break;
+                    case "canceled":
+                        orders = orders.Where(o => o.OrderStatus == StaticDetail.OrderStatusCanceled);
+                        break;
+                    default:
+                        orders = orders;
+                        break;
+                }
+            }
+
+            return View(orders.ToList());
+        }
+
+        public IActionResult BookingList(string status)
+        {
+            IQueryable<Booking> bookings = _db.Bookings.
+                Include(U => U.User).
+                Include(p => p.Product)
+                .ThenInclude(p => p.RentalEquipment);
+
+
+            if (!string.IsNullOrEmpty(status))
+            {
+                switch (status.ToLower())
+                {
+                    case "pending":
+                        bookings = bookings.Where(o => o.BookingStatus == StaticDetail.BookingStatusPending);
+                        break;
+                    case "approved":
+                        bookings = bookings.Where(o => o.BookingStatus == StaticDetail.BookingStatusApproved);
+                        break;
+                    case "confirmed":
+                        bookings = bookings.Where(o => o.BookingStatus == StaticDetail.BookingStatusConfirmed);
+                        break;
+                    case "completed":
+                        bookings = bookings.Where(o => o.BookingStatus == StaticDetail.BookingStatusCompleted);
+                        break;
+                    case "canceled":
+                        bookings = bookings.Where(o => o.BookingStatus == StaticDetail.BookingStatusPending);
+                        break;
+                    default:
+                        bookings = bookings;
+                        break;
+                }
+            }
+
+            return View(bookings.ToList());
+        }
+
+        public IActionResult ReportList(string status)
+        {
+            IQueryable<Report> reports = _db.Reports;
+
+
+            if (!string.IsNullOrEmpty(status))
+            {
+                switch (status.ToLower())
+                {
+                    case "pending":
+                        reports = reports.Where(o => o.ReportStatus == StaticDetail.ReportStatusPending);
+                        break;
+                    case "completed":
+                        reports = reports.Where(o => o.ReportStatus == StaticDetail.ReportStatusSolved);
+                        break;
+                    default:
+                        reports = reports;
+                        break;
+                }
+            }
+
+            return View(reports.ToList());
+        }
+
+        public IActionResult PaymentList(string searchInput)
+        {
+            var paymentList = _db.Payments.ToList();
+
+            if (!string.IsNullOrEmpty(searchInput))
+            {
+                var lowerCaseSearchInput = searchInput.ToLower();
+                paymentList = _db.Payments.Where(u => u.TransactionId.ToLower().Contains(lowerCaseSearchInput)).ToList();
+            }
+
+            return View(paymentList);   
+        }
+
+        public IActionResult MarkReportAsSolved(Guid id)
+        {
+            var report = _db.Reports.FirstOrDefault(r => r.Id == id);
+
+            if (report != null)
+            {
+                report.ReportStatus = StaticDetail.ReportStatusSolved;
+            }
+            _db.Reports.Update(report);
+            _db.SaveChanges();
+
+            TempData["success"] = "Status changes to solved!";
+            return RedirectToAction("ReportList");
+        }
     }
 }

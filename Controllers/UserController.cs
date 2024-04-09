@@ -17,8 +17,6 @@ namespace Kheti.Controllers
             _db = db;
             _webHostEnvironment = webHostEnvironment;
         }
-
-
         
         public IActionResult EditInformation(string id)
         {

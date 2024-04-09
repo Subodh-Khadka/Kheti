@@ -3,28 +3,36 @@
 }
 
 <style>
-    p{
+    p {
         margin: 5px 0px;
     }
 </style>
 
-<div class="d-flex container justify-content-center">
-    <div class="card text-center w-50">
-        <div class="card-header purple-background text-white">
-            Order Payment
-        </div>
-        <div class="card-body">
-            <i class="bi bi-check2-circle text-success fs-4"></i>
-            <h5 class="card-title text-success">Payment Completed!</h5>
-            <p>Payment Index: @ViewData["Pidx"]</p>
-            <p>Status: @ViewData["Status"]</p>
-            <p>Transaction ID: @ViewData["TransactionId"]</p>
-            <p>Purchase Order ID: @ViewData["PurchaseOrderId"]</p>
-            <p>Purchase Order Name: @ViewData["PurchaseOrderName"]</p>
-            <p>Total Amount: @ViewData["TotalAmount"]</p>
-            <a asp-action="RequestList" asp-controller="Rental" class="btn btn-sm btn-success">Back to RequestList</a>
-        </div>
-        <div class="card-footer text-body-secondary purple-background text-white">
-            Thank you!
+
+    <div class="d-flex container justify-content-center">
+        <div class="card text-center w-50">
+            <div class="card-header purple-background text-white">
+                Order Payment
+            </div>
+            <div class="card-body">
+                <i class="bi bi-check2-circle text-success fs-4"></i>
+                <h5 class="card-title text-success">Payment Completed!</h5>
+                <p>Status: @ViewData["Status"]</p>
+                <p>Total Amount: @ViewData["TotalAmount"]</p>
+                <p>Purchase Order Name: @ViewData["PurchaseOrderName"]</p>
+                <p>Payment Index: @ViewData["Pidx"]</p>
+
+                @{
+                    var completeTransactionId = ViewData["TransactionId"] as string;
+                    var transactionIdToShow = completeTransactionId.Length >= 1 ? $"XXXX-XXXX-XXXX-XXXX-XX{completeTransactionId.Substring(completeTransactionId.Length - 5)}" : completeTransactionId;
+                }
+
+                <p>Transaction ID: @transactionIdToShow </p>
+                <p>Purchase Order ID: @ViewData["PurchaseOrderId"]</p>
+                <a asp-action="RequestList" asp-controller="Rental" class="btn btn-sm btn-success">Back to RequestList</a>
+            </div>
+            <div class="card-footer text-body-secondary purple-background text-white">
+                Thank you!
+            </div>
         </div>
     </div>

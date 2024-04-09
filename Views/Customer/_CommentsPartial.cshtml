@@ -1,7 +1,5 @@
 ﻿@model IEnumerable<ProductComment>
 
-
-
     @foreach (var comment in Model)
     {
         <div class="col-md-4 bg-light p-2">
@@ -32,7 +30,7 @@
             @if (User.IsInRole(StaticDetail.SellerRole))
             {
                 <!-- Form for adding reply -->
-                <form class="replyForm mt-1">
+                <form class="replyForm">
                     <input type="hidden" class="commentId" value="@comment.Id" />
                     <textarea class="replyText p-2" rows="2" cols="50" placeholder="Write a reply"></textarea><br />
                     <button type="button" class="submitReply btn btn-sm purple-background text-white">Reply</button>

@@ -39,16 +39,16 @@
 <link rel="stylesheet" href="~/css/queryDetails.css">
 
 
-<form class="d-flex gap-4 ms-2 markAsSolved" method="post" asp-action="MarkAsSolved" asp-route-queryFormId="@Model.Id">
-    @if (Model.QueryStatus != StaticDetail.QueryStatusSolved && User.IsInRole("Expert"))
-    {
-        <button type="submit" class="btn  btn-sm btn-secondary"><i class="bi bi-check2"></i> Mark As Solved</button>
-    }
-    <p class="card-title ms-2 mt-2 text-secondary">Query Status: @Model.QueryStatus</p>
-</form>
 
 
-<div class="container-fluid">
+<div class="container">
+    <form class="container d-flex gap-4 ms-0 markAsSolved" method="post" asp-action="MarkAsSolved" asp-route-queryFormId="@Model.Id">
+        @if (Model.QueryStatus != StaticDetail.QueryStatusSolved && User.IsInRole("Expert"))
+        {
+            <button type="submit" class="btn  btn-sm btn-secondary"><i class="bi bi-check2"></i> Mark As Solved</button>
+        }
+        <p class="card-title ms-2 mt-2 text-secondary">Query Status: @Model.QueryStatus</p>
+    </form>
     <div class="row mt-2">
         @*  <!-- left side query section --> *@
         <div class="col-md-4 left-side">
@@ -133,7 +133,7 @@
                     else
                     {
                         <p class="text-center text-danger">Query has not been selected!.</p>
-                        
+
                     }
                 }
 

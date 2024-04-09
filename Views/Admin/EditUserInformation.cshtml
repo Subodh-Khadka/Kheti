@@ -1,0 +1,114 @@
+﻿@model Kheti.Models.KhetiApplicationUser
+
+@{
+    ViewData["Title"] = "Edit User Information";
+}
+
+@{
+    Layout = "_AdminLayout";
+}
+
+<link rel="stylesheet" href="/css/EditUserInformation.css" />
+
+<h6>Edit User Information</h6>
+
+<form asp-action="EditUserInformation" asp-controller="Admin" class="mt-2" method="post" enctype="multipart/form-data">
+    <div class="container">
+        <div class="row p-2 bg-light main-div d-flex justify-content-center">
+            <div class="col-md-8">
+                <div class="rounded-2 justify-content-center d-flex align-items-center " id="imagePreview">
+                    @if (Model.ProfilePictureURL != null)
+                    {
+                        <img src="~/@Model.ProfilePictureURL" class="m-3 user-image img-fluid" />
+                    }
+                    else
+                    {
+                        <img src="~/images/defaultimages/defaultuserimage.jpg" class="rounded-circle" height="80px" width="80px" />
+                    }
+                </div>
+
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="Email" />
+                <input type="hidden" asp-for="PhoneNumber" />
+
+                <div class="form-group">
+                    <label asp-for="FirstName" class="control-label"></label>
+                    <input asp-for="FirstName" class="form-control" />
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="LastName" class="control-label"></label>
+                    <input asp-for="LastName" class="form-control" />
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="District" class="control-label"></label>
+                    <input asp-for="District" class="form-control" placeholder="e.g. sunsari" />
+                    <span asp-validation-for="District" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Address" class="control-label"></label>
+                    <input asp-for="Address" class="form-control" />
+                    <span asp-validation-for="Address" class="text-danger"></span>
+                </div>
+
+
+
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="Email" />
+                <input type="hidden" asp-for="PhoneNumber" />
+
+                <div class="form-group">
+                    <label asp-for="LocalAddress" class="control-label"></label>
+                    <input asp-for="LocalAddress" class="form-control" placeholder="e.g. Milan Tole" />
+                    <span asp-validation-for="LocalAddress" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="province" class="control-label"></label>
+                    <select asp-for="province" class="form-select">
+                        <option disabled selected>Select</option>
+                        <option>Koshi</option>
+                        <option>Bagmati</option>
+                        <option>Gandaki</option>
+                        <option>Lumbini</option>
+                        <option>Karnali</option>
+                        <option>Sudurpaschim</option>
+                    </select>
+
+                    <span asp-validation-for="province" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="AdditionalPhoneNumber" class="control-label"></label>
+                    <input asp-for="AdditionalPhoneNumber" class="form-control" placeholder="additional phone (if any)" />
+                    <span asp-validation-for="AdditionalPhoneNumber" class="text-danger"></span>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-sm mt-4 w-50 purple-background text-white">Save</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</form>
+
+
+<script type="text/javascript">
+    function ImagePreview(event) {
+        var image = URL.createObjectURL(event.target.files[0]);
+        var imagePreview = document.getElementById('imagePreview');
+
+        imagePreview.innerHTML = '';
+
+        var newImage = document.createElement('img');
+        newImage.src = image;
+        newImage.width = 180;
+        newImage.height = 100;
+        imagePreview.appendChild(newImage);
+    }
+</script>

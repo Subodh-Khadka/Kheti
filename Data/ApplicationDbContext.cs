@@ -25,6 +25,10 @@ namespace Kheti.Data
         public DbSet<Booking> Bookings { get; set; }
         public DbSet<BookingComments> BookingComments { get; set; }
         public DbSet<Report> Reports { get; set; }
+        public DbSet<Invoice> Invoices { get; set; }
+        public DbSet<SellerProfile> SellerProfiles { get; set; }
+
+        public DbSet<Payment> Payments { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

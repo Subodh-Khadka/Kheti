@@ -1,4 +1,9 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -7,35 +12,16 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
-    <script src="https://khalti.com/api/v2/kpg/js/khalti-checkout.js"></script> 
-
+    <script src="https://khalti.com/api/v2/kpg/js/khalti-checkout.js"></script>
     <script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
-
-
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
-    <style>
-        body {
-            font-size: small;
-        }
-
-        * {
-            padding: 0;
-            margin: 0;
-            font-family: "Poppins", sans-serif;
-        }
-
-        .nav-link{
-            color:lightgray;
-        }
-    </style>
 </head>
+
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3">
-            <div class="container-fluid">                
-                <img src="~/Images/KhetiLogo/newlogo.png" height="50px" width="150px" />
+            <div class="container-fluid">
+                <img src="~/Images/KhetiLogo/logo.png" height="50px" width="150px" />
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -50,30 +36,46 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Rental" asp-action="Index">Machinery</a>
-                        </li>   
-
-                        @if (User.IsInRole(StaticDetail.SellerRole) || User.IsInRole(StaticDetail.AdminRole))
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Product" asp-action="Index">AddProduct</a>
-                            </li>
-                           @*  <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Rental" asp-action="Index">Rental</a>
-                            </li> *@
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Consultation" asp-action="CreateQuery">Submit Query</a>
-                            </li>
-
-                        }
-                        @if (User.IsInRole(StaticDetail.ExpertRole) || User.IsInRole(StaticDetail.SellerRole))
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Consultation" asp-action="QueryList">Query</a>
-                            </li>
-                        }
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="User" asp-action="CreateReport">Report</a>
                         </li>
+
+                          @if (SignInManager.IsSignedIn(User) && (!User.IsInRole("Customer")))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Add
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    @if (User.IsInRole(StaticDetail.SellerRole) || User.IsInRole(StaticDetail.AdminRole))
+                                    {
+                                        <li class="nav-item">
+                                            <a class="nav-link" asp-area="" asp-controller="Product" asp-action="Index">AddProduct</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" asp-area="" asp-controller="Consultation" asp-action="CreateQuery">Submit Query</a>
+                                        </li>
+
+
+                                    }
+                                    @if (User.IsInRole(StaticDetail.ExpertRole) || User.IsInRole(StaticDetail.SellerRole))
+                                    {
+                                        <li class="nav-item">
+                                            <a class="nav-link" asp-area="" asp-controller="Consultation" asp-action="QueryList">Query</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" asp-area="" asp-controller="User" asp-action="CreateReport">Report</a>
+                                        </li>
+                                    }
+                                </ul>
+                            </li>
+                        }
+
+                      
+                        @if (User.IsInRole("Customer"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="User" asp-action="CreateReport">Report</a>
+                            </li>
+                        }
 
                     </ul>
                     <partial name="_loginPartial" />
@@ -81,11 +83,11 @@
             </div>
         </nav>
     </header>
-    <div class="container">
         <main role="main" class="pb-3">
             <partial name="_Notification" />
             @RenderBody()
         </main>
+    <div class="container">
     </div>
 
     @*  <footer class="border-top footer text-muted">
@@ -105,7 +107,7 @@
         toast.show();
     </script>
 
-    
+
 
 </body>
 </html>

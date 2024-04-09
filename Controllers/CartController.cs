@@ -65,6 +65,7 @@ namespace Kheti.Controllers
             existingCartFromDb.Quantity += 1;
             _db.ShoppingCarts.Update(existingCartFromDb);
             _db.SaveChanges();
+            TempData["success"] = "Query submitted successfully";
 
             return RedirectToAction("Index");
         }

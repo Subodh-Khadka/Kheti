@@ -16,7 +16,6 @@ namespace Kheti.Models
         public Guid ProductId { get; set; }
         [ValidateNever]
         public Product Product { get; set; }
-
         public DateTime AddedDate { get; set; }              
 
     }

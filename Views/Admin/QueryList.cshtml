@@ -9,27 +9,26 @@
 }
 
 <style>
-    .table th {
-        background-color: aliceblue;
-    }
 
-    .table {
-        font-size: x-small;
-        border: 1px solid #dddddd;
-    }
-
-    td {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 100px;
-    }
 </style>
 
 <div class="container-fluid">
-    <h6 class="text-center">QueryList</h6>
-    <hr />
-    <table class="table table-hover">
+
+    <div class="dropdown text-end">
+        <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+            Filter
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+            <li><a asp-action="QueryList" asp-route-status="all" class="dropdown-item">all</a></li>
+            <li><a asp-action="QueryList" asp-route-status="Pending" class="dropdown-item">pending</a></li>
+            <li><a asp-action="QueryList" asp-route-status="inProcess" class="dropdown-item">in process</a></li>
+            <li><a asp-action="QueryList" asp-route-status="solved" class="dropdown-item">solved</a></li>
+        </ul>
+    </div>
+
+    <h6>QueryList</h6>
+    
+    <table class="table table-bordered table-hover">
         <thead>
             <tr>
                 <th>Title</th>
@@ -53,7 +52,7 @@
                     <td title="@query.DateCreated">@query.DateCreated</td>
                     <td title="@query.IsSelected">@query.IsSelected</td>
                     <td>
-                        <img src="~/@query.ImageUrl" height="50px" width="50px" />
+                        <img src="~/@query.ImageUrl" class="ms-md-4 rounded-circle" height="30px" width="30px" />
                     </td>
                 </tr>
             }

@@ -27,7 +27,7 @@
             <div class="toBeEllipsed">
                 <p class="product-name" title="@review.Product.ProductName">@review.Product.ProductName</p>
             </div>
-            <p>@review.DateReviewed.ToString("yyyy-mm-dd")</p>
+            <p>@review.DateReviewed.ToShortDateString()</p>
             <div class="stars-container mb-3">
                 @for (int i = 0; i < review.Rating; i++)
                 {

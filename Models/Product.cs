@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+﻿    using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Newtonsoft.Json;
 using System;
 using System.ComponentModel.DataAnnotations;
@@ -42,7 +42,7 @@ namespace Kheti.Models
         // Navigation property for replies
         public ICollection<ProductReply> Replies { get; set; }
 
-        public bool IsDeleted { get; set; } = false;
+        public bool? IsDeleted { get; set; } = false;
 
         public ICollection<Review> Reviews { get; set; } = new List<Review>();
 

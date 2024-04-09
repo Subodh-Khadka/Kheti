@@ -5,7 +5,8 @@
 
 <style>
     .table th {
-        background-color: aliceblue;
+        background-color: royalblue;
+        color: white;
     }
 
     .table {
@@ -21,10 +22,18 @@
     }
 </style>
 
-<div class="container-fluid">
-    <h6 class="text-center">Userlist</h6>
-    <hr />
-    <table class="table table-hover">
+<div class="container">
+
+    <div class="text-end gap-0">
+        <form method="get" asp-action="UserList" asp-controller="Admin" class="mb-2">
+            <input class="search-input" type="text" name="searchInput" placeholder="Search user...." />
+            <button style="background-color:dodgerblue" type="submit" class="btn btn-sm search-btn text-white"><i class="bi bi-search"></i></button>
+        </form>
+    </div>
+
+    <h6>Userlist</h6>
+
+    <table class="table table-bordered table-hover">
         <thead>
             <tr>
                 <th>Name</th>
@@ -32,7 +41,8 @@
                 <th>PhoneNumber</th>
                 <th>Address</th>
                 <th>Date</th>
-                <th>ProfileImage</th>
+                <th>IsDeleted</th>
+                @* <th>ProfileImage</th> *@
                 <th>Actions</th>
             </tr>
         </thead>
@@ -43,17 +53,40 @@
                 @if (users.FirstName != null)
                 {
                     <tr>
-                        <td title="@users.FirstName">@users.FirstName</td>
+                        <td title="@users.FirstName">
+                            @if (users.ProfilePictureURL != null)
+                            {
+                                <img src="~/@users.ProfilePictureURL" class="rounded-circle" height="30px" width="30px" />
+                            }
+                            else
+                            {
+                                <img src="~/images/defaultimages/defaultuserimage.jpg" class="rounded-circle" height="30px" width="30px" />
+                            }
+                            @users.FirstName
+                        </td>
                         <td title="@users.Email">@users.Email</td>
                         <td>@users.PhoneNumber</td>
                         <td>@users.Address</td>
                         <td>@users.RegistrationDate.ToString("yyyy-MM-dd")</td>
+                        <td>@users.IsDeleted</td>
+                        @* <td>
+                <img src="~/@users.ProfilePictureURL" height="30px" width="30px" />
+                </td> *@
                         <td>
-                            <img src="~/@users.ProfilePictureURL" height="30px" width="30px" />
-                        </td>
-                        <td>
-                            <a class="btn btn-sm btn-primary" asp-action="EditInformation" asp-controller="User" asp-route-id="@users.Id"><i class="bi bi-pencil-square"></i></a>
-                            <a class="btn btn-sm btn-info text-white" asp-action="EditInformation" asp-controller="User" asp-route-id="@users.Id"><i class="bi bi-shield-x"></i></a>
+                            <a class="btn ms-md-4 btn-sm btn-primary" asp-action="EditUserInformation" asp-controller="Admin" asp-route-id="@users.Id"><i class="bi bi-pencil"></i></a>
+                            @if (users.LockoutEnd != null && users.LockoutEnd > DateTime.Now)
+                            {
+                                <a class="btn btn-sm btn-success text-white" asp-action="UnlockUser" asp-controller="Admin" asp-route-id="@users.Id"><i class="bi bi-unlock-fill"></i></a>
+                            }
+                            else
+                            {
+                                <a class="btn btn-sm btn-warning text-white" asp-action="LockUser" asp-controller="Admin" asp-route-id="@users.Id"><i class="bi bi-person-fill-lock"></i></a>
+                            }
+                            <a class="btn btn-sm btn-danger text-white" asp-action="DeleteUser" asp-controller="Admin" asp-route-id="@users.Id"><i class="bi bi-trash"></i></a>
+                            @*    @if (User.IsInRole("Admin"))
+                    {
+                    <a class="btn btn-sm btn-success" asp-action="MarkReportAsSolved" asp-controller="Admin" asp-route-id="@users.Id"><i class="bi bi-check2-square"></i></a>
+                    } *@
                         </td>
                     </tr>
                 }

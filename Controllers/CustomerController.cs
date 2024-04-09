@@ -19,7 +19,7 @@ namespace Kheti.Controllers
             _db = db;
         }
 
-        /*[Authorize(Roles = "Seller,Customer")]*/
+        
         public IActionResult Index(string searchInput)  
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -35,7 +35,7 @@ namespace Kheti.Controllers
                     .Where(p => p.UserId == userId && p.IsDeleted == false);
             }
             else 
-            {
+            {   
                 products = _db.Products
                     .Include(p => p.Category)
                     .Include(p => p.User)
@@ -121,6 +121,7 @@ namespace Kheti.Controllers
             var favorites = _db.Favorites
                 .Where(f => f.UserId == userId)
                 .Include(f => f.Product)
+                .ThenInclude(f => f.Category)
                 .ToList();
 
             if (TempData["AddedToCartMessage"] != null)

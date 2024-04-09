@@ -8,9 +8,10 @@
         public const string AdminRole = "Admin";
         public const string ExpertRole = "Expert";
 
-        //OrderStatus
+        //OrderStatus   
         public const string OrderStatusPending = "Pending";        
         public const string OrderStatusShipped = "Shipped";
+        public const string OrderStatusCanceled = "Canceled";
 
         //machinery availability status
         public const bool stausAvailable = true;
@@ -43,5 +44,9 @@
         //Report Status
         public const string ReportStatusPending = "Pending";
         public const string ReportStatusSolved = "Solved";
+
+        //payment Method 
+        public const string khaltiPayment = "Khalti";
+
     }
 }

@@ -24,49 +24,21 @@
     }
 </style>
 
-<ul class="nav nav-tabs mb-4" id="myTab" role="tablist">
-    <li class="nav-item">
-        <a asp-action="QueryList" asp-route-status="All" class="nav-link text-dark status active" id="home-tab" data-toggle="tab" role="tab" aria-controls="home" aria-selected="true">All</a>
-    </li>
-    <li class="nav-item">
-        <a asp-action="QueryList" asp-route-status="Pending" class="nav-link text-dark status active" id="home-tab" data-toggle="tab" role="tab" aria-controls="Pending" aria-selected="true">Pending</a>
-    </li>
-    <li class="nav-item">
-        <a asp-action="QueryList" asp-route-status="In Process" class="nav-link text-dark status active" id="home-tab" data-toggle="tab" role="tab" aria-controls="InProcess" aria-selected="true">InProcess</a>
-    </li>
-    <li class="nav-item">
-        <a asp-action="QueryList" asp-route-status="Solved" class="nav-link text-dark status active" id="home-tab" data-toggle="tab" role="tab" aria-controls="Solved" aria-selected="true">Solved</a>
-    </li>
-</ul>
-
-<div class="d-flex justify-content-end align-items-center gap-4">
-    @* <p class="extra_small_grey_text_css">Sort By:</p> *@
-    @* <form id="queryStatusForm" class="mb-3" method="get" asp-action="QueryList">
-    <select id="queryStatusFilter" class="form-select w-100" name="status">
-    <option>
-    @if (TempData["defaultName"] != null)
-    {
-    <p class="text-end disabled">showing @TempData["defaultName"] queries</p>
-    }
-    else
-    {
-    <p>select</p>
-    }
-
-    </option>
-    <option value="all">All</option>
-    <option value="pending">Pending</option>
-    <option value="In Process">In Process</option>
-    <option value="solved">Solved</option>
-    </select>
-    </form> *@
-</div>
-
-@* <div class="result p-2 mb-1">
-    <p class="align-self-center">Showing result for @TempData["defaultName"]</p>
-</div> *@
-
 <div class="container">
+    <ul class="nav nav-tabs mb-4" id="myTab" role="tablist">
+        <li class="nav-item">
+            <a asp-action="QueryList" asp-route-status="All" class="nav-link text-dark status active" id="home-tab" data-toggle="tab" role="tab" aria-controls="home" aria-selected="true">All</a>
+        </li>
+        <li class="nav-item">
+            <a asp-action="QueryList" asp-route-status="Pending" class="nav-link text-dark status active" id="home-tab" data-toggle="tab" role="tab" aria-controls="Pending" aria-selected="true">Pending</a>
+        </li>
+        <li class="nav-item">
+            <a asp-action="QueryList" asp-route-status="In Process" class="nav-link text-dark status active" id="home-tab" data-toggle="tab" role="tab" aria-controls="InProcess" aria-selected="true">InProcess</a>
+        </li>
+        <li class="nav-item">
+            <a asp-action="QueryList" asp-route-status="Solved" class="nav-link text-dark status active" id="home-tab" data-toggle="tab" role="tab" aria-controls="Solved" aria-selected="true">Solved</a>
+        </li>
+    </ul>
 
     <div class="row d-flex justify-content-center">
         @foreach (var query in Model)

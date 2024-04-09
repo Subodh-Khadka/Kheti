@@ -1,105 +1,143 @@
-﻿@page
-@model RegisterModel
-@* @{
-    ViewData["Title"] = "Register";
-} *@
+﻿    @page
+    @model RegisterModel
 
-<link rel="stylesheet" href="~/css/login.css" asp-append-version="true" />
+    @if (User.IsInRole("Admin"))
+    {
+        Layout = "_AdminLayout";
+    }
+    <link rel="stylesheet" href="~/css/login.css" asp-append-version="true" />
 
-<h1>@ViewData["Title"]</h1>
+    <h1>@ViewData["Title"]</h1>
+        
+    <div class="row">
+        <div class="container-fluid login_container d-flex  gap-0 h-100">
+            <div class="row justify-content-center login">
+                <div class="col-lg-6 col-md-12 col-sm-12 p-0 left_section">
+                    <img src="~/Images/HomePage/7795297.jpg" class="img-fluid images" alt="Placeholder Image">
+                </div>
+                <div class="col-lg-4 col-md-12 col-sm-12 right_section" style="background-color: #fcfbfb;">
+                    <p class="text-black fw-bolder px-0 pt-0 mt-1 mb-0 text-center" style="font-size: x-large;">
+                        CREATE AN
+                        ACCOUNT
+                    </p>
+                    <div class="d-flex flex-column justify-content-center align-items-center">
+                        <form id="registerForm" class="container px-4 mt-2" asp-route-returnUrl="@Model.ReturnUrl" method="post" enctype="multipart/form-data" >
+                            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+                            <div class="form-group pb-3 col-lg-12 col-md-12 col-sm-6">
+                                <input asp-for="Input.FirstName" class="form-control" aria-required="true" id=""
+                                       aria-describedby="emailHelp" placeholder="Enter FirstName">
+                                <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+                            </div>
+                            <div class="form-group pb-3 col-lg-12 col-md-12 col-sm-6">
+                                <input asp-for="Input.LastName" class="form-control" aria-required="true" id=""
+                                       aria-describedby="emailHelp" placeholder="Enter LastName">
+                                <span asp-validation-for="Input.LastName" class="text-danger"></span>
+                            </div>
+                            <div class="form-group pb-3 col-lg-12 col-md-12 col-sm-6">
+                                <input asp-for="Input.Email" class="form-control" aria-required="true" id="exampleInputEmail1"
+                                       aria-describedby="emailHelp" placeholder="Enter email">
+                                <span asp-validation-for="Input.Email" class="text-danger"></span>
+                            </div>
+                            <div class="form-group pb-3 col-lg-12 col-md-12 col-sm-6">
+                                <input asp-for="Input.Password" class="form-control" aria-required="true" id=""
+                                       aria-describedby="emailHelp" placeholder="Password">
+                                <span asp-validation-for="Input.Password" class="text-danger"></span>
+                            </div>
+                            <div class="form-group pb-3 col-lg-12 col-md-12 col-sm-6">
+                                <input asp-for="Input.ConfirmPassword" class="form-control" aria-required="true" id=""
+                                       aria-describedby="emailHelp" placeholder="Confirm Password">
+                                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                            </div>
+                            <div class="form-group pb-3 col-lg-12 col-md-12 col-sm-6">
+                                <input asp-for="Input.Address" class="form-control" aria-required="true" id=""
+                                       aria-describedby="emailHelp" placeholder="Address">
+                                <span asp-validation-for="Input.Address" class="text-danger"></span>
+                            </div>
+                            <div class="form-group pb-3 col-lg-12 col-md-12 col-sm-6">
+                                <input asp-for="Input.PhoneNumber" class="form-control" aria-required="true" id=""
+                                       aria-describedby="emailHelp" placeholder="Phone">
+                                <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+                            </div>
+                            <div class="form-group pb-3 col-lg-12 col-md-12 col-sm-6">
+                                @* <select asp-for="Input.Role" asp-items="@Model.Input.KhetiRoleList" class="form-select"> *@
+                                <select asp-for="Input.Role" class="form-select">
+                                    <option disabled selected>Choose a role</option>
+                                    <option>Customer</option>
+                                    <option>Seller</option>
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <option>Expert</option>
+                                        <option>Admin</option>
+                                    }
+                                </select>
+                            </div>
 
-<div class="row">
-    <div class="container-fluid login_container d-flex  gap-0 h-100">
-        <div class="row justify-content-center login">
-            <div class="col-lg-6 col-md-12 col-sm-12 p-0 left_section">
-                <img src="~/Images/HomePage/7795297.jpg" class="img-fluid images" alt="Placeholder Image">
-            </div>
-            <div class="col-lg-4 col-md-12 col-sm-12 right_section" style="background-color: #fcfbfb;">
-                <p class="text-black fw-bolder px-0 pt-0 mt-1 mb-0 text-center" style="font-size: x-large;">
-                    CREATE AN
-                    ACCOUNT
-                </p>
-                <div class="d-flex flex-column justify-content-center align-items-center">
-                    <form id="registerForm" class="container px-4 mt-2" asp-route-returnUrl="@Model.ReturnUrl" method="post">
-                        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-                        <div class="form-group pb-3 col-lg-12 col-md-12 col-sm-6">
-                            <input asp-for="Input.FirstName" class="form-control" aria-required="true" id=""
-                                   aria-describedby="emailHelp" placeholder="Enter FirstName">
-                            <span asp-validation-for="Input.FirstName" class="text-danger"></span>
-                        </div>
-                        <div class="form-group pb-3 col-lg-12 col-md-12 col-sm-6">
-                            <input asp-for="Input.LastName" class="form-control" aria-required="true" id=""
-                                   aria-describedby="emailHelp" placeholder="Enter LastName">
-                            <span asp-validation-for="Input.LastName" class="text-danger"></span>
-                        </div>
-                        <div class="form-group pb-3 col-lg-12 col-md-12 col-sm-6">
-                            <input asp-for="Input.Email" class="form-control" aria-required="true" id="exampleInputEmail1"
-                                   aria-describedby="emailHelp" placeholder="Enter email">
-                            <span asp-validation-for="Input.Email" class="text-danger"></span>
-                        </div>
-                        <div class="form-group pb-3 col-lg-12 col-md-12 col-sm-6">
-                            <input asp-for="Input.Password" class="form-control" aria-required="true" id=""
-                                   aria-describedby="emailHelp" placeholder="Password">
-                            <span asp-validation-for="Input.Password" class="text-danger"></span>
-                        </div>
-                        <div class="form-group pb-3 col-lg-12 col-md-12 col-sm-6">
-                            <input asp-for="Input.ConfirmPassword" class="form-control" aria-required="true" id=""
-                                   aria-describedby="emailHelp" placeholder="Confirm Password">
-                            <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
-                        </div>
-                        <div class="form-group pb-3 col-lg-12 col-md-12 col-sm-6">
-                            <input asp-for="Input.Address" class="form-control" aria-required="true" id=""
-                                   aria-describedby="emailHelp" placeholder="Address">
-                            <span asp-validation-for="Input.Address" class="text-danger"></span>
-                        </div>
-                        <div class="form-group pb-3 col-lg-12 col-md-12 col-sm-6">
-                            <input asp-for="Input.PhoneNumber" class="form-control" aria-required="true" id=""
-                                   aria-describedby="emailHelp" placeholder="Phone">
-                            <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
-                        </div>
-                        <div class="form-group pb-3 col-lg-12 col-md-12 col-sm-6">
-                            <select asp-for="Input.Role" asp-items="@Model.Input.KhetiRoleList" class="form-select">
-                                <option disabled selected>Choose a role</option>
-                            </select>
-                        </div>
+                            @* Additional Fields for expert information *@
+                            <div class="form-group pb-3 col-lg-12 col-md-12 col-sm-6" style="display:none" id="expertField">
+                                <select asp-for="Input.FieldOfExpertise" class="form-select">
+                                    <option disabled selected>Choose Field Of Expertise</option>
+                                    <option>Crop</option>
+                                    <option>Fertilizer</option>
+                                    <option>Equipment</option>
+                                </select>
+                                <span asp-validation-for="Input.FieldOfExpertise"></span>
+                            </div>
+                            <div class="form-group pb-3 col-lg-12 col-md-12 col-sm-6" style="display:none" id="ExperienceField">
+                                <input asp-for="Input.YearsOfExperience" class="form-control" aria-required="true" id=""
+                                       aria-describedby="emailHelp" placeholder="Enter Experience in years">
+                                <span asp-validation-for="Input.YearsOfExperience" class="text-danger"></span>
+                            </div>
 
-                        @* Additional Fields for expert information *@
-                        <div class="form-group pb-3 col-lg-12 col-md-12 col-sm-6" style="display:none" id="expertField">
-                            <select asp-for="Input.FieldOfExpertise" class="form-select">
-                                <option disabled selected>Choose Field Of Expertise</option>
-                                <option>Crop</option>
-                                <option>Fertilizer</option>
-                                <option>Equipment</option>
-                            </select>
-                            <span asp-validation-for="Input.FieldOfExpertise"></span>
-                        </div>
-
-                        <div class="form-group pb-3 col-lg-12 col-md-12 col-sm-6" style="display:none" id="ExperienceField">
-                            <input asp-for="Input.YearsOfExperience" class="form-control" aria-required="true" id=""
-                                   aria-describedby="emailHelp" placeholder="Enter Experience in years">
-                            <span asp-validation-for="Input.YearsOfExperience" class="text-danger"></span>
-                        </div>
-                        <button cid="registerSubmit" type="submit" class="w-100 btn login_btn">Create Account</button>
-                    </form>
+                            @* Additional Fields for seller information *@
+                            <div class="form-group pb-3 col-lg-12 col-md-12 col-sm-6" style="display:none" id="comapnayField">
+                                <input asp-for="Input.CompanyName" class="form-control" aria-required="true" id=""
+                                       aria-describedby="emailHelp" placeholder="Enter company name">
+                                <span asp-validation-for="Input.CompanyName" class="text-danger"></span>
+                            </div>
+                            <div class="form-group pb-3 col-lg-12 col-md-12 col-sm-6" style="display:none" id="PanFields">
+                                <input asp-for="Input.PanNo" class="form-control" aria-required="true" id=""
+                                       aria-describedby="emailHelp" placeholder="Enter pan no">
+                                <span asp-validation-for="Input.PanNo" class="text-danger"></span>
+                            </div>
+                            <div class="form-group" style="display:none" id="citizenField">
+                                <label>Citizenship Image</label>
+                            <input asp-for="Input.CitizenShipImage" type="file" name="imageFile" class="form-control" required />
+                                <span asp-validation-for="Input.CitizenShipImage" class="text-danger"></span>
+                            </div>
+                            <button cid="registerSubmit" type="submit" class="w-100 btn btn-success mt-1">Create Account</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />    
-}
+    @section Scripts {
+        <partial name="_ValidationScriptsPartial" />
+    }
 
-<script>
-    $('#Input_Role').change(function () {
-        if ($(this).val() === "Expert") {
-            $('#expertField').show();
-            $('#ExperienceField').show();
-        }
-        else {
-            $('#expertField').hide();
-            $('#ExperienceField').hide();
-        }
-    });
-</script>
+    <script>
+        $('#Input_Role').change(function () {
+            if ($(this).val() === "Expert") {
+                $('#expertField').show();
+                $('#ExperienceField').show();
+            }
+            else {
+                $('#expertField').hide();
+                $('#ExperienceField').hide();
+            }
+        });
+
+        $('#Input_Role').change(function () {
+            if ($(this).val() === "Seller") {   
+                $('#comapnayField').show();
+                $('#PanFields').show();
+                $('#citizenField').show();
+            }
+            else {
+                $('#comapnayField').hide();
+                $('#PanFields').hide();
+                $('#citizenField').hide();
+            }
+        });
+    </script>

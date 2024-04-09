@@ -39,11 +39,11 @@
                             <h6>Return Details</h6>
                             <div class="form-group">
                                 <label asp-for="@Model.ActualRequestStartDate">Rental Start Date:</label>
-                                <input class="form-control" asp-for="@Model.ActualRequestStartDate" />
+                                <input class="form-control" asp-for="@Model.ActualRequestStartDate" required />
                             </div>
                             <div class="form-group">
                                 <label asp-for="@Model.ActualRequestEndDate">Rental End Date:</label>
-                                <input class="form-control" asp-for="@Model.ActualRequestEndDate" />
+                                <input class="form-control" asp-for="@Model.ActualRequestEndDate" required/>
                             </div>
                             <div class="form-group">
                                 <label asp-for="DamageDescription">Damage Description:</label><br />

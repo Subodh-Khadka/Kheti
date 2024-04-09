@@ -15,6 +15,7 @@ using Kheti.KhetiUtils;
 using Kheti.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -29,7 +30,7 @@ namespace Kheti.Areas.Identity.Pages.Account
     public class RegisterModel : PageModel
     {
         private readonly ApplicationDbContext _db;
-        
+
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly UserManager<IdentityUser> _userManager;
@@ -38,6 +39,8 @@ namespace Kheti.Areas.Identity.Pages.Account
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
 
+        private readonly IWebHostEnvironment _webHostEnvironment;
+
         public RegisterModel(
             UserManager<IdentityUser> userManager,
             RoleManager<IdentityRole> roleManager,
@@ -45,16 +48,18 @@ namespace Kheti.Areas.Identity.Pages.Account
             IUserStore<IdentityUser> userStore,
             SignInManager<IdentityUser> signInManager,
             ILogger<RegisterModel> logger,
+            IWebHostEnvironment webHostEnvironment,
             IEmailSender emailSender)
         {
             _userManager = userManager;
-            _roleManager = roleManager;   
+            _roleManager = roleManager;
             _db = db;
             _userStore = userStore;
             _emailStore = GetEmailStore();
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         /// <summary>
@@ -127,6 +132,12 @@ namespace Kheti.Areas.Identity.Pages.Account
             public string FieldOfExpertise { get; set; }
             public string YearsOfExperience { get; set; }
 
+            //input properties for seller
+            public string? CompanyName { get; set; }
+            public string? PanNo { get; set; }
+            [Required]
+            public string CitizenShipImage { get; set; }
+
         }
 
 
@@ -154,11 +165,12 @@ namespace Kheti.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
 
-        public async Task<IActionResult> OnPostAsync(string returnUrl = null)
+        public async Task<IActionResult> OnPostAsync(IFormFile? imageFile, string returnUrl = null)
         {
             returnUrl ??= Url.Content("~/");
+
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 var user = CreateUser();
 
@@ -198,11 +210,46 @@ namespace Kheti.Areas.Identity.Pages.Account
                             FieldOfExpertise = fieldOfExpertise,
                             YearsOfExperience = yearsOfExperienceInNum,
                             UserId = user.Id,
-                        };                       
-                        
+                        };
+
                         _db.ExpertProfiles.Add(expertProfile);
                         await _db.SaveChangesAsync();
                     }
+                    else if (Input.Role == "Seller")
+                    {
+                        var companyName = Input.CompanyName;
+                        var panNumber = Input.PanNo;
+
+
+                        var sellerProfile = new SellerProfile
+                        {
+                            CompanyName = companyName,
+                            PanNo = panNumber,
+                            UserId = user.Id,
+                        };
+
+                        if (imageFile!= null)
+                        {
+                            //Save the image to wwwroot/Images/ProductImages
+                            var imagePath = Path.Combine(_webHostEnvironment.WebRootPath, "Images", "SellerCitizenshipImage");
+                            var uniqueFileName = Guid.NewGuid().ToString() + "_" + imageFile.FileName;
+                            var filePath = Path.Combine(imagePath, uniqueFileName);
+
+                            using (var stream = new FileStream(filePath, FileMode.Create))
+                            {
+                                imageFile.CopyTo(stream);
+                            }
+
+                            sellerProfile.CitizenShipImage = Path.Combine("Images", "SellerCitizenshipImage", uniqueFileName);
+                        }
+
+                        _db.SellerProfiles.Add(sellerProfile);
+                        await _db.SaveChangesAsync();
+                    }
+
+                    //for seller    
+
+
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));

@@ -1,0 +1,25 @@
+﻿@{
+    ViewData["Title"] = "Payment Confirmation";
+}
+
+<style>
+    p{
+        margin: 5px 0px;
+    }
+</style>
+
+<div class="d-flex container justify-content-center">
+    <div class="card text-center w-50">
+        <div class="card-header bg-danger text-white">
+            Order Payment
+        </div>
+        <div class="card-body">
+            <i class="bi bi-check2-circle text-success fs-4"></i>
+            <h5 class="card-title text-success">Payment Completed!</h5>
+            <p>Status: @ViewData["Status"]</p>
+            <a asp-action="RequestList" asp-controller="Rental" class="btn btn-sm btn-success">Back to RequestList</a>
+        </div>
+        <div class="card-footer text-body-secondary bg-danger text-white">
+            Thank you!
+        </div>
+    </div>

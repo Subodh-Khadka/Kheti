@@ -1,0 +1,86 @@
+﻿@model List<Kheti.Models.Payment>
+@{
+    Layout = "_AdminLayout";
+}
+
+<style>
+    .table th {
+        background-color: royalblue;
+        color: white;
+    }
+
+    .table {
+        font-size: x-small;
+        border: 1px solid #dddddd;
+    }
+
+    td {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100px;
+    }
+</style>
+
+<div class="container">
+
+    <div class="text-end gap-0">
+        <form method="get" asp-action="PaymentList" asp-controller="Admin" class="mb-2">
+            <input class="search-input" type="text" name="searchInput" placeholder="Search transaction...." />
+            <button style="background-color:dodgerblue" type="submit" class="btn btn-sm search-btn text-white"><i class="bi bi-search"></i></button>
+        </form>
+    </div>
+
+    <h6>Payment List</h6>
+
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>TransactionId</th>
+                <th>Payment</th>
+                <th>Amount</th>
+                <th>Date</th>
+                <th>OrderId</th>
+                <th>BookingId</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var payment in Model)
+            {
+                @if (payment.Id != null)
+                {
+                    @* <tr>
+            <td title="@payment.User.FirstName">
+            @if (payment.User.ProfilePictureURL != null)
+            {
+            <img src="~/@payment.User.ProfilePictureURL" class="rounded-circle" height="30px" width="30px" />
+            }
+            else
+            {
+            <img src="~/images/defaultimages/defaultuserimage.jpg" class="rounded-circle" height="30px" width="30px" />
+            }
+            @payment.User.FirstName
+            </td> *@
+                    <tr>
+
+                        @{
+                            var completeTransactionId = payment.TransactionId as string;
+                            var transactionIdToShow = completeTransactionId.Length >= 1 ? $"XXXX-XXXX-XXXX-XXXX-XX{completeTransactionId.Substring(completeTransactionId.Length - 5)}" : completeTransactionId;
+                        }
+
+
+                        <td>@transactionIdToShow </td>
+                        <td>@payment.PaymentMethod </td>
+                        <td>@payment.Amount</td>
+                        <td>@payment.PaymentDate </td>
+                        <td>@payment.OrderId </td>
+                        <td>@payment.BookingId </td>
+                    </tr>
+                }
+
+            }
+        </tbody>
+    </table>
+</div>

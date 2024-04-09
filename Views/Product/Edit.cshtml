@@ -7,10 +7,14 @@
 <link rel="stylesheet" href="~/css/create.css" asp-append-version="true" />
 
 <div class="row d-flex justify-content-center">
-    <div class="col-md-10 create-form">
-        <h6 class="text-success">Edit product</h6>
+    <div class="col-md-10 bg-light create-form">
+        <div class="d-flex gap-md-3 align-items-center">
+            <h6 class="text-success">Edit product</h6>
+            <img src="~/@Model.ProductImageUrl" class="rounded-circle" height="50px" width="50px" />
+        </div>
+        <hr />
         <form asp-action="Edit" enctype="multipart/form-data">
-            <div class="row">
+            <div class="row ">
                 <div class="col-md-6">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <input type="hidden" asp-for="ProductId" />
@@ -42,6 +46,7 @@
                         <label asp-for="ProductImageUrl"></label>
                         <input type="file" name="imageFile" class="form-control" />
                     </div>
+
                 </div>
 
                 <div class="col-md-6">

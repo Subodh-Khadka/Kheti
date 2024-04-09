@@ -14,37 +14,43 @@
     <style>
     </style>
 </head>
-@* <button id="sidebarToggle" class="navbar-brand toggles bg-dark ms-2 mt-1 text-center">
-    <i class="bi bi-list icon"> </i>
-</button> *@
 <body>
-    <div class="header">
+  @*   <div class="header">
         <button id="sidebarToggle" class="border-0 mt-2 mb-1">
             <i class="bi bi-list icon"> </i>
         </button>
-    </div>
+    </div> *@
     <div class="sidebar" id="sidebar">
         <ul class="nav flex-column h-100 mt-5">
             <li class="nav-item">
                 <a class="nav-link" asp-action="Index" asp-controller="Admin"><i class="bi bi-graph-down-arrow fs-6 "></i> Dashboard</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="CategoryList"><i class="bi bi-diagram-3-fill fs-6"></i> Category</a>
+                <a class="nav-link navs" asp-area="" asp-controller="Admin" asp-action="CategoryList"><i class="bi bi-diagram-3 fs-6"></i> Category</a>
+            </li>                  
+            <li class="nav-item">  
+                <a class="nav-link navs" asp-area="" asp-controller="Admin" asp-action="UserList"><i class="bi bi-people fs-6"></i> Users</a>
+            </li>                  
+            <li class="nav-item">  
+                <a class="nav-link navs" asp-area="" asp-controller="Admin" asp-action="QueryList"><i class="bi bi-person-raised-hand fs-6"></i> Queries</a>
+            </li>                  
+            <li class="nav-item">  
+                <a class="nav-link navs" asp-area="" asp-controller="Admin" asp-action="OrderList"><i class="bi bi-postcard fs-6"></i> Orders</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="UserList"><i class="bi bi-people fs-6"></i> Users</a>
+                <a class="nav-link navs" asp-area="" asp-controller="Admin" asp-action="BookingList"><i class="bi bi-postcard fs-6"></i> Bookings</a>
+            </li>
+              <li class="nav-item">
+                <a class="nav-link navs" asp-area="" asp-controller="Admin" asp-action="PaymentList"><i class="bi bi-postcard fs-6"></i> Payments</a>
+            </li>
+            <li class="nav-item">  
+                <a class="nav-link navs" asp-area="" asp-controller="Admin" asp-action="ReportList"><i class="bi bi-flag"></i> Reports</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="QueryList"><i class="bi bi-person-raised-hand fs-6"></i> Queries</a>
+                <a class="nav-link navs" id="register" asp-area="Identity" asp-page="/Account/Register"><i class="bi bi-person-add fs-6"></i> Register</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="OrderList"><i class="bi bi-postcard"></i> Orders</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="ReportList"><i class="bi bi-postcard"></i> Reports</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index"><i class="bi bi-house-door-fill fs-6"></i> Home</a>
+            <li class="nav-item">  
+                <a class="nav-link navs" asp-area="" asp-controller="Home" asp-action="Index"><i class="bi bi-house-door fs-6"></i> Home</a>
             </li>
             <li class="nav-item logout-li">
                 <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">

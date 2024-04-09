@@ -8,7 +8,7 @@ namespace Kheti.KhetiUtils
 {
     public class KhaltiPayment
     {
-        public static async Task<string> InitiateOrderPayment(int purchaseOrderId, int totalAmountInPaisa, string returnUrl)
+        public static async Task<string> InitiateOrderPayment(int purchaseOrderId, int totalAmountInPaisa, string returnUrl, string purchase_order_name)
         {
             try
             {
@@ -20,7 +20,7 @@ namespace Kheti.KhetiUtils
                     website_url = "https://localhost:7108/",
                     amount = 1000.ToString(),
                     purchase_order_id = purchaseOrderId,
-                    purchase_order_name = "Product Name",
+                    purchase_order_name = purchase_order_name,
                 };
 
                 var jsonPayload = JsonConvert.SerializeObject(payload);
@@ -53,7 +53,7 @@ namespace Kheti.KhetiUtils
             }
         }
 
-        public static async Task<string> InitiateBookingPayment(Guid rental_booking_Id, int totalAmountInPaisa, string returnUrl)
+        public static async Task<string> InitiateBookingPayment(Guid purchaseOrderId, int totalAmountInPaisa, string returnUrl,string purchase_order_name)
         {
             try
             {
@@ -64,8 +64,8 @@ namespace Kheti.KhetiUtils
                     return_url = returnUrl,
                     website_url = "https://localhost:7108/",
                     amount = 1000.ToString(),
-                    purchase_order_id = rental_booking_Id,
-                    purchase_order_name = "Product Name",
+                    purchase_order_id = purchaseOrderId,
+                    purchase_order_name = purchase_order_name,
                 };
 
                 var jsonPayload = JsonConvert.SerializeObject(payload);
@@ -97,7 +97,7 @@ namespace Kheti.KhetiUtils
             }
         }
 
-        public static async Task<string> InitiateRemainingBokkingPayment(Guid rental_booking_Id, int totalAmountInPaisa, string returnUrl)
+        public static async Task<string> InitiateRemainingBokkingPayment(Guid purchaseOrderId, int totalAmountInPaisa, string returnUrl, string purchase_order_name)
         {
             try
             {
@@ -108,8 +108,8 @@ namespace Kheti.KhetiUtils
                     return_url = returnUrl,
                     website_url = "https://localhost:7108/",
                     amount = 1000.ToString(),
-                    purchase_order_id = rental_booking_Id,
-                    purchase_order_name = "Product Name",
+                    purchase_order_id = purchaseOrderId,
+                    purchase_order_name = purchase_order_name,
                 };
 
                 var jsonPayload = JsonConvert.SerializeObject(payload);

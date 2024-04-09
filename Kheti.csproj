@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\Images\BookingImages\" />
+    <Folder Include="wwwroot\Images\SellerCitizenshipImage\" />
     <Folder Include="wwwroot\Images\ReportImages\" />
     <Folder Include="wwwroot\Images\UserImages\" />
     <Folder Include="wwwroot\Images\QueryImages\" />

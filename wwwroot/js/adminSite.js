@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
     var currentPageUrl = window.location.pathname;
     console.log(currentPageUrl);
 
-    var navLinks = document.querySelectorAll('.nav-link')
+    var navLinks = document.querySelectorAll('.navs')
     console.log(navLinks);
 
     navLinks.forEach(function (navLink) {

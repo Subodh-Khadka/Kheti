@@ -4,27 +4,24 @@
 }
 
 <style>
-    .table th {
-        background-color: aliceblue;
-    }
 
-    .table {
-        font-size: x-small;
-        border: 1px solid #dddddd;
-    }
-
-    td {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 100px;
-    }
 </style>
 
 <div class="container-fluid">
-    <h6 class="text-center">Report List</h6>
-    <hr />
-    <table class="table table-hover">
+
+    <div class="dropdown text-end">
+        <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+            Filter
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+            <li><a asp-action="ReportList" asp-route-status="all" class="dropdown-item">all</a></li>
+            <li><a asp-action="ReportList" asp-route-status="Pending" class="dropdown-item">pending</a></li>
+            <li><a asp-action="ReportList" asp-route-status="Completed" class="dropdown-item">solved</a></li>
+        </ul>
+    </div>
+
+    <h6>Report List</h6>
+    <table class="table table-bordered table-hover">
         <thead>
             <tr>
                 <th>Issue Type</th>
@@ -36,7 +33,7 @@
                 <th>Created At</th>
                 <th>Image</th>
                 <th>Action</th>
-               @*  <th>ProfileImage</th>
+                @*  <th>ProfileImage</th>
                 <th>Actions</th> *@
             </tr>
         </thead>
@@ -55,15 +52,16 @@
                         <td>@report.AdditionalInformation</td>
                         <td>@report.CreatedAt.ToShortDateString()</td>
                         <td>
-                            <img src="~/@report.ReportImageUrl" height="30px" width="30px" />
+                            <img src="~/@report.ReportImageUrl" class="rounded-circle" height="30px" width="30px" />
                         </td>
-                        <td>
-                            <a class="btn btn-sm btn-primary" asp-action="EditInformation" asp-controller="User" asp-route-id="@report.Id"><i class="bi bi-pencil-square"></i></a>
-                            <a class="btn btn-sm btn-info text-white" asp-action="EditInformation" asp-controller="User" asp-route-id=""><i class="bi bi-shield-x"></i></a>
-                        </td>
+                        @if (report.ReportStatus != StaticDetail.ReportStatusSolved)
+                        {
+                            <td>
+                                <a class="btn btn-sm btn-success" asp-action="MarkReportAsSolved" asp-controller="Admin" asp-route-id="@report.Id"><i class="bi bi-check2-square"></i></a>
+                            </td>
+                        }
                     </tr>
                 }
-
             }
         </tbody>
     </table>

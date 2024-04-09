@@ -34,7 +34,6 @@ namespace Kheti.Controllers
             var userRole = User.FindFirstValue(ClaimTypes.Role);
             var queryStatus = string.IsNullOrEmpty(status) ? "All" : status;
 
-
             IEnumerable<QueryForm> queries;
 
             //for user with role 'Expert'
@@ -48,6 +47,7 @@ namespace Kheti.Controllers
 
                     queries = _db.QueryForms
                         .OrderByDescending(q => q.UrgencyLevel == "High")
+
                         .Where(q => q.ProblemCategory == expertise).ToList();
                 }
 
@@ -85,23 +85,17 @@ namespace Kheti.Controllers
                 if (queryStatus == "All")
                 {
                     queries = _db.QueryForms
-                    /*  .OrderByDescending(p => p.UrgencyLevel == "High")
-                      .ThenByDescending(x => x.UrgencyLevel == "Medium")
-                      .ThenByDescending(p => p.UrgencyLevel == "Low")*/
                     .Where(p => p.UserId == userId)
                     .OrderByDescending(p => p.DateCreated).ToList();
                 }
                 else
                 {
                     queries = _db.QueryForms
-                    /*  .OrderByDescending(p => p.UrgencyLevel == "High")
-                      .ThenByDescending(x => x.UrgencyLevel == "Medium")
-                      .ThenByDescending(p => p.UrgencyLevel == "Low")*/
                     .Where(p => p.UserId == userId && p.QueryStatus == queryStatus)
                     .OrderByDescending(p => p.DateCreated).ToList();
                 }
             }
-            /*TempData["success"] = $"showing results for {queryStatus}";*/
+
             if (queryStatus != null)
             {
                 TempData["defaultName"] = queryStatus;
@@ -164,10 +158,9 @@ namespace Kheti.Controllers
 
                 TempData["success"] = "Query submitted successfully";
 
-                /*return RedirectToAction(nameof(QueryList), "Consultation");*/
                 return RedirectToAction("CreateQuery");
             }
-
+            TempData["delete"] = "Query submission failed!";
             return View();
         }
 
@@ -187,7 +180,7 @@ namespace Kheti.Controllers
                 .Include(q => q.User)
                 .FirstOrDefault(x => x.Id == queryId && x.UserId == userId);
 
-                if(query == null)
+                if (query == null)
                 {
                     return Redirect($"/Identity/Account/AccessDenied");
                 }
@@ -226,96 +219,6 @@ namespace Kheti.Controllers
             }
         }
 
-        ////queryComment post method
-        //[HttpPost]
-        //public IActionResult QueryDetails(int queryFormId, string commentText)
-        //{
-        //    var claimsIdentity = (ClaimsIdentity)User.Identity;
-        //    var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
-        //    var userRole = User.FindFirstValue(ClaimTypes.Role);
-
-        //    var query = _db.QueryForms
-        //           .Include(query => query.QueryComments)
-        //        .FirstOrDefault(q => q.Id == queryFormId);
-        //    if (query == null)
-        //    {
-        //        return RedirectToAction("Error");
-        //    }
-
-        //    var isExpert = userRole == "Expert";
-
-        //    if (userRole == "Expert")
-        //    {
-        //        var queryComment = new QueryComment
-        //        {
-        //            QueryFormId = queryFormId,
-        //            UserId = userId,
-        //            CommentText = commentText,
-        //            DateCreated = DateTime.Now,
-        //            IsExpert = true,
-        //        };
-
-        //        query.QueryComments.Add(queryComment);
-        //        _db.SaveChanges();
-        //    }
-        //    else
-        //    {
-        //        var queryComment = new QueryComment
-        //        {
-        //            QueryFormId = queryFormId,
-        //            UserId = userId,
-        //            CommentText = commentText,
-        //            DateCreated = DateTime.Now,
-        //        };
-
-        //        query.QueryComments.Add(queryComment);
-        //        _db.SaveChanges();
-
-        //        //send message through signalR
-        //        var user = isExpert ? "Expert" : "Seller";
-        //        _hubContext.Clients.All.SendAsync("ReceiveMessage", user, commentText);
-        //    }
-
-        //    return RedirectToAction("QueryDetails", new { queryId = queryFormId });
-        //}
-
-        //[HttpPost]
-        //public IActionResult SendMessage(int queryFormId, string commentText)
-        //{
-        //    Console.WriteLine("SendMessage action method hit with queryFormId: " + queryFormId + " and commentText: " + commentText);
-
-        //    var claimsIdentity = (ClaimsIdentity)User.Identity;
-        //    var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
-        //    var userRole = User.FindFirstValue(ClaimTypes.Role);
-
-        //    var query = _db.QueryForms
-        //        .Include(q => q.QueryComments)
-        //        .FirstOrDefault(q => q.Id == queryFormId);
-
-        //    if (query == null)
-        //    {
-        //        return RedirectToAction("Error");
-        //    }
-
-        //    var isExpert = userRole == "Expert";
-
-        //    var message = new QueryComment
-        //    {
-        //        CommentText = commentText,
-        //        DateCreated = DateTime.Now,
-        //        QueryFormId = queryFormId,
-        //        UserId = userId,
-        //        IsExpert = isExpert
-        //    };
-        //    _db.QueryComments.Add(message);
-        //    _db.SaveChanges();
-
-        //    // Send message through SignalR
-        //    var user = isExpert ? "Expert" : "Seller";
-        //    _hubContext.Clients.All.SendAsync("ReceiveMessage", user, commentText);
-
-        //    return RedirectToAction("QueryDetails", new { queryId = queryFormId });
-        //}
 
         [Authorize(Roles = "Expert")]
         [HttpPost]
