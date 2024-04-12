@@ -6,15 +6,20 @@
     ViewData["Title"] = "Index";
 }
 <style>
-    .table{
-        font-size:smaller;
+    .table {
+        font-size: smaller;
     }
-   
 </style>
 
-<div class="container">
-    <h6>Product Categories</h6>
+<div class="container d-flex align-items-center justify-content-between mb-0 pb-0">
+    <div>
+        <h6>Product Categories</h6>
+    </div>
+</div>
+<hr class="text-secondary mt-0 pt-0" />
 
+
+<div class="container">
     <p class="text-end">
         <a class="btn btn-primary btn-sm text-white" asp-action="CreateCategory" asp-controller="Admin">Create</a>
     </p>

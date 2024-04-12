@@ -239,6 +239,8 @@ namespace Kheti.Controllers
             return RedirectToAction("QueryList");
         }
 
+        //for expert only
+        [Authorize(Roles = "Expert")]
         public IActionResult MarkQueryAsSelected(int queryId)
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;

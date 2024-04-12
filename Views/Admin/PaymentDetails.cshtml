@@ -1,0 +1,46 @@
+﻿@model Kheti.ViewModels.OrderVm
+@{
+    Layout = "_AdminLayout";
+}
+
+<link rel="stylesheet" href="~/css/orderDetails.css" asp-append-version="true" />
+<script src="~/js/productReview.js"></script>
+
+
+<h6 class="">Order Details</h6>
+<h6 class="text-end me-2">Order Id: @Model.Order.OrderId</h6>
+<div class="d-flex container justify-content-center">
+
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Customer</th>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Total</th>
+                <th>Image</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var orderItem in Model.OrderItems)
+            {
+                @if (orderItem.OrderId != null)
+                {
+                    <tr>
+                        <td title="@orderItem.Order.CustomerName">@orderItem.Order.CustomerName</td>
+                        <td title="@orderItem.Product.ProductName">@orderItem.Product.ProductName</td>
+                        <td>@orderItem.Product.Price</td>
+                        <td>@orderItem.Quantity</td>
+                        <td>@(orderItem.Quantity * @orderItem.Product.Price)</td>
+                        <td>
+                            <img src="~/@orderItem.Product.ProductImageUrl" height="30px" width="30px" class="rounded-circle" />
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+</div>

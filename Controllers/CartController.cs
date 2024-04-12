@@ -65,7 +65,6 @@ namespace Kheti.Controllers
             existingCartFromDb.Quantity += 1;
             _db.ShoppingCarts.Update(existingCartFromDb);
             _db.SaveChanges();
-            TempData["success"] = "Query submitted successfully";
 
             return RedirectToAction("Index");
         }
@@ -125,81 +124,6 @@ namespace Kheti.Controllers
 
         }
 
-       /* [HttpPost]
-        [ActionName("CartSummary")]
-        public IActionResult CartSummaryPOST(ShoppingCartVM shoppingCartVM)
-        {
-            var claimsIdentity = (ClaimsIdentity)User.Identity;
-            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
-
-            ShoppingCartVm = new()
-            {
-                ShoppingCartList = _db.ShoppingCarts
-                    .Where(u => u.UserId == userId)
-                    .Include(p => p.Product)
-                    .ToList(),
-                Orders = new()
-
-            };
-
-            ShoppingCartVm.Orders.OrderCreatedDate = DateTime.Now;
-            ShoppingCartVm.Orders.UserId = userId;
-
-            ShoppingCartVm.Orders.User = _db.KhetiApplicationUsers.FirstOrDefault(u => u.Id == userId);
-
-            KhetiApplicationUser khetiApplicationUser = _db.KhetiApplicationUsers.FirstOrDefault(u => u.Id == userId);
-
-            ShoppingCartVm.Orders.User = khetiApplicationUser;
-
-            ShoppingCartVm.Orders.CustomerName = ShoppingCartVm.Orders.User.FirstName + " " + ShoppingCartVm.Orders.User.LastName;
-            ShoppingCartVm.Orders.Address = ShoppingCartVm.Orders.User.Address;
-            ShoppingCartVm.Orders.phoneNumber = ShoppingCartVm.Orders.User.PhoneNumber;
-            ShoppingCartVm.Orders.OrderTotal = ShoppingCartVm.Orders.OrderTotal;
-            ShoppingCartVm.Orders.Address = ShoppingCartVm.Orders.User.Address;
-
-
-            foreach (var cart in ShoppingCartVm.ShoppingCartList)
-            {
-                ShoppingCartVm.Orders.OrderTotal += (decimal)cart.Product.Price * cart.Quantity;
-            }
-
-            ShoppingCartVm.Orders.PaymentStatus = KhetiUtils.StaticDetail.PaymentStatusPending;
-            ShoppingCartVm.Orders.OrderStatus = KhetiUtils.StaticDetail.OrderStatusPending;
-
-
-            _db.Orders.Add(ShoppingCartVm.Orders);
-            _db.SaveChanges();
-
-            foreach (var cart in ShoppingCartVm.ShoppingCartList)
-            {
-                OrderItem orderItem = new OrderItem()
-                {
-                    ProductId = cart.ProductId,
-                    OrderId = shoppingCartVM.Orders.OrderId,
-                    Price = (decimal)cart.Product.Price,
-                    Quantity = cart.Quantity,
-                };
-                _db.OrderItems.Add(orderItem);
-                _db.SaveChanges();
-            }
-            var shoppingCartItems = _db.ShoppingCarts
-           .Where(u => u.UserId == userId)
-           .ToList();
-
-            // Remove all items from the shopping cart
-            _db.ShoppingCarts.RemoveRange(shoppingCartItems);
-            _db.SaveChanges();
-
-            // Clear the fields by creating a new empty ShoppingCartVM object
-            ShoppingCartVm = new ShoppingCartVM()
-            {
-                ShoppingCartList = new List<ShoppingCart>(),
-                Orders = new Order()
-            };
-
-            return RedirectToAction(nameof(OrderConformation), new { orderId = shoppingCartVM.Orders.OrderId });
-        }*/
-
         [HttpPost]
         [ActionName("CartSummary")]
         public   IActionResult CartSummaryPost(ShoppingCartVM shoppingCartVM)
@@ -208,14 +132,8 @@ namespace Kheti.Controllers
             {
                 var claimsIdentity = (ClaimsIdentity)User.Identity;
                 var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
-
                 var user = _db.KhetiApplicationUsers.FirstOrDefault(u => u.Id == userId);
                 var userEmail = user.Email;
-/*
-                if (shoppingCartVM == null || shoppingCartVM.Orders == null || shoppingCartVM.ShoppingCartList == null)
-                {
-                    return BadRequest("Invalid shopping cart data");
-                }*/
 
                 //populating ShoppingCartVm with shopping cart data
                 ShoppingCartVm = new ShoppingCartVM()
@@ -230,7 +148,7 @@ namespace Kheti.Controllers
                 ShoppingCartVm.Orders.OrderCreatedDate = DateTime.Now;
                 ShoppingCartVm.Orders.UserId = userId;
 
-                //populate order properties after getting the order properties
+                //populate order properties
                 var khetiApplicationUser = _db.KhetiApplicationUsers.FirstOrDefault(u => u.Id == userId);
                 if (khetiApplicationUser != null)
                 {
@@ -246,7 +164,7 @@ namespace Kheti.Controllers
 
                 ShoppingCartVm.Orders.PaymentStatus = KhetiUtils.StaticDetail.PaymentStatusPending;
                 ShoppingCartVm.Orders.OrderStatus = KhetiUtils.StaticDetail.OrderStatusPending;
-
+                    
                 _db.Orders.Add(ShoppingCartVm.Orders); ;
                 _db.SaveChanges();
 
@@ -269,7 +187,8 @@ namespace Kheti.Controllers
                 _db.SaveChanges();
 
                 //send email of order placed 
-                _emailSender.SendEmailAsync(userEmail, $"Order Placed Successfully", $"Your order with ID {ShoppingCartVm.Orders.OrderId} has been placed successfully. Thank you for shopping with us!");
+                _emailSender.SendEmailAsync(userEmail, $"Order Placed Successfully", $"Your order with ID {ShoppingCartVm.Orders.OrderId} has " +
+                    $"been placed successfully. Thank you for shopping with us!");
 
                 //clear shoppingCartVm
                 ShoppingCartVm = new ShoppingCartVM
@@ -280,8 +199,7 @@ namespace Kheti.Controllers
                 int orderId = shoppingCartVM.Orders.OrderId;
                 int orderIds = ShoppingCartVm.Orders.OrderId;
 
-                return RedirectToAction("OrderConformation", new { orderId = ShoppingCartVm.Orders.OrderId });
-                //return RedirectToAction("OrderConformation", new {orderId = shoppingCartVM.Orders.OrderId});
+                return RedirectToAction("OrderConformation", new { orderId = ShoppingCartVm.Orders.OrderId }); 
 
             }
             catch (Exception ex)

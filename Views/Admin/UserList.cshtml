@@ -22,17 +22,21 @@
     }
 </style>
 
-<div class="container">
+<div class="container d-flex align-items-center justify-content-between mb-0 pb-0">
+    <div>
+        <h6>User List</h6>
+    </div>
 
-    <div class="text-end gap-0">
+    <div class="text-end gap-0 mb-1">
         <form method="get" asp-action="UserList" asp-controller="Admin" class="mb-2">
             <input class="search-input" type="text" name="searchInput" placeholder="Search user...." />
             <button style="background-color:dodgerblue" type="submit" class="btn btn-sm search-btn text-white"><i class="bi bi-search"></i></button>
         </form>
     </div>
+</div>
+<hr class="text-secondary mt-0 pt-0" />
 
-    <h6>Userlist</h6>
-
+<div class="container">
     <table class="table table-bordered table-hover">
         <thead>
             <tr>
@@ -83,10 +87,6 @@
                                 <a class="btn btn-sm btn-warning text-white" asp-action="LockUser" asp-controller="Admin" asp-route-id="@users.Id"><i class="bi bi-person-fill-lock"></i></a>
                             }
                             <a class="btn btn-sm btn-danger text-white" asp-action="DeleteUser" asp-controller="Admin" asp-route-id="@users.Id"><i class="bi bi-trash"></i></a>
-                            @*    @if (User.IsInRole("Admin"))
-                    {
-                    <a class="btn btn-sm btn-success" asp-action="MarkReportAsSolved" asp-controller="Admin" asp-route-id="@users.Id"><i class="bi bi-check2-square"></i></a>
-                    } *@
                         </td>
                     </tr>
                 }

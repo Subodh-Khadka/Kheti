@@ -128,11 +128,6 @@ namespace Kheti.Areas.Identity.Pages.Account
                     // Redirect to admin layout page if user is an admin
                     return LocalRedirect(adminUrl);
                 }
-
-                    //var profilePictureUrl = (user as KhetiApplicationUser)?.ProfilePictureURL;
-                    
-
-
                     TempData["update"] = "Login Successfull!";
                     _logger.LogInformation("User logged in.");
                     return LocalRedirect(returnUrl);
@@ -152,7 +147,6 @@ namespace Kheti.Areas.Identity.Pages.Account
                     return Page();
                 }
             }
-
             // If we got this far, something failed, redisplay form
             return Page();
         }

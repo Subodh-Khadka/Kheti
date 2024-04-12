@@ -2,6 +2,7 @@
 using Kheti.Data;
 using Kheti.KhetiUtils;
 using Kheti.Models;
+using Kheti.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,7 @@ namespace Kheti.Controllers
     {
 
         private readonly ApplicationDbContext _db;
+        public OrderVm OrderVm { get; set; }
         public AdminController(ApplicationDbContext db)
         {
             _db = db;
@@ -237,32 +239,86 @@ namespace Kheti.Controllers
             return View(queries.ToList());
         }
 
+        //public IActionResult OrderList(string status)
+        //{
+        //    IQueryable<Order> orders = _db.Orders.Include(U => U.User);
+
+
+        //    if (!string.IsNullOrEmpty(status))
+        //    {
+        //        switch (status.ToLower())
+        //        {
+        //            case "pending":
+        //                orders = orders.Where(o => o.OrderStatus == StaticDetail.OrderStatusPending);
+        //                break;
+        //            case "completed":
+        //                orders = orders.Where(o => o.OrderStatus == StaticDetail.OrderStatusShipped);
+        //                break;
+        //            case "canceled":
+        //                orders = orders.Where(o => o.OrderStatus == StaticDetail.OrderStatusCanceled);
+        //                break;
+        //            default:
+        //                orders = orders;
+        //                break;
+        //        }
+        //    }
+
+        //    return View(orders.ToList());
+        //}
+
         public IActionResult OrderList(string status)
         {
-            IQueryable<Order> orders = _db.Orders.Include(U => U.User);
-
+            IQueryable<Order> orders = _db.Orders.Include(o => o.User);
 
             if (!string.IsNullOrEmpty(status))
             {
                 switch (status.ToLower())
                 {
                     case "pending":
-                        orders = orders.Where(o => o.OrderStatus == StaticDetail.OrderStatusPending);
+                        orders = orders.Where(o => o.PaymentStatus == StaticDetail.PaymentStatusPending);
                         break;
                     case "completed":
-                        orders = orders.Where(o => o.OrderStatus == StaticDetail.OrderStatusShipped);
-                        break;
-                    case "canceled":
-                        orders = orders.Where(o => o.OrderStatus == StaticDetail.OrderStatusCanceled);
+                        orders = orders.Where(o => o.PaymentStatus == StaticDetail.PaymentStatusCompleted);
                         break;
                     default:
                         orders = orders;
                         break;
                 }
             }
+            OrderVm = new()
+            {
+                OrderList = orders
+                .OrderByDescending(u => u.PaymentStatus)
+                .ThenByDescending(u => u.OrderCreatedDate)
+                .ToList(),
+                OrderItems = _db.OrderItems.Include(o => o.Product).ThenInclude(oi => oi.User)
+                .Include(o => o.Product.Category)
+                .ToList(),
 
-            return View(orders.ToList());
+            };
+            ViewData["Status"] = status;
+            return View(OrderVm);
         }
+
+
+        public IActionResult OrderDetails(int orderId, string userId)
+        {
+
+            var orderItems = _db.OrderItems
+                .Include(o => o.Order)
+                .Include(o => o.Order.User)
+                .Include(oi => oi.Product)
+                .Where(oi => oi.OrderId == orderId && oi.Order.UserId == userId).ToList();
+
+            var orderVm = new OrderVm
+            {
+                OrderItems = orderItems,
+                Order = orderItems.FirstOrDefault()?.Order
+            };
+
+            return View(orderVm);
+        }
+
 
         public IActionResult BookingList(string status)
         {
@@ -326,7 +382,13 @@ namespace Kheti.Controllers
 
         public IActionResult PaymentList(string searchInput)
         {
-            var paymentList = _db.Payments.ToList();
+            var paymentList = _db.Payments
+                .Include(p => p.Order)
+                
+                .Include(p => p.Booking)
+                .Include(p => p.User)
+                
+                .ToList();
 
             if (!string.IsNullOrEmpty(searchInput))
             {
@@ -334,7 +396,7 @@ namespace Kheti.Controllers
                 paymentList = _db.Payments.Where(u => u.TransactionId.ToLower().Contains(lowerCaseSearchInput)).ToList();
             }
 
-            return View(paymentList);   
+            return View(paymentList);
         }
 
         public IActionResult MarkReportAsSolved(Guid id)
@@ -351,5 +413,45 @@ namespace Kheti.Controllers
             TempData["success"] = "Status changes to solved!";
             return RedirectToAction("ReportList");
         }
+
+        public IActionResult PaymentDetails(int? orderId, Guid bookingId)
+        {
+            if (orderId.HasValue)
+            {
+                // Load order details based on orderId
+                var orderDetails = _db.Orders.FirstOrDefault(o => o.OrderId == orderId.Value);
+                var orderItems = _db.OrderItems
+                    .Include(p => p.Product)
+                    .Include(p => p.Order)
+                    .Where(o => o.OrderId == orderId.Value)
+                    .ToList();
+
+                var orderVm = new OrderVm
+                {
+                    OrderItems = orderItems,
+                    Order = orderDetails,
+                };
+
+                return View(orderVm);
+            }
+            else if (bookingId != null)
+            {
+                // Load booking details based on userId
+                var bookingDetails = _db.Bookings
+                    .Include(b => b.Product)
+                     .Include(r => r.Product.RentalEquipment)
+                     .Include(b => b.Product)
+                     .Include(r => r.Product.User)
+                    .Include(b => b.User)
+                    .FirstOrDefault(b => b.BookingId == bookingId);
+                return View("BookingDetails", bookingDetails);  
+            }
+            else
+            {
+                // Handle error case where neither orderId nor userId is provided
+                return BadRequest();
+            }
+        }
+
     }
 }

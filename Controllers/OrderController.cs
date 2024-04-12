@@ -128,7 +128,8 @@ namespace Kheti.Controllers
             string returnUrl = "https://localhost:7108/Order/OrderPaymentConfirmationPage";
             int totalAmountInPaisa = 1000;
             string purchase_order_name = order.CustomerName;
-            string paymentUrl = await Kheti.KhetiUtils.KhaltiPayment.InitiateOrderPayment(purchaseOrderId, totalAmountInPaisa, returnUrl, purchase_order_name);
+            string paymentUrl = await Kheti.KhetiUtils.KhaltiPayment.InitiateOrderPayment(purchaseOrderId, totalAmountInPaisa,
+                returnUrl, purchase_order_name);
             return Redirect(paymentUrl);
         }
 
@@ -175,14 +176,6 @@ namespace Kheti.Controllers
             }
             TempData["success"] = "Payment Completed!";
             return View();
-            //else
-            //{
-            //    ViewData["Status"] = status;
-            //    TempData["delete"] = "Payment Error!";
-            //    return View();
-            //}
-
-
         }
 
         public IActionResult CancelOrder(int orderId, string status)
@@ -298,8 +291,6 @@ namespace Kheti.Controllers
                                 </div>
                                 </body>
                                 </html>";
-
-
 
             var pdf = renderer.RenderHtmlAsPdf(html_order);
             return pdf;

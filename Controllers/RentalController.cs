@@ -53,6 +53,8 @@ namespace Kheti.Controllers
             var sortedProducts = products.OrderByDescending(p => p.CreatedDate).ToList();
             return View(sortedProducts);
         }
+
+
         [Authorize(Roles = "Seller,Customer,Expert")]
         public IActionResult Details(Guid id)
         {

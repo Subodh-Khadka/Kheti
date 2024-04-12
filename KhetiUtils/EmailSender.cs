@@ -6,7 +6,6 @@ namespace Kheti.KhetiUtils
 {
     public class EmailSender : IEmailSender
     {
-
         private readonly IConfiguration _configuration;
 
         public EmailSender(IConfiguration configuration)
@@ -34,7 +33,7 @@ namespace Kheti.KhetiUtils
                     using (SmtpClient smtpClient = new SmtpClient(host, port))
                     {
                         smtpClient.Credentials = new NetworkCredential(username, password);
-                        smtpClient.EnableSsl = true; // Enable SSL/TLS
+                        smtpClient.EnableSsl = true;
 
                         smtpClient.Send(message);
                     }
@@ -47,32 +46,4 @@ namespace Kheti.KhetiUtils
             }
         }
     }
-
-    //    Task IEmailSender.SendEmailAsync(string email, string subject, string htmlMessage)
-    //    {
-    //        try
-    //        {
-
-    //            //return Task.CompletedTask;
-    //            /*throw new NotImplementedException();*/
-    //            MailMessage message = new MailMessage();
-    //            SmtpClient smtpClient = new SmtpClient();
-    //            message.From = new MailAddress(email);
-    //            message.Subject = subject;
-    //            message.IsBodyHtml = true;
-    //            message.Body = htmlMessage;
-
-    //            smtpClient.Port = 587;
-    //            smtpClient.UseDefaultCredentials = false;
-    //            smtpClient.Credentials = new NetworkCredential("USERNAME", "PASSWORD");
-    //            smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
-    //            smtpClient.Send(message);
-    //            return Task.CompletedTask;
-    //        }
-    //        catch (Exception ex)
-    //        {
-    //            return Task.FromException(ex);
-    //        }
-    //    }
-    //}
 }

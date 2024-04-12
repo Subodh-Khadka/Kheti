@@ -213,16 +213,13 @@ namespace Kheti.Controllers
 
         public IActionResult SubmitProductComment(Guid productId, string commentText)
         {
-
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
-
             
             var product = _db.Products
                 .Include(p => p.ProductComments.OrderByDescending(pc => pc.CommentDate)) 
                 .Include(p => p.User)
                 .FirstOrDefault(p => p.ProductId == productId);
-
             
             var comment = new ProductComment
             {
@@ -233,7 +230,6 @@ namespace Kheti.Controllers
             };
             
             product.ProductComments.Add(comment);
-            
             _db.SaveChanges();
             
             var updatedProduct = _db.Products

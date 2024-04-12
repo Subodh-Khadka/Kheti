@@ -1,4 +1,4 @@
-﻿@model List<Kheti.Models.Order>
+﻿@model Kheti.ViewModels.OrderVm
 @{
     Layout = "_AdminLayout";
 }
@@ -7,25 +7,36 @@
 
 </style>
 
-<div class="container-fluid">
-
-    <div class="dropdown text-end">
-        <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-            Filter
-        </button>
-        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-            <li><a asp-action="OrderList" asp-route-status="all" class="dropdown-item">all</a></li>
-            <li><a asp-action="OrderList" asp-route-status="Pending" class="dropdown-item">pending</a></li>
-            <li><a asp-action="OrderList" asp-route-status="Completed" class="dropdown-item">completed</a></li>
-            <li><a asp-action="OrderList" asp-route-status="canceled" class="dropdown-item">canceled</a></li>
-        </ul>
+<div class="container d-flex align-items-center justify-content-between mb-0 pb-0">
+    <div>
+        <h6 class="">Orders List</h6>
     </div>
 
-    <h6 class="">Orders</h6>
+    <div class="text-end gap-0 mb-1">
+        <div class="dropdown text-end">
+            <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                Filter
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                <li><a asp-action="OrderList" asp-route-status="all" class="dropdown-item">all</a></li>
+                <li><a asp-action="OrderList" asp-route-status="Pending" class="dropdown-item">pending</a></li>
+                <li><a asp-action="OrderList" asp-route-status="Completed" class="dropdown-item">completed</a></li>
+                <li><a asp-action="OrderList" asp-route-status="canceled" class="dropdown-item">canceled</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<hr class="text-secondary mt-0 pt-0" />
+
+<div class="container-fluid">
+
+    
     <table class="table table-bordered table-hover">
         <thead>
             <tr>
+                <th>Id</th>
                 <th>Customer</th>
+                <th>UserImage</th>
                 <th>Total</th>
                 <th>OrderStatus</th>
                 <th>PaymentStatus</th>
@@ -35,22 +46,35 @@
         </thead>
         <tbody>
 
-            @foreach (var orders in Model)
+            @foreach (var orders in Model.OrderList)
             {
                 @if (orders.OrderId != null)
                 {
                     <tr>
+                        <td>@orders.OrderId</td>
                         <td title="@orders.CustomerName">@orders.CustomerName</td>
+                        <td class="justify-content-center">
+                            @if (orders.User.ProfilePictureURL != null)
+                            {
+                                <img  src="~/@orders.User.ProfilePictureURL" height="30px" width="30px" class="rounded-circle" />
+                            }
+                            else
+                            {
+                                <img src="~/Images/DefaultImages/defaultUserImage.jpg" height="30px" width="30px" class="rounded-circle" />
+                            }
+                        </td>
                         <td title="@orders.OrderTotal">@orders.OrderTotal</td>
                         <td>@orders.OrderStatus</td>
                         <td>@orders.PaymentStatus</td>
-                        <td>@orders.OrderCreatedDate.ToShortDateString()</td>
-                       @*  <td>
-                            <img src="~/@users.ProfilePictureURL" height="30px" width="30px" />
-                        </td> *@
-                        <td>
-                            <a class="btn btn-sm btn-primary" asp-action="EditInformation" asp-controller="User" asp-route-id="@orders.OrderId"><i class="bi bi-pencil"></i></a>
-                            <a class="btn btn-sm btn-danger text-white" asp-action="EditInformation" asp-controller="User" asp-route-id=""><i class="bi bi-shield-x"></i></a>
+                        <td>@orders.OrderCreatedDate</td>
+                        <td class="d-flex gap-1 justify-content-center">
+                           @*  <a class="btn btn-sm btn-primary" asp-action="EditInformation" asp-controller="User" asp-route-id="@orders.OrderId"><i class="bi bi-pencil"></i></a> *@
+                            <form asp-action="OrderDetails" asp-controller="Admin">
+                                <input type="hidden" name="orderId" value="@orders.OrderId" />
+                                <input type="hidden" name="userId" value="@orders.UserId" />
+                                <button class="btn btn-sm purple-background" type="submit"><i class="bi bi-eye-fill text-white"></i></button>
+                            </form>
+
                         </td>
                     </tr>
                 }

@@ -12,21 +12,28 @@
 
 </style>
 
-<div class="container-fluid">
-
-    <div class="dropdown text-end">
-        <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-            Filter
-        </button>
-        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-            <li><a asp-action="QueryList" asp-route-status="all" class="dropdown-item">all</a></li>
-            <li><a asp-action="QueryList" asp-route-status="Pending" class="dropdown-item">pending</a></li>
-            <li><a asp-action="QueryList" asp-route-status="inProcess" class="dropdown-item">in process</a></li>
-            <li><a asp-action="QueryList" asp-route-status="solved" class="dropdown-item">solved</a></li>
-        </ul>
+<div class="container d-flex align-items-center justify-content-between mb-0 pb-0">
+    <div>
+        <h6>QueryList</h6>      
     </div>
 
-    <h6>QueryList</h6>
+    <div class="text-end gap-0 mb-1">
+        <div class="dropdown text-end">
+            <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                Filter
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                <li><a asp-action="QueryList" asp-route-status="all" class="dropdown-item">all</a></li>
+                <li><a asp-action="QueryList" asp-route-status="Pending" class="dropdown-item">pending</a></li>
+                <li><a asp-action="QueryList" asp-route-status="inProcess" class="dropdown-item">in process</a></li>
+                <li><a asp-action="QueryList" asp-route-status="solved" class="dropdown-item">solved</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<hr class="text-secondary mt-0 pt-0" />
+
+<div class="container-fluid">
     
     <table class="table table-bordered table-hover">
         <thead>
