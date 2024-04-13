@@ -37,7 +37,8 @@
         <thead>
             <tr>
                 <th>TransactionId</th>
-                <th>UserImage</th>
+                <th>User</th>
+                <th>Email</th>
                 <th>Payment</th>
                 <th>Amount</th>
                 <th>Date</th>
@@ -53,7 +54,7 @@
             {
                 @if (payment.Id != null)
                 {
-                    <tr>    
+                    <tr>
 
                         @{
                             var completeTransactionId = payment.TransactionId as string;
@@ -62,11 +63,15 @@
 
                         <td>@transactionIdToShow </td>
                         <td>
-                            @if (payment.User.ProfilePictureURL != null)
-                            {
-                                <img src="~/@payment.User.ProfilePictureURL" class="rounded-circle" height="30px" width="30px" />
-                            }
+                            <div class="d-flex align-items-center gap-2">
+                                <p>@payment.User.FirstName @payment.User.LastName</p>
+                                @if (payment.User.ProfilePictureURL != null)
+                                {
+                                    <img src="~/@payment.User.ProfilePictureURL" class="rounded-circle" height="30px" width="30px" />
+                                }
+                            </div>
                         </td>
+                        <td title="@payment.User.UserName">@payment.User.Email </td>
                         <td>@payment.PaymentMethod </td>
                         <td>@payment.Amount</td>
                         <td>@payment.PaymentDate </td>

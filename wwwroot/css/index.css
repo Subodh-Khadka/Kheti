@@ -41,7 +41,7 @@
 /* body css */
 
 .home_page_row1 {    
-    height: 100vh;
+    /*height: 100vh;*/
     margin-top: 100px;
     /* margin-top: 90px; */
 }
@@ -117,4 +117,8 @@
 
 .line{
     width:50px; 
+}   
+
+.contact-form {
+    /*box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;*/
 }

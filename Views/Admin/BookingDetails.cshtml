@@ -5,7 +5,7 @@
 
 <style>
     .row {
-        font-size: small;
+        /* font-size: medium; */
     }
 
     .table tr .bluetd {
@@ -29,16 +29,16 @@
 <div class="container mt-2">
     <h6 class="text-dark">Rental Details</h6>
     <hr />
-    <div class="row">
+    <div class="row bg-light p-2">
         <div class="col-md-6">
             <h6>Rental Details</h6>
-            <table class="table table-bordered">
+            <table class="table table-bordered bg-white">
                 <tr>
                     <td>
                         <strong>Rented Product Image:</strong><br />
                     </td>
                     <td>
-                        <img src="~/@Model.Product.ProductImageUrl" class="rounded-circle" />
+                        <img src="~/@Model.Product.ProductImageUrl" class="rounded-circle ms-md-5" />
                     </td>
                 </tr>
                 <tr>
@@ -46,7 +46,7 @@
                         <strong>Product Owner:</strong><br />
                     </td>
                     <td>
-                        <img src="~/@Model.Product.User.ProfilePictureURL" class="rounded-circle" />
+                        <img src="~/@Model.Product.User.ProfilePictureURL" class="rounded-circle ms-md-5" />
                     </td>
                 </tr>
                 <tr>
@@ -54,7 +54,7 @@
                         <strong>Booking User:</strong><br />
                     </td>
                     <td>
-                        <img src="~/@Model.User.ProfilePictureURL" class="rounded-circle" />
+                        <img src="~/@Model.User.ProfilePictureURL" class="rounded-circle ms-md-5" />
                     </td>
                 </tr>
 
@@ -65,18 +65,18 @@
 
         <div class="col-md-6">
             <h6>Booking Details</h6>
-            <table class="table table-bordered">
-                <tr>
-                    <td><strong>Booking ID:</strong></td>
-                    <td>@Model.BookingId</td>
-                </tr>
+            <table class="table table-bordered bg-white">
+                @*    <tr>
+                <td><strong>Booking ID:</strong></td>
+                <td>@Model.BookingId</td>
+                </tr> *@
                 <tr>
                     <td><strong>PredictedStartDate:</strong></td>
                     <td>@Model.RequestStartDate</td>
                 </tr>
                 <tr>
                     <td><strong>PredictedEndDate:</strong></td>
-                    <td>@Model.ActualRequestEndDate</td>
+                    <td>@Model.RequestEndDate</td>
                 </tr>
 
                 <tr>
@@ -99,15 +99,23 @@
                     <td><strong>PaymentStatus:</strong></td>
                     <td>@Model.PaymentStatus</td>
                 </tr>
+                <tr>
+                    <td><strong>RentStatus:</strong></td>
+                    <td>@Model.RentStatus</td>
+                </tr>
             </table>
         </div>
     </div>
 
-    <div class="row">
+    <div class="row bg-light p-2 mt-3">
         <div class="col-md-6">
             <h6>Return Details</h6>
 
-            <table class="table table-bordered">
+            <table class="table table-bordered bg-white">
+                <tr>
+                    <td><strong>BookingId:</strong></td>
+                    <td>@Model.BookingId</td>
+                </tr>
                 <tr>
                     <td><strong>RentalStartDate:</strong></td>
                     <td>@Model.ActualRequestStartDate</td>
@@ -148,12 +156,12 @@
             </table>
         </div>
 
-        @if (Model.DamagedImageUrl != null)
-        {
-            <div class="col-md-6">
-                <h6>Damaged Details</h6>
+        <div class="col-md-6">
+            <h6>Damaged Details</h6>
+            @if (Model.DamagedImageUrl != null)
+            {
 
-                <table class="table table-bordered">
+                <table class="table table-bordered bg-white">
                     <tr>
                         <td>
                             <strong>DamageDescription:</strong><br />
@@ -180,122 +188,88 @@
                     </tr>
                 </table>
 
-            </div>
-        }
+            }
+            else
+            {
+                <div>
+                    <table class="table table-bordered bg-white">
+                        <tr>
+                            <td><p>No damages for the selected booking!</p></td>
+                        </tr>
+                    </table>
+                </div>
+            }
+        </div>
 
     </div>
 </div>
 
+@* user details *@
 
-@*  <div class="row">
-    <h6>User & Product Images</h6>
-    <table class="table table-bordered table-hover">
-    <thead>
-    <tr>
-    <th>ProductImage</th>
-    <th>ProductOwner</th>
-    <th>BookingUser</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-    <td>
-    <img src="~/@Model.Product.ProductImageUrl" height="50px" width="50px" class="rounded-circle" />
-    </td>
-    <td>
-    <img src="~/@Model.Product.User.ProfilePictureURL" height="50px" width="50px" class="rounded-circle" />
-    </td>
-    <td>
-    <img src="~/@Model.Product.User.ProfilePictureURL" height="50px" width="50px" class="rounded-circle" />
-    </td>
-    </tr>
-    </tbody>
-    </table>
 
-    <h6>Booking Details</h6>
-    <table class="table table-bordered table-hover">
-    <thead>
-    <tr>
-    <th>BookingId</th>
-    <th>PredictedStartDate</th>
-    <th>PredictedEndtDate</th>
-    <th>ProductName</th>
-    <th>RentedFrom</th>
-    <th>BookingStatus</th>
-    <th>PaymentStatus</th>
-    <th>MachineImage</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-    <td>@Model.BookingId</td>
-    <td>@Model.RequestStartDate</td>
-    <td>@Model.RequestEndDate</td>
-    <td>@Model.Product.ProductName</td>
-    <td>@Model.Product.User.FirstName</td>
-    <td>@Model.BookingStatus</td>
-    <td>@Model.PaymentStatus</td>
-    <td><img src="~/@Model.Product.ProductImageUrl" height="30px" width="70px" class="rounded-circle" /></td>
-    </tr>
-    </tbody>
-    </table>
+    <div class="row bg-light p-2">
+        <div class="col-md-6">
+            <h6>Booking User Details</h6>
+            <table class="table table-bordered table-hover bg-white">
 
-    <h6>Return Details</h6>
-    <table class="table table-bordered table-hover">
-    <thead>
-    <tr>
-    <th>RentalStartDate</th>
-    <th>RentalEndDate</th>
-    <th>InitialTotalAmount</th>
-    <th>ActualTotalAmount</th>
-    <th>InitialAmountPaid</th>
-    <th>FineAmount</th>
-    <th>TotalAmountAfterFine</th>
-    <th>RemainingAmountToPay</th>
-    <th>RemainingAmountPaid</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-    <td>@Model.ActualRequestStartDate</td>
-    <td>@Model.ActualRequestEndDate</td>
-    <td>@Model.InitialTotalAmount</td>
-    <td>@Model.ActualTotalAmountWithoutFine</td>
-    <td>@Model.InitialAmountPaid</td>
-    <td>@Model.FineAmount</td>
-    <td>@Model.TotalAmountAfterFine</td>
-    <td>@Model.RemainingAmountToPayAfterFine</td>
-    <td>@Model.RemainingAmountPaid</td>
-    </tr>
-    </tbody>
-    </table>
+                <tr>
+                    <td><strong>Name</strong></td>
+                    <td>@Model.User.FirstName @Model.User.LastName</td>
 
-    <h6>Damage Details</h6>
-    <table class="table table-bordered table-hover">
-    <thead>
-    <tr>
-    <th>DamageDescription</th>
-    <th>DamageImage</th>
-    <th>DamageFine</th>
+                </tr>
+                <tr>
+                    <td><strong>Email</strong></td>
+                    <td>@Model.User.Email</td>
 
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-    <td><input class="w-50  " asp-for="DamageDescription" disabled /></td>
-    <td>
-    @if (Model.DamagedImageUrl != null)
-    {
-    <img src="~/@Model.DamagedImageUrl" height="100px" width="300px" />
-    }
-    else
-    {
-    <p>No pictures avaialble of damages!</p>
-    }
-    </td>
-    <td>DamageFine</td>
+                </tr>
+                <tr>
+                    <td><strong>Phone</strong></td>
+                    <td>@Model.User.PhoneNumber</td>
 
-    </tr>
-    </tbody>
-    </table>
-    </div> *@
+                </tr>
+                <tr>
+                    <td><strong>Address</strong></td>
+                    <td>@Model.User.Address</td>
+
+                </tr>
+                <tr>
+                    <td><strong>Image</strong></td>
+                    <td><img src="~/@Model.User.ProfilePictureURL" height="30px" width="30px" class="rounded-circle" /></td>
+
+                </tr>
+
+            </table>
+        </div>
+
+        <div class="col-md-6">
+            <h6>Seller Information</h6>
+            <table class="table table-bordered table-hover bg-white">
+                <tr>
+                    <td><strong>Name</strong></td>
+                    <td>@Model.Product.User.FirstName @Model.Product.User.FirstName @Model.Product.User.LastName</td>
+
+                </tr>
+                <tr>
+                    <td><strong>Email</strong></td>
+                    <td>@Model.Product.User.Email</td>
+
+                </tr>
+                <tr>
+                    <td><strong>Phone</strong></td>
+                    <td>@Model.Product.User.PhoneNumber</td>
+
+                </tr>
+                <tr>
+                    <td><strong>Address</strong></td>
+                    <td>@Model.Product.User.Address</td>
+
+                </tr>
+                <tr>
+                    <td><strong>Image</strong></td>
+                    <td><img src="~/@Model.Product.User.ProfilePictureURL" height="30px" width="30px" class="rounded-circle" /></td>
+
+                </tr>
+
+            </table>
+        </div>
+    </div>

@@ -419,7 +419,9 @@ namespace Kheti.Controllers
             if (orderId.HasValue)
             {
                 // Load order details based on orderId
-                var orderDetails = _db.Orders.FirstOrDefault(o => o.OrderId == orderId.Value);
+                var orderDetails = _db.Orders
+                    .Include(o => o.User)
+                    .FirstOrDefault(o => o.OrderId == orderId.Value);
                 var orderItems = _db.OrderItems
                     .Include(p => p.Product)
                     .Include(p => p.Order)
@@ -448,7 +450,6 @@ namespace Kheti.Controllers
             }
             else
             {
-                // Handle error case where neither orderId nor userId is provided
                 return BadRequest();
             }
         }

@@ -19,7 +19,7 @@
 
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3 centered-navbar">
             <div class="container-fluid">
                 <img src="~/Images/KhetiLogo/khetiLogo.png" height="40px" width="150px" />
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
@@ -38,7 +38,7 @@
                             <a class="nav-link" asp-area="" asp-controller="Rental" asp-action="Index">Machinery</a>
                         </li>
 
-                          @if (SignInManager.IsSignedIn(User) && (!User.IsInRole("Customer")))
+                        @if (SignInManager.IsSignedIn(User) && (!User.IsInRole("Customer")))
                         {
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -69,13 +69,21 @@
                             </li>
                         }
 
-                      
                         @if (User.IsInRole("Customer"))
                         {
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="" asp-controller="User" asp-action="CreateReport">Report</a>
                             </li>
                         }
+                      @*   <li class="nav-item">
+                            <a class="nav-link" id="about-nav" href="#about">About Us</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="about-nav" href="#service">Services</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="about-nav" href="#contactUs">Contact</a>
+                        </li> *@
 
                     </ul>
                     <partial name="_loginPartial" />
@@ -83,31 +91,24 @@
             </div>
         </nav>
     </header>
-        <main role="main" class="pb-3">
-            <partial name="_Notification" />
-            @RenderBody()
-        </main>
-    <div class="container">
-    </div>
+    <main role="main" class="pb-3">
+        <partial name="_Notification" />
+        @RenderBody()
+    </main>
 
-    @*  <footer class="border-top footer text-muted">
-    <div class="container">
-    &copy; 2023 - Kheti - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-    </div>
-    </footer> *@
+    <footer style="background-color:#fafafa" class="footer border-top text-muted">
+        <div class="container mt-4 mb-0">
+            <div class="row">
+                <p class="text-center"> &copy; 2024 - Kheti - <a class="text-secondary" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a></p>
+            </div>
+        </div>
+    </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajax-unobtrusive/3.2.6/jquery.unobtrusive-ajax.min.js" integrity="sha512-DedNBWPF0hLGUPNbCYfj8qjlEnNE92Fqn7xd3Sscfu7ipy7Zu33unHdugqRD3c4Vj7/yLv+slqZhMls/4Oc7Zg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
-
-    <script>
-        var toastEl = document.querySelector('.toast');
-        var toast = new bootstrap.Toast(toastEl);
-        toast.show();
-    </script>
-
-
 
 </body>
 </html>

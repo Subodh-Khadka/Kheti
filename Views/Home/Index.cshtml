@@ -1,9 +1,44 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "Home Page";
 }
 
 <link rel="stylesheet" href="~/css/index.css" asp-append-version="true" />
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+<style>
+    .about-content p {
+        font-size: smaller;
+    }
+
+    .card-body p {
+        font-size: smaller;
+    }
+
+    .card-body {
+        height: 470px;
+    }
+
+    .service-section {
+        /* background-color: #f4eeff; */
+    }
+
+    .table td {
+        align-items: center;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-group label{
+        color:midnightblue;
+    }
+
+    .form-control {
+        border-radius:0;
+    }
+</style>
 
 <body>
     <div class="container home_page_row1">
@@ -47,26 +82,170 @@
                 </div>
             </div>
         </div>
-    </div>
 
-
-    @* About Us Section *@
-    <div class="d-flex flex-column  align-items-center">
-        <h5 class="mt-3 text-dark text-center">About Us</h5>
-        <hr class="line mt-1 text-center" />
-    </div>
-    <div class="container bg-light">
-        <div class="row me-2 ms-2">
-            <div class="col-md-5 mt-3">
-                <h4>Our Founding Story</h4>
-                <p class="text-secondary extra_small_grey_text_css">
-                    Founded in 2024 by a team of passionate agronomists and technologists,
-                    Kheti was born out of a desire to address the challenges faced by farmers
-                    and enhance their productivity through technology-driven solutions.
-                </p>
+        @* About Us Section *@
+        <div id="about"></div>
+        <div class="">
+            <div class="d-flex flex-column  align-items-center">
+                <h5 class="mt-md-3 text-dark text-center">About Us</h5>
+                <hr class="line mt-1 text-center" />
             </div>
-            <div class="col-md-5">
+
+            <div class="row d-flex mt-md-5 justify-content-sm-center justify-content-md-around align-items-center  ">
+                <div class="col-md-5">
+                    <div class="about-content ms-sm-2 ms-md-2 ms-lg-0">
+                        <h2 class="text-success">About Kheti</h2>
+                        <p class="text-muted">Empowering Farmers, Cultivating Progress</p>
+                        <p>Kheti is more than just a marketplace—it's a revolutionary platform dedicated to transforming agriculture. Our platform connects farmers, sellers, and agricultural experts, providing a comprehensive solution for all their needs.</p>
+                        <p>With Kheti, farmers can easily list their products for sale, allowing them to reach a wider audience and increase their income. Sellers, on the other hand, can offer their products and services to a targeted agricultural community.</p>
+                        <p>In addition to buying and selling, Kheti facilitates equipment rental between farmers and sellers, ensuring that farmers have access to the tools they need without the burden of ownership.</p>
+                        <p>Furthermore, our platform offers consulting services, allowing farmers and sellers to connect with agricultural experts for personalized advice and guidance.</p>
+                        @* <a href="#" class="btn purple-background text-white">Learn More</a> *@
+                    </div>
+                </div>
+                <div class="col-md-6 d-flex">
+                    <div>
+                        <img src="~/images/defaultimages/riceplant.jpg" class="rounded-start rounded-end" height="180px" width="100%px" />
+                        <img src="~/Images/DefaultImages/farmer-working-outdoors-harvesting-wheat-sunset-generated-by-ai.jpg" class="rounded-start rounded-end" height="180px" width="100%" />
+                    </div>
+                    <div>
+                        <img src="~/images/defaultimages/riceplant.jpg" class="rounded-start rounded-end" height="180px" width="100%" />
+                        <img src="~/Images/DefaultImages/farmer-working-outdoors-harvesting-wheat-sunset-generated-by-ai.jpg" class="rounded-start rounded-end" height="180px" width="100%" />
+                    </div>
+                </div>
+
             </div>
         </div>
+
+        @* Services Section *@
+        <div id="service"></div>
+        <div class="container service-section mt-5">
+            <div class="d-flex flex-column  align-items-center">
+                <h5 class="mt-3 text-dark text-center">Kheti Services</h5>
+                <hr class="line mt-1 text-center" />
+            </div>
+
+            <div class="row d-flex mt-md-5 justify-content-around ">
+                <div class="col-md-4 mb-3">
+                    <div class="card rounded-start rounded-end">
+                        <div class="card-body">
+                            <img src="/Images/DefaultImages/marketLogo.jpg" height="218px" class="card-img-top" alt="...">
+                            <h5 class="card-title text-success">Ecommerce</h5>
+                            <p class="card-text text-muted">
+                                Kheti's e-commerce platform provides a seamless marketplace
+                                where farmers and sellers can list their agricultural products
+                                for sale. With user-friendly features, farmers can easily create
+                                product listings, upload images, and set prices, while buyers can
+                                browse through a wide range of products and place orders with just a few clicks.
+                                Kheti ensures secure transactions and transparent communication between buyers and sellers,
+                                fostering trust and reliability within the agricultural community. So, lets get started.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <img src="/Images/DefaultImages/tractor white - 1.png" class="card-img-top" alt="...">
+                            <h5 class="card-title text-success mt-2">Equipment Rental</h5>
+                            <p class="card-text text-muted">
+                                Kheti's equipment rental services revolutionize the way farmers access agricultural tools and machinery. Through the platform, farmers can browse a diverse selection of equipment available for rent, including tractors, plows, harvesters, and more. With flexible rental terms and transparent pricing, farmers can find the right equipment for their needs without the burden of ownership. Kheti facilitates smooth transactions between farmers and equipment owners, ensuring timely delivery and return of rented equipment.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body text-success">
+                            <img src="/Images/DefaultImages/expert.jpg" height="218px" class="card-img-top" alt="...">
+                            <h5 class="card-title">Consulting Services</h5>
+                            <p class="card-text text-muted">
+                                Kheti's consulting services connect farmers and sellers with experienced agricultural experts for personalized advice and guidance. Whether farmers need assistance with crop management, pest control, soil health, or market analysis, Kheti provides access to a network of qualified consultants who offer tailored solutions to address specific challenges. Through one-on-one consultations, webinars, and educational resources, farmers can gain valuable insights and expertise to improve their farming practices and maximize productivity.
+                            </p>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @* Contact Us Section *@
+        <div id="contactUs"></div>
+        <div class="container contact-section mt-5">
+            <div class="d-flex flex-column  align-items-center">
+                <h5 class="mt-3 text-dark text-center">Contact Us</h5>
+                <hr class="line mt-1 text-center" />
+            </div>
+
+            <div class="row mt-5 contact-form align-items-center justify-content-around">
+                <div class="col-md-5">
+                    @* <h4>Contact Kheti Team</h4> *@
+                    <p class="text-muted">We welcome your any question!</p>
+                    
+                    <table class="table table-bordered">
+                        <tr>
+                            <td class="d-flex gap-2">
+                                <i class="bi bi-telephone fs-5"></i>  <span class="">+055 097876</span>
+                            </td>
+                        </tr>
+                    </table>
+                    <table class="table table-bordered">
+                        <tr>
+                            <td class="d-flex gap-2">
+                                <i class="bi bi-envelope fs-5"></i> <span> KhetiOrganization123@gmail.com</span>
+                            </td>
+                        </tr>
+                    </table>
+                    <table class="table table-bordered">
+                        <tr>
+                            <td class="d-flex gap-2">
+                                <i class="bi bi-geo-alt fs-5"></i> Itahari-04, Halgada
+                            </td>
+                        </tr>
+                    </table>
+
+                    <table class="table table-bordered">
+                        <tr>
+                            <td class="d-flex gap-2">
+                                <i class="bi bi-facebook  fs-4"></i>
+                                <i class="bi bi-instagram fs-4"></i>
+                                <i class="bi bi-threads   fs-4"></i>
+                                <i class="bi bi-twitter-x fs-4"></i>
+                            </td>
+                        </tr>
+                    </table>
+                    @* <p class="text-muted">Our team would be happy to help you!</p> *@
+                </div>
+                <div class="col-md-5">
+                    <form asp-action="Contact" asp-controller="User">
+                        <div class="form-group">
+                            <label for="">Name:</label>
+                            <input type="text" class="form-control" id="" placeholder="e.g. john doe">
+                        </div>
+                        <div class="form-group">
+                            <label for="">Email:</label>
+                            <input type="email" class="form-control" id="" placeholder="yourmail@gmail.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="">Phone:</label>
+                            <input type="text" class="form-control" id="" placeholder="+977 9898787665">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="">Messsage:</label>
+                            <textarea class="form-control" id="" rows="3"></textarea>
+                        </div>
+                        <button style="border-radius:0;" type="submit" class="btn btn-secondary text- w-100"><i class="bi bi-send"></i> Send Message </button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+
+
     </div>
 </body>
+<script>
+    AOS.init();
+</script>
