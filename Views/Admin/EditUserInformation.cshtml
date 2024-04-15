@@ -8,25 +8,37 @@
     Layout = "_AdminLayout";
 }
 
-<link rel="stylesheet" href="/css/EditUserInformation.css" />
+<style>
+    .row {
+        box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+    }
+</style>
 
-<h6>Edit User Information</h6>
+<div class="ms-3 mt-0 d-flex align-items-center justify-content-between mb-0 pb-0">
+    <div>
+        <h6>Edit User Information</h6>
+    </div>
+
+    <div class="text-end gap-0 mb-2">
+        <a class="btn btn-sm btn-primary" asp-action="UserList"><i class="bi bi-arrow-90deg-left"></i></a>
+    </div>
+</div>
+<hr class="text-secondary mt-0 pt-0" />
 
 <form asp-action="EditUserInformation" asp-controller="Admin" class="mt-2" method="post" enctype="multipart/form-data">
     <div class="container">
-        <div class="row p-2 bg-light main-div d-flex justify-content-center">
-            <div class="col-md-8">
-                <div class="rounded-2 justify-content-center d-flex align-items-center " id="imagePreview">
-                    @if (Model.ProfilePictureURL != null)
-                    {
-                        <img src="~/@Model.ProfilePictureURL" class="m-3 user-image img-fluid" />
-                    }
-                    else
-                    {
-                        <img src="~/images/defaultimages/defaultuserimage.jpg" class="rounded-circle" height="80px" width="80px" />
-                    }
-                </div>
-
+        <div class="row p-3 main-div d-flex justify-content-center">
+            <div class="rounded-2 justify-content-center d-flex align-items-center " id="imagePreview">
+                @if (Model.ProfilePictureURL != null)
+                {
+                    <img src="~/@Model.ProfilePictureURL" class="m-3 user-image img-fluid rounded-start rounded-end" />
+                }
+                else
+                {
+                    <img src="~/images/defaultimages/defaultuserimage.jpg" class="rounded-circle" height="80px" width="80px" />
+                }
+            </div>
+            <div class="col-md-5">
                 <input type="hidden" asp-for="Id" />
                 <input type="hidden" asp-for="Email" />
                 <input type="hidden" asp-for="PhoneNumber" />
@@ -55,8 +67,9 @@
                     <span asp-validation-for="Address" class="text-danger"></span>
                 </div>
 
+            </div>
 
-
+            <div class="col-md-5">
                 <input type="hidden" asp-for="Id" />
                 <input type="hidden" asp-for="Email" />
                 <input type="hidden" asp-for="PhoneNumber" />
@@ -88,12 +101,12 @@
                     <span asp-validation-for="AdditionalPhoneNumber" class="text-danger"></span>
                 </div>
                 <div class="text-center">
-                    <button type="submit" class="btn btn-sm mt-4 w-50 purple-background text-white">Save</button>
+                    <button type="submit" class="btn btn-sm mt-4 w-100 purple-background text-white">Save</button>
                 </div>
             </div>
-
         </div>
     </div>
+    @* </div> *@
 
 </form>
 

@@ -2,22 +2,25 @@
 
 <link rel="stylesheet" href="~/css/cart.css" asp-append-version="true" />
 
-<h5 class="text-center mt-2 text-success">Shopping Cart</h5>
-<div class="container small_grey_text_css mt-4">
-    <div class="row rows">
+<style>
+ 
+</style>
+
+<h6 class="text-center mt-2 text-success">Shopping Cart <i class="bi bi-bag"></i></h6>
+<div class="container justify-content-center ms-md-5 small_grey_text_css mt-4">
+    <div class="row mb-5">
         <div class="col-sm-12 col-md-9">
             @foreach (var item in Model.ShoppingCartList)
             {
                 <div class="d-flex justify-content-around align-items-center">
                     <div class="m-0 d-flex flex-column">
-                        <img src="@item.Product.ProductImageUrl" class="product-image m-2" />
-                        <p class="title d-flex justify-content-center align-items-center fw-bold">@item.Product.ProductName</p>
+                        <img src="@item.Product.ProductImageUrl" class="product-image m-2 img-fluid rounded-start rounded-end" />
+                        <p class="title d-flex align-items-center fw-bold">@item.Product.ProductName</p>
                     </div>
 
-                    <div class=" mb-md-2 quantity-container">
-                        <a asp-action="DecreaseCount" asp-controller="Cart" asp-route-itemid="@item.ShoppingCartId" data-ajax="true" data-ajax-complete="count" class="quantity-btn"><i class="bi bi-dash"></i></a>
-                        <input type="number" id="quantity-Input" class="p-0 m-0" value="1" min="1" />
-                        <a asp-action="AddCount" asp-controller="Cart" asp-route-itemid="@item.ShoppingCartId" data-ajax="true" data-ajax-complete="count" class="quantity-btn"><i class="bi bi-plus"></i></a>
+                    <div class=" mb-md-2 quantity-container btn-group gap-1">
+                        <a asp-action="DecreaseCount" asp-controller="Cart" asp-route-itemid="@item.ShoppingCartId" data-ajax="true" data-ajax-complete="count" class="btn btn-outline-secondary btn-sm"><i class="bi bi-dash"></i></a>
+                        <a asp-action="AddCount" asp-controller="Cart" asp-route-itemid="@item.ShoppingCartId" data-ajax="true" data-ajax-complete="count" class="btn btn-outline-secondary btn-sm"><i class="bi bi-plus"></i></a>
                     </div>
                     <div class="">
                         <p class="m-0">@item.Product.Price</p>
@@ -32,7 +35,7 @@
                 <hr class="m-0 p-0" />
             }
         </div>
-        <div class="col-sm-12 col-md-2 checkout-div">
+        <div class="col-md-3 checkout-div">
             <p>Total: Rs @Model.Orders.OrderTotal</p>
             <a class="btn checkout-btn" asp-action="CartSummary">Checkout</a>
         </div>

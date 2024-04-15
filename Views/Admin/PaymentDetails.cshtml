@@ -12,9 +12,16 @@
 <link rel="stylesheet" href="~/css/orderDetails.css" asp-append-version="true" />
 <script src="~/js/productReview.js"></script>
 
+<div class="ms-3 mt-0 d-flex align-items-center justify-content-between mb-0 pb-0">
+    <div>
+        <h6 class="">Order Details</h6>
+    </div>
 
-<h6 class="">Order Details</h6>
-<hr class="text-secondary" />
+    <div class="text-end gap-0 mb-2">
+        <a class="btn btn-sm btn-primary" asp-action="PaymentList"><i class="bi bi-arrow-90deg-left"></i></a>
+    </div>
+</div>
+<hr class="text-secondary mt-0 pt-0" /> 
 
 <div class="row justify-content-center bg-light p-2">
     @{

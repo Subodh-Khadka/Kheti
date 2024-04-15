@@ -21,10 +21,6 @@ namespace Kheti.Controllers
         {
             _db = db;
         }
-        public IActionResult Index()
-        {
-            return View();
-        }
 
         public IActionResult CategoryList()
         {
@@ -239,32 +235,7 @@ namespace Kheti.Controllers
             return View(queries.ToList());
         }
 
-        //public IActionResult OrderList(string status)
-        //{
-        //    IQueryable<Order> orders = _db.Orders.Include(U => U.User);
-
-
-        //    if (!string.IsNullOrEmpty(status))
-        //    {
-        //        switch (status.ToLower())
-        //        {
-        //            case "pending":
-        //                orders = orders.Where(o => o.OrderStatus == StaticDetail.OrderStatusPending);
-        //                break;
-        //            case "completed":
-        //                orders = orders.Where(o => o.OrderStatus == StaticDetail.OrderStatusShipped);
-        //                break;
-        //            case "canceled":
-        //                orders = orders.Where(o => o.OrderStatus == StaticDetail.OrderStatusCanceled);
-        //                break;
-        //            default:
-        //                orders = orders;
-        //                break;
-        //        }
-        //    }
-
-        //    return View(orders.ToList());
-        //}
+     
 
         public IActionResult OrderList(string status)
         {
@@ -453,6 +424,172 @@ namespace Kheti.Controllers
                 return BadRequest();
             }
         }
+
+        //for admin dashboard
+        public IActionResult Index()
+        {
+            var adminDashboardViewModel = new AdminDashboardViewModel
+            {
+                TotalUsers = getTotalUsers(),
+                TotalProducts = getTotalProducts(),
+                TotalOrders = getTotalOrders(),
+                TotalQueries = getTotalQueries(),
+                RecentOrders = GetRecentOrders(5).Result,
+                TotalRevenue = CalculateTotalRevenueOfOrder(),
+                RecentQueries = GetRecentQueries(5).Result,
+                PopularCategories = GetMostPopularCategories(3).Result,
+                RevenueDates = GetRevenueDates(),
+                RevenueAmounts = GetRevenueAmounts(),
+                LastSoldProducts = GetLastSoldProducts(),
+                TotalBookings = getTotalRentalBookings(),
+                TotalPayments = getTotalPayments(),
+                TotalRentalRevenue = CalculateTotalRevenueOfRental(),
+            };
+            GetTotalUserCategories(out int totalCustomers, out int totalSellers, out int totalExperts);
+            adminDashboardViewModel.TotalCustomers = totalCustomers;
+            adminDashboardViewModel.TotalSellers = totalSellers;
+            adminDashboardViewModel.TotalExperts = totalExperts;
+
+            GetTotalProductsCategories(out int totalCrops, out int totalFertilizer, out int totalMachinery);
+            adminDashboardViewModel.TotalCropProduct = totalCrops;
+            adminDashboardViewModel.TotalFertilizer = totalFertilizer;
+            adminDashboardViewModel.TotalMachinery = totalMachinery;
+
+            return View(adminDashboardViewModel);
+        }
+
+        //methods to show details in dashboard
+        public int getTotalUsers()
+        {
+            return _db.KhetiApplicationUsers.Count();
+        }
+
+        public int getTotalProducts()
+        {
+            return _db.Products.Count();
+        }
+
+        private void GetTotalUserCategories(out int totalCustomers, out int totalSellers, out int totalExperts)
+        {
+            totalCustomers = _db.KhetiApplicationUsers.Count(u => u.ExpertProfile == null && u.SellerProfile == null);
+            totalSellers = _db.KhetiApplicationUsers.Count(u => u.SellerProfile != null);
+            totalExperts = _db.KhetiApplicationUsers.Count(u => u.ExpertProfile != null);
+        }
+
+        private void GetTotalProductsCategories(out int totalCrops, out int totalFertilizer, out int totalMachinery)
+        {
+            totalCrops = _db.Products.Count(u => u.Category.Name == "Crop");
+            totalFertilizer = _db.Products.Count(u => u.Category.Name == "Fertilizer");
+            totalMachinery = _db.Products.Count(u => u.Category.Name == "Machinery");
+        }
+
+        public int getTotalOrders()
+        {
+            return _db.Orders.Count();
+        }
+
+        public int getTotalQueries()
+        {
+            return _db.QueryForms.Count();
+        }
+
+        public Task<List<Order>> GetRecentOrders(int count)
+        {
+            var recentOrders = _db.Orders
+                .Include(o => o.User)
+                .OrderByDescending(o => o.OrderCreatedDate)
+                .Take(count)
+                .ToListAsync();
+            return recentOrders;
+        }
+
+        public Task<List<QueryForm>> GetRecentQueries(int count)
+        {
+            var recentQueries = _db.QueryForms
+                .Include(o => o.User)
+                .OrderByDescending(o => o.DateCreated)
+                .Take(count)
+                .ToListAsync();
+            return recentQueries;
+        }
+
+        public decimal CalculateTotalRevenueOfOrder()
+        {
+            return _db.Orders
+                .Where(o => o.PaymentStatus == StaticDetail.PaymentStatusCompleted)
+                .Sum(o => o.OrderTotal);
+        }
+        public async Task<List<Category>> GetMostPopularCategories(int count)
+        {
+            var popularCategories = await _db.Products
+                .GroupBy(p => p.Category)
+                .OrderByDescending(g => g.Count())
+                .Take(count)
+                .Select(g => g.Key)
+                .ToListAsync();
+
+            return popularCategories;
+        }
+
+        private List<DateTime> GetRevenueDates()
+        {
+            return _db.Orders
+                .Where(o => o.PaymentStatus == StaticDetail.PaymentStatusCompleted)
+                .OrderBy(o => o.OrderCreatedDate)
+                .Select(o => o.OrderCreatedDate.Date)
+                .Distinct()
+                .ToList();
+        }
+
+        private List<decimal> GetRevenueAmounts()
+        {
+            var revenueAmounts = new List<decimal>();
+            var dates = GetRevenueDates();
+
+            foreach (var date in dates)
+            {
+                var totalRevenue = _db.Orders
+                    .Where(o => o.PaymentStatus == StaticDetail.PaymentStatusCompleted && o.OrderCreatedDate.Date == date)
+                    .Sum(o => o.OrderTotal);
+
+                revenueAmounts.Add(totalRevenue);
+            }
+
+            return revenueAmounts;
+        }
+
+        private List<OrderItem> GetLastSoldProducts()
+        {
+            var lastSoldProducts = _db.OrderItems
+                .Include(oi => oi.Product) 
+                .OrderByDescending(oi => oi.Order.OrderCreatedDate) 
+                .Take(12) 
+                .ToList();
+
+            return lastSoldProducts;
+        }
+
+        //booking
+        public int getTotalRentalBookings()
+        {
+            return _db.Bookings.Count();
+        }
+
+        public int getTotalPayments()
+        {
+            return _db.Payments.Count();
+        }
+
+        public decimal CalculateTotalRevenueOfRental()
+        {
+            var amount = _db.Bookings
+                .Where(o => o.PaymentStatus == StaticDetail.PaymentStatusCompleted)
+                .Sum(o => o.TotalAmountPaid);
+            decimal totalRevenue = (decimal)amount;
+
+            return totalRevenue;
+        }
+
 
     }
 }

@@ -39,9 +39,7 @@
 <link rel="stylesheet" href="~/css/queryDetails.css">
 
 
-
-
-<div class="container">
+<div class="container mb-4">
     <form class="container d-flex gap-4 ms-0 markAsSolved" method="post" asp-action="MarkAsSolved" asp-route-queryFormId="@Model.Id">
         @if (Model.QueryStatus != StaticDetail.QueryStatusSolved && User.IsInRole("Expert"))
         {

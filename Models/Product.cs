@@ -47,6 +47,8 @@ namespace Kheti.Models
         public ICollection<Review> Reviews { get; set; } = new List<Review>();
 
         public RentalEquipment RentalEquipment { get; set; }
+        public string? IsInStock { get; set; }
+        public string? Unit { get; set; }
     }
 
 }

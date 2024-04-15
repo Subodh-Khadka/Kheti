@@ -4,15 +4,22 @@
 <link rel="stylesheet" href="~/css/orderList.css" asp-append-version="true" />
 
 <style>
-    .btn-group > .btn, .btn-group-vertical > .btn{
-        flex:0 0 auto;
-        width:50px;
-        border-radius:10px;
+    .btn-group > .btn, .btn-group-vertical > .btn {
+        flex: 0 0 auto;
+        width: 50px;
+        border-radius: 10px;
+    }
+
+    .table tr{
+        font-size:smaller;
     }
 </style>
 
-<div class="container mt-1">
-    <h5 class="text-center mt-0 text-success">My Orders</h5>
+<div class="container d-flex justify-content-between">
+    <div>
+        <h5 class="text-center mt-0 text-success">My Orders</h5>
+    </div>
+
     <div class="dropdown text-end mb-1 mt-0">
         <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
             Filter
@@ -23,11 +30,13 @@
             <li><a asp-action="OrderList" asp-route-status="Completed" class="dropdown-item">completed</a></li>
         </ul>
     </div>
+</div>
 
-    <div class="order-container row d-flex justify-cont ent-center ">
+<div class="container mt-1 mb-4">
+    <div class="row d-flex justify-content-center ">
         <div class="col-sm-12 col-md-12">
             <div class="col-12">
-                <table class="table table-responsive-sm">
+                <table class="table table-bordered table-responsive-sm">
                     <thead>
                         <tr class="text-center">
                             <th>Id</th>
@@ -35,51 +44,55 @@
                             <th>Date</th>
                             <th>OrderStatus</th>
                             <th>PaymentStatus</th>
-                            <th>Actions</th>
+                            <th class="me-4">Actions</th>
+                            <th>Payment</th>
                         </tr>
                     </thead>
 
                     <tbody>
                         @foreach (var order in Model.OrderList)
                         {
-                            <tr class="text-center">
+                            <tr class="text-center align-items-center">
                                 <td>@order.OrderId</td>
                                 <td>@order.OrderTotal</td>
                                 <td>@order.OrderCreatedDate.ToString("yyyy-MM-dd")</td>
-                                <td class="text-dark">@order.OrderStatus</td>
-                                <td class="text-dark">
+                                <td class="">@order.OrderStatus</td>
+                                <td class="">
                                     @order.PaymentStatus
-                                    @if (order.PaymentStatus == "Completed")
-                                    {
-                                        <i class="bi bi-check2-all text-success"></i>
-                                    }
                                 </td>
-                                <td class="btn-group d-flex gap-2">
-
-
+                                <td class="btn-group d-flex justify-content-center gap-1 align-items-center">
                                     <form id="OrderDetails" method="get" action="@Url.Action("OrderDetails", "Order")">
                                         <input type="hidden" name="orderId" value="@order.OrderId" />
-                                        <button type="submit" class="btn btn-sm btn-primary w-100">Details</button>
+                                        <button type="submit" class="btn btn-sm btn-primary w-100"><i class="bi bi-eye"></i></button>
                                     </form>
                                     <form method="post" action="@Url.Action("OrderInvoice", "Order")">
                                         <input type="hidden" name="orderId" value="@order.OrderId" />
-                                        <button type="submit" class="btn btn-sm btn-info text-white">Invoice</button>
+                                        <button type="submit" class="btn btn-sm btn-info text-white"><i class="bi bi-file-earmark-arrow-down"></i></button>
                                     </form>
                                     @if (order.PaymentStatus != StaticDetail.PaymentStatusCompleted)
                                     {
                                         <form id="paymentForm" method="post" action="@Url.Action("CancelOrder", "Order", new { status = ViewData["Status"] })">
                                             <input type="hidden" name="orderId" value="@order.OrderId" />
                                             <input type="hidden" name="status" value="@ViewData["Status"]" />
-                                            <button type="submit" class="btn btn-sm btn-danger w-100"><i class="bi bi-x-lg">Cancel</i></button>
+                                            <button type="submit" class="btn btn-sm btn-danger w-100"><i class="bi bi-x-lg"></i></button>
                                         </form>
-                                       @*  <a asp-action="CancelOrder" class="cancel rounded-2 btn btn-sm btn-danger" asp-route-orderId="@order.OrderId" >Cancel</a> *@
+                                        @*  <a asp-action="CancelOrder" class="cancel rounded-2 btn btn-sm btn-danger" asp-route-orderId="@order.OrderId" >Cancel</a> *@
                                     }
-                                    @if (order.PaymentStatus == StaticDetail.PaymentStatusPending)
-                                    {
-                                        <form id="paymentForm" method="post" action="@Url.Action("Pay", "Order")">
-                                            <input type="hidden" name="orderId" value="@order.OrderId" />
-                                            <button type="submit" class="btn btn-sm btn-success w-100">Pay</button>
+                                </td>
+                                <td>
+                                        @if (order.PaymentStatus == StaticDetail.PaymentStatusPending)
+                                        {
+                                            <form id="paymentForm" method="post" action="@Url.Action("Pay", "Order")">
+                                                <input type="hidden" name="orderId" value="@order.OrderId" />
+                                                <button type="submit" class="btn btn-sm btn-success w-100">Pay</button>
                                         </form>
+                                    }
+                                    else
+                                    {
+                                        @if (order.PaymentStatus == "Completed")
+                                        {
+                                            <i class="bi bi-check2-all text-success"></i>
+                                        }
                                     }
                                 </td>
 

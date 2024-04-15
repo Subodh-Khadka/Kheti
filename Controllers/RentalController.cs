@@ -4,6 +4,7 @@ using Kheti.Migrations;
 using Kheti.Models;
 using Kheti.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -16,10 +17,12 @@ namespace Kheti.Controllers
     {
         private readonly ApplicationDbContext _db;
         private readonly IWebHostEnvironment _webHostEnvironment;
-        public RentalController(ApplicationDbContext db, IWebHostEnvironment webHostEnvironment)
+        private readonly IEmailSender _emailSender;
+        public RentalController(ApplicationDbContext db, IWebHostEnvironment webHostEnvironment, IEmailSender emailSender)
         {
             _db = db;
             _webHostEnvironment = webHostEnvironment;
+            _emailSender = emailSender;
         }
 
         public IActionResult Index(string searchInput)
@@ -89,6 +92,16 @@ namespace Kheti.Controllers
 
                 var product = _db.Products.Include(p => p.RentalEquipment).FirstOrDefault(b => b.ProductId == productId);
 
+                //user who is sends the booking request
+                var user = _db.KhetiApplicationUsers.FirstOrDefault(u => u.Id == userId);
+                var bookingUserEmail = user.Email;
+
+                //user to whom the booking request is sent
+                var sellerOwner = _db.KhetiApplicationUsers.FirstOrDefault(u => u.Id == product.UserId);
+                var sellerOwnerEmail = sellerOwner.Email;
+
+                
+
                 booking.UserId = userId;
                 booking.BookingStatus = StaticDetail.BookingStatusPending;
                 booking.PaymentStatus = StaticDetail.PaymentStatusPending;
@@ -98,8 +111,58 @@ namespace Kheti.Controllers
 
                 _db.Add(booking);
                 _db.SaveChanges();
-                TempData["success"] = "Booking request sent!";
 
+                _emailSender.SendEmailAsync(sellerOwnerEmail, "Rental Request Recieved",
+ $@"<html>
+        <head>
+            <style>
+                .container {{
+                    font-family: Arial;
+                    max-width: 400px;
+                    margin: 0 auto;
+                    border: 1px solid #ddd;
+                    border-radius: 5px;
+                    background-color: #f9f9f9;
+                }}
+                .header {{
+                    background-color: green;
+                    color: white;
+                    padding:10px;
+                    border-radius: 5px 5px 0 0;
+                }}
+                .content {{
+                    padding: 20px;
+                }}
+                .footer {{
+                    background-color: #f0f0f0;
+                    padding: 10px 20px;
+                    border-radius: 0 0 5px 5px;
+                }}
+            </style>
+        </head>
+        <body>
+            <div class='container'>
+                <div class='header'>
+                    <h2>Rental Request Recieved</h2>
+                </div>
+                <div class='content'>
+                    <p> Rental request of id {booking.BookingId} has been received. Please check it out!</p>
+                    <div class='Rental Details'>
+                        <p><strong>Order ID:</strong> {booking.BookingId}</p>
+                        <p><strong>Booking User Email: {bookingUserEmail}  </strong></p>
+                        <p><strong>Booking User Name: {user.FirstName} {user.LastName}  </strong></p>
+                        <p><strong>Product: {product.ProductName}</strong></p>
+                        <p><strong>Start Date: {booking.RequestStartDate}</strong></p>
+                        <p><strong>End Date: {booking.RequestEndDate}</strong></p>
+                    </div>
+                </div>
+                <div class='footer'>
+                    <p>If you have any questions, please contact our support team.</p>
+                </div>
+            </div>
+        </body>
+    </html>");
+                TempData["success"] = "Booking request sent!";
                 return RedirectToAction("Details");
             }
             catch (Exception ex)

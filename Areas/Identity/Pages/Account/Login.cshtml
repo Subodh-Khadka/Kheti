@@ -9,7 +9,7 @@
 
 <h1>@ViewData["Title"]</h1>
 
-<div class="container-fluid login_container d-flex gap-0 justify-content-center align-items-center h-100">
+<div class="container-fluid login_container d-flex gap-0 justify-content-center align-items-center h-100 mb-3">
     <div class="row justify-content-center login">
         <div class="col-lg-6 col-md-12 col-sm-12 p-0 left_section">
             <img src="~/Images/HomePage/7795297.jpg" class="img-fluid images" alt="Placeholder Image">
@@ -34,10 +34,16 @@
                         <input type="checkbox" class="form-check-input" id="exampleCheck1">
                         <label class="form-check-label mb-3" for="exampleCheck1">Keep Me Logged In</label>
                     </div> *@
-                    <button type="submit" class="btn btn-success w-100 mb-2">LOGIN</button>
+                    <button type="submit" class="btn btn-success w-100 mb-sm-2 mb-md-3">LOGIN</button>
+                    <div class="d-flex justify-content-center mb-2">
+                        <a class="text-success text-decoration-none">Forgot your password?</a>
+                        <a style="color:grey" id="register" asp-area="Identity" asp-page="/Account/ForgotPassword">Reset</a>
+
+                    </div>
                     <div class="d-flex justify-content-center">
                         <a class="text-success text-decoration-none">Don't have an account?</a>
                         <a style="color:grey" id="register" asp-area="Identity" asp-page="/Account/Register">Register</a>
+
                     </div>
                 </form>
             </div>            

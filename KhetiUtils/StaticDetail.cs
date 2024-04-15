@@ -8,6 +8,10 @@
         public const string AdminRole = "Admin";
         public const string ExpertRole = "Expert";
 
+        //product Availability
+        public const string IsInStockStatus = "InStock";
+        public const string OutOfStockStatus = "OutOfStock";
+
         //OrderStatus   
         public const string OrderStatusPending = "Pending";        
         public const string OrderStatusShipped = "Shipped";

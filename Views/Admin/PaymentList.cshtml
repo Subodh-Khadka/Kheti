@@ -22,7 +22,10 @@
     }
 </style>
 
-<div class="container">
+<div class="ms-3 mt-0 d-flex align-items-center justify-content-between mb-0 pb-0">
+    <div>
+        <h6>Payment List</h6>
+    </div>
 
     <div class="text-end gap-0">
         <form method="get" asp-action="PaymentList" asp-controller="Admin" class="mb-2">
@@ -30,9 +33,10 @@
             <button style="background-color:dodgerblue" type="submit" class="btn btn-sm search-btn text-white"><i class="bi bi-search"></i></button>
         </form>
     </div>
+</div>
+<hr class="text-secondary mt-0 pt-0" />
 
-    <h6>Payment List</h6>
-
+<div class="container">
     <table class="table table-bordered table-hover">
         <thead>
             <tr>

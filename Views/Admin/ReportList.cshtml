@@ -7,7 +7,10 @@
 
 </style>
 
-<div class="container-fluid">
+<div class="ms-3 mt-0 d-flex align-items-center justify-content-between mb-0 pb-0">
+    <div>
+        <h6>Report  List</h6>
+    </div>
 
     <div class="dropdown text-end">
         <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
@@ -19,8 +22,10 @@
             <li><a asp-action="ReportList" asp-route-status="Completed" class="dropdown-item">solved</a></li>
         </ul>
     </div>
+</div>
+<hr class="text-secondary mt-2 pt-0" />
 
-    <h6>Report List</h6>
+<div class="container">
     <table class="table table-bordered table-hover">
         <thead>
             <tr>

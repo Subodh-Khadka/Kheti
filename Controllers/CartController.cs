@@ -22,7 +22,7 @@ namespace Kheti.Controllers
         {
             _db = db;
             _userManager = userManager;
-            _emailSender = emailSender; 
+            _emailSender = emailSender;
         }
 
         [Authorize(Roles = "Customer")]
@@ -45,7 +45,7 @@ namespace Kheti.Controllers
             }
 
             return View(ShoppingCartVm);
-        }   
+        }
 
         private decimal CalculateOrderTotal(IEnumerable<ShoppingCart> shoppingCartItems)
         {
@@ -126,7 +126,7 @@ namespace Kheti.Controllers
 
         [HttpPost]
         [ActionName("CartSummary")]
-        public   IActionResult CartSummaryPost(ShoppingCartVM shoppingCartVM)
+        public IActionResult CartSummaryPost(ShoppingCartVM shoppingCartVM)
         {
             try
             {
@@ -164,7 +164,7 @@ namespace Kheti.Controllers
 
                 ShoppingCartVm.Orders.PaymentStatus = KhetiUtils.StaticDetail.PaymentStatusPending;
                 ShoppingCartVm.Orders.OrderStatus = KhetiUtils.StaticDetail.OrderStatusPending;
-                    
+
                 _db.Orders.Add(ShoppingCartVm.Orders); ;
                 _db.SaveChanges();
 
@@ -187,8 +187,55 @@ namespace Kheti.Controllers
                 _db.SaveChanges();
 
                 //send email of order placed 
-                _emailSender.SendEmailAsync(userEmail, $"Order Placed Successfully", $"Your order with ID {ShoppingCartVm.Orders.OrderId} has " +
-                    $"been placed successfully. Thank you for shopping with us!");
+                //_emailSender.SendEmailAsync(userEmail, $"Order Placed Successfully", $"Your order with ID {ShoppingCartVm.Orders.OrderId} has " +
+                //    $"been placed successfully. Thank you for shopping with us!");
+                _emailSender.SendEmailAsync(userEmail, "Order Placed Successfully",
+      $@"<html>
+        <head>
+            <style>
+                .container {{
+                    font-family: Arial;
+                    max-width: 400px;
+                    margin: 0 auto;
+                    border: 1px solid #ddd;
+                    border-radius: 5px;
+                    background-color: #f9f9f9;
+                }}
+                .header {{
+                    background-color: green;
+                    color: white;
+                    padding:10px;
+                    border-radius: 5px 5px 0 0;
+                }}
+                .content {{
+                    padding: 20px;
+                }}
+                .footer {{
+                    background-color: #f0f0f0;
+                    padding: 10px 20px;
+                    border-radius: 0 0 5px 5px;
+                }}
+            </style>
+        </head>
+        <body>
+            <div class='container'>
+                <div class='header'>
+                    <h2>Order Placed Successfully</h2>
+                </div>
+                <div class='content'>
+                    <p>Your order with ID {ShoppingCartVm.Orders.OrderId} has been placed successfully. Thank you for shopping with us!</p>
+                    <div class='order-details'>
+                        <p><strong>Order ID:</strong> {ShoppingCartVm.Orders.OrderId}</p>
+                        <p><strong>Order Total:</strong> Rs {ShoppingCartVm.Orders.OrderTotal}</p>
+                    </div>
+                </div>
+                <div class='footer'>
+                    <p>If you have any questions, please contact our support team.</p>
+                </div>
+            </div>
+        </body>
+    </html>");
+
 
                 //clear shoppingCartVm
                 ShoppingCartVm = new ShoppingCartVM
@@ -199,7 +246,7 @@ namespace Kheti.Controllers
                 int orderId = shoppingCartVM.Orders.OrderId;
                 int orderIds = ShoppingCartVm.Orders.OrderId;
 
-                return RedirectToAction("OrderConformation", new { orderId = ShoppingCartVm.Orders.OrderId }); 
+                return RedirectToAction("OrderConformation", new { orderId = ShoppingCartVm.Orders.OrderId });
 
             }
             catch (Exception ex)

@@ -2,6 +2,238 @@
     Layout = "_AdminLayout";
 }
 
+@model Kheti.ViewModels.AdminDashboardViewModel
+
+<style>
+    body {
+        background-color:;
+    }
+
+    .col-md-3{
+        margin-bottom:10px;
+    }
+
+    hr{
+        color:lightslategrey;
+    }
+</style>
+
 <div>
-    <h6 class="text-success">hi this is the admin dashboard</h6>
+    <h6>Dashboard</h6>
 </div>
+<hr />
+
+<div class="container">
+    <div class="row d-flex bg-light rounded-start rounded-end p-2">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <p class="card-title">Total User</p>
+                    <hr />
+                    <h5 class="card-text">@Model.TotalUsers</h5>
+                </div>
+            </div>
+        </div>
+       
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <p class="card-title">Total Products</p>
+                    <hr />
+                    <h5 class="card-text">@Model.TotalProducts</h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <p class="card-title">Total Orders</p>
+                    <hr />
+                    <h5 class="card-text">@Model.TotalOrders</h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <p class="card-title">Total Rental Bookings</p>
+                    <hr />
+                    <h5 class="card-text">@Model.TotalBookings</h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <p class="card-title">Total Payments</p>
+                    <hr />
+                    <h5 class="card-text">@Model.TotalPayments</h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <p class="card-title">Total Order Revenue <i class="bi bi-currency-rupee"></i></p>
+                    <hr />
+                    <h5 class="card-text">@Model.TotalRevenue</h5>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <p class="card-title">Total Rental Revenue <i class="bi bi-currency-rupee"></i></p>
+                    <hr />
+                    <h5 class="card-text">RS @Model.TotalRentalRevenue</h5>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <p class="card-title">Total Revenue <i class="bi bi-currency-rupee"></i></p>
+                    <hr />
+                    <h5 class="card-text">RS @(@Model.TotalRentalRevenue + Model.TotalRevenue)</h5>
+                </div>
+            </div>
+        </div>
+       
+    </div>
+
+    <div class="row bg-light rounded-start rounded-end p-2 mt-4">
+        <!-- Revenue Chart Section -->
+        <div class="col-md-9 mt-2">
+            <div class="card">
+                <div class="card-header text-white" style="background-color:royalblue">
+                    Total Order Revenue
+                </div>
+                <div class="card-body">
+                    <canvas id="revenueChart" width="400" height="195"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <!-- Last 10 Sold Products Section -->
+            <table class="table table-bordered bg-white mt-2">
+                <thead>
+                 <th>Recently Ordered Products</th>
+                  <th>Amount</th>
+                </thead>
+                @foreach (var item in Model.LastSoldProducts)
+                {
+                    <tr>
+                        <td>@item.Product.ProductName</td>
+                        <td>RS @item.Price</td>
+                    </tr>
+                }
+            </table>
+        </div>
+    </div>
+
+    <div class="row mt-4 rounded-start rounded-end justify-content-center p-2 bg-light">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header text-white" style="background-color:royalblue">
+                    User Distribution
+                </div>
+                <div class="card-body">
+                    <!-- Render the pie chart with reduced height -->
+                    <canvas id="userCategoryChart" width="400" height="20"></canvas>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header text-white" style="background-color:royalblue">
+                    Product Distribution
+                </div>
+                <div class="card-body">
+                    <!-- Render the pie chart with reduced height -->
+                    <canvas id="productCategoryChart" width="400" height="20"></canvas>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+
+        var revenueDates = @Html.Raw(Json.Serialize(Model.RevenueDates));
+        var formattedDates = revenueDates.map(function (date) {
+            return new Date(date).toLocaleDateString();
+        });
+        var revenueAmounts = @Html.Raw(Json.Serialize(Model.RevenueAmounts));
+
+        var ctx = document.getElementById('revenueChart').getContext('2d');
+
+        var revenueChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: formattedDates,
+                datasets: [{
+                    label: 'Total Revenue',
+                    data: revenueAmounts,
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+
+        var ctx = document.getElementById('userCategoryChart').getContext('2d');
+        var userCategoryChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Customers', 'Sellers', 'Experts'],
+                datasets: [{
+                    data: [@Model.TotalCustomers, @Model.TotalSellers, @Model.TotalExperts],
+                    backgroundColor: [
+                        'lightgrey',
+                        'rgba(54, 162, 235, 0.7)',
+                        'rgba(75, 192, 192, 0.7)'
+                    ]
+                }]
+            },
+        });
+
+        var ctx = document.getElementById('productCategoryChart').getContext('2d');
+        var userCategoryChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Crops', 'Fertilizer', 'Machinery'],
+                datasets: [{
+                    data: [@Model.TotalCropProduct, @Model.TotalFertilizer, @Model.TotalMachinery],
+                    backgroundColor: [
+                        'lightgrey',
+                        'rgba(54, 162, 235, 0.7)',
+                        'rgba(75, 192, 192, 0.7)'
+                    ]
+                }]
+            },
+        });
+    </script>
+}
+
+<!-- Now you can access properties of the ViewModel like this -->
+@* <div>Total Users: @Model.TotalUsers</div>
+<div>Total Orders: @Model.TotalOrders</div>
+<div>Total Queries: @Model.TotalQueries</div>
+<div>Total Queries: @Model.TotalRevenue</div> *@
+

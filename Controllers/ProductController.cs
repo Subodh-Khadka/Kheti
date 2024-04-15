@@ -29,11 +29,11 @@ namespace Kheti.Controllers
 
             var user = _db.KhetiApplicationUsers.FirstOrDefault(u => u.Id == userId);
 
-            if (user == null || user.SellerProfile == null || user.SellerProfile.IsVerified == false)
-            {
-                TempData["delete"] = "User not verified!";
-                return RedirectToAction("Index", "Home");
-            }
+            //if (user == null || user.SellerProfile == null || user.SellerProfile.IsVerified == false)
+            //{
+            //    TempData["delete"] = "User not verified!";
+            //    return RedirectToAction("Index", "Home");
+            //}
 
             //filtering the products based on the userId
             var products = _db.Products.Include(p => p.Category)
