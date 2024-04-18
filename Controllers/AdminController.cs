@@ -4,7 +4,10 @@ using Kheti.KhetiUtils;
 using Kheti.Models;
 using Kheti.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Security.Claims;
@@ -16,10 +19,18 @@ namespace Kheti.Controllers
     {
 
         private readonly ApplicationDbContext _db;
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
+
         public OrderVm OrderVm { get; set; }
-        public AdminController(ApplicationDbContext db)
+        public AdminController(ApplicationDbContext db, IWebHostEnvironment webHostEnvironment, UserManager<IdentityUser> userManager,
+            RoleManager<IdentityRole> roleManager)
         {
             _db = db;
+            _webHostEnvironment = webHostEnvironment;
+            _userManager = userManager;
+            _roleManager = roleManager;
         }
 
         public IActionResult CategoryList()
@@ -88,21 +99,217 @@ namespace Kheti.Controllers
             }
 
             return NotFound();
-
         }
 
-        public IActionResult UserList(string searchInput)
+        public IActionResult ProductList(string searchInput, string status)
         {
-            var users = _db.KhetiApplicationUsers.ToList();
+            IQueryable<Product> products = _db.Products.Include(p => p.Category);
+
 
             if (!string.IsNullOrEmpty(searchInput))
             {
                 var lowerCaseSearchInput = searchInput.ToLower();
-                users = _db.KhetiApplicationUsers.Where(u => u.FirstName.ToLower().Contains(lowerCaseSearchInput)).ToList();
+                products = _db.Products.Where(p => p.ProductName.ToLower().Contains(lowerCaseSearchInput))
+                    .Include(p => p.Category);
             }
 
-            return View(users);
+            if (!string.IsNullOrEmpty(status))
+            {
+                switch (status.ToLower())
+                {
+                    case "crop":
+                        products = products.Where(o => o.Category.Name == "Crop");
+                        break;
+                    case "fertilizer":
+                        products = products.Where(o => o.Category.Name == "Fertilizer");
+                        break;
+                    case "machinery":
+                        products = products.Where(o => o.Category.Name == "Machinery");
+                        break;
+                    default:
+                        products = products;
+                        break;
+                }
+            }
+            ViewData["Status"] = status;
+            return View(products.ToList());
         }
+
+        public IActionResult ProductDetails(Guid productId)
+        {
+            //var userId = _db.KhetiApplicationUsers.FirstOrDefault(u => u.Id == id);
+
+            if (productId != null)
+            {
+                var product = _db.Products
+                    .Include(p => p.RentalEquipment)
+                    .Include(p => p.Category)
+                    .FirstOrDefault(u => u.ProductId == productId);
+
+                var categories = _db.Categories.ToList();
+                SelectList categoryList = new SelectList(categories, "Id", "Name");
+                ViewBag.CategoryList = categoryList;
+                return View(product);
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
+        [HttpPost]
+        public IActionResult EditProductDetails(Guid productId, Product product, RentalEquipment rentalEquipment, IFormFile? imageFile)
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            product.UserId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            var existingProduct = _db.Products
+                .Include(p => p.RentalEquipment)
+                .Include(p => p.Category)
+                .FirstOrDefault(p => p.ProductId == productId);
+
+            if (existingProduct == null)
+            {
+                return RedirectToAction("Error", "Home");
+            }
+
+            existingProduct.ProductName = product.ProductName;
+            existingProduct.ProductDescription = product.ProductDescription;
+            existingProduct.Price = product.Price;
+            existingProduct.CategoryId = product.CategoryId;
+            existingProduct.Unit = product.Unit;
+            existingProduct.IsInStock = product.IsInStock;
+
+            if (existingProduct.Category.Name == "Machinery")
+            {
+                existingProduct.RentalEquipment.RentalDuration = rentalEquipment.RentalDuration;
+                existingProduct.RentalEquipment.RentalPricePerDay = rentalEquipment.RentalPricePerDay;
+                existingProduct.RentalEquipment.TermsAndCondition = rentalEquipment.TermsAndCondition;
+                existingProduct.RentalEquipment.AvailabilityStartDate = rentalEquipment.AvailabilityStartDate;
+                existingProduct.RentalEquipment.AvailabilityEndDate = rentalEquipment.AvailabilityEndDate;
+                existingProduct.RentalEquipment.Location = rentalEquipment.Location;
+                existingProduct.RentalEquipment.DepositAmount = rentalEquipment.DepositAmount;
+            }
+
+            if (imageFile != null && imageFile.Length > 0)
+            {
+
+                //Save the image to wwwroot/Images/ProductImages
+                var imagePath = Path.Combine(_webHostEnvironment.WebRootPath, "Images", "ProductImages");
+                var uniqueFileName = Guid.NewGuid().ToString() + "_" + imageFile.FileName;
+                var filePath = Path.Combine(imagePath, uniqueFileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    imageFile.CopyTo(stream);
+                }
+
+                existingProduct.ProductImageUrl = Path.Combine("Images", "ProductImages", uniqueFileName);
+                _db.Products.Update(existingProduct);
+                _db.SaveChanges();
+            }
+            else
+            {
+                if (existingProduct != null)
+                {
+                    product.ProductImageUrl = existingProduct.ProductImageUrl;
+                }
+            }
+
+            TempData["success"] = "Product Edited";
+            _db.SaveChanges();
+            return RedirectToAction("ProductDetails", new { productId = product.ProductId });
+        }
+
+        public IActionResult DeleteProduct(Guid id, string status)
+        {
+            var productToDelete = _db.Products.FirstOrDefault(x => x.ProductId == id);
+
+            if (productToDelete == null)
+            {
+                return RedirectToAction("Error", "Home");
+            }
+
+            var existingProductInCart = _db.ShoppingCarts.Where(x => x.ProductId == id).ToList();
+            var existingProductInFavorite = _db.Favorites.Where(x => x.ProductId == id).ToList();
+
+            if (existingProductInCart.Any() || existingProductInFavorite.Any())
+            {
+                foreach (var shoppingCart in existingProductInCart)
+                {
+                    _db.ShoppingCarts.Remove(shoppingCart);
+                }
+
+
+                foreach (var favorite in existingProductInFavorite)
+                {
+
+                    _db.Favorites.Remove(favorite);
+                }
+                _db.SaveChanges();
+            }
+
+            if (productToDelete.IsDeleted == false)
+            {
+                productToDelete.IsDeleted = true;
+                TempData["delete"] = "Product Deleted";
+            }
+            else
+            {
+                productToDelete.IsDeleted = false;
+                TempData["success"] = "Deleted Product Undone";
+            }
+
+
+            _db.SaveChanges();
+            return RedirectToAction("ProductList", new { status = status });
+        }
+
+
+        public async Task<IActionResult> UserList(string searchInput, string status)
+        {
+            IQueryable<KhetiApplicationUser> users = _db.KhetiApplicationUsers
+                .Include(p => p.SellerProfile).Include(p => p.ExpertProfile)
+                .OrderByDescending(o => o.RegistrationDate)
+                ;
+
+            if (!string.IsNullOrEmpty(searchInput))
+            {
+                var lowerCaseSearchInput = searchInput.ToLower();
+                users = _db.KhetiApplicationUsers.Where(u => u.FirstName.ToLower().Contains(lowerCaseSearchInput) || u.Email.ToLower().Contains(lowerCaseSearchInput));
+            }
+
+            if (!string.IsNullOrEmpty(status))
+            {
+                switch (status.ToLower())
+                {
+                    case "customer":
+                        var allUsers = await users.ToListAsync();
+                        users = allUsers.Where(u => _userManager.IsInRoleAsync(u, "Customer").Result).AsQueryable();
+                        break;
+                    case "seller":
+                        var allUsersSeller = await users.ToListAsync();
+                        users = allUsersSeller.Where(u => _userManager.IsInRoleAsync(u, "Seller").Result).AsQueryable();
+                        break;
+                    case "expert":
+                        var allUsersExpert = await users.ToListAsync();
+                        users = allUsersExpert.Where(u => _userManager.IsInRoleAsync(u, "Expert").Result).AsQueryable();
+                        break;
+                    case "admin":
+                        var allUsersAdmin = await users.ToListAsync();
+                        users = allUsersAdmin.Where(u => _userManager.IsInRoleAsync(u, "Admin").Result).AsQueryable();
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            ViewData["Status"] = status;
+            ViewBag.RoleStatus = status;
+            return View(users.ToList());
+        }
+
+
 
         public IActionResult EditUserInformation(string id)
         {
@@ -110,7 +317,10 @@ namespace Kheti.Controllers
 
             if (id != null)
             {
-                var user = _db.KhetiApplicationUsers.FirstOrDefault(u => u.Id == id);
+                var user = _db.KhetiApplicationUsers
+                    .Include(u => u.SellerProfile)
+                    .Include(u => u.ExpertProfile)
+                    .FirstOrDefault(u => u.Id == id);
                 return View(user);
 
             }
@@ -158,22 +368,35 @@ namespace Kheti.Controllers
             return RedirectToAction("Index");
         }
 
+
+
         public IActionResult DeleteUser(string id)
         {
             //var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             var user = _db.KhetiApplicationUsers.FirstOrDefault(u => u.Id == id);
-            if (user != null)
+            if (user == null)
+            {
+                RedirectToAction("Error", "Home");
+            }
+
+            if (user.IsDeleted == false)
             {
                 user.IsDeleted = true;
+                TempData["delete"] = "User Deleted";
+            }
+            else
+            {
+                user.IsDeleted = false;
+                TempData["success"] = "Deleted User Undone";
             }
 
             _db.KhetiApplicationUsers.Update(user);
             _db.SaveChanges();
 
-            TempData["delete"] = "User Deleted";
             return RedirectToAction("Userlist");
         }
+
 
         public IActionResult LockUser(string id)
         {
@@ -207,11 +430,42 @@ namespace Kheti.Controllers
             return RedirectToAction("Userlist");
         }
 
+        public IActionResult VerifySeller(string userId, string status)
+        {
+            var user = _db.KhetiApplicationUsers
+                .Include(u => u.SellerProfile)
+                .Include(u => u.ExpertProfile)
+                .FirstOrDefault(u => u.Id == userId);
+
+            if (user == null)
+            {
+                return RedirectToAction("Error", "Home");
+            }
+
+            if (user.SellerProfile.IsVerified == false)
+            {
+                TempData["success"] = "Seller Verified";
+                user.SellerProfile.IsVerified = true;
+            }
+            else if (user.SellerProfile.IsVerified == true)
+            {
+                TempData["delete"] = "Seller unverified";
+                user.SellerProfile.IsVerified = false;
+            }
+
+            _db.KhetiApplicationUsers.Update(user);
+            _db.SaveChanges();
+            return RedirectToAction("UserList", new { status = status });
+        }
+
+
+
         public IActionResult QueryList(string status)
         {
 
-            IQueryable<QueryForm> queries = _db.QueryForms.Include(U => U.User);
-
+            IQueryable<QueryForm> queries = _db.QueryForms
+                .OrderByDescending(q => q.IsDeleted)
+                .Include(U => U.User);
 
             if (!string.IsNullOrEmpty(status))
             {
@@ -220,7 +474,7 @@ namespace Kheti.Controllers
                     case "pending":
                         queries = queries.Where(o => o.QueryStatus == StaticDetail.QueryStatusPending);
                         break;
-                    case "inProcess":
+                    case "process":
                         queries = queries.Where(o => o.QueryStatus == StaticDetail.QueryStatusInProcess);
                         break;
                     case "solved":
@@ -232,10 +486,40 @@ namespace Kheti.Controllers
                 }
             }
 
+            ViewData["Status"] = status;
             return View(queries.ToList());
         }
 
-     
+        public IActionResult DeleteQuery(int id, string status)
+        {
+            var query = _db.QueryForms.FirstOrDefault(q => q.Id == id);
+
+            if (query == null)
+            {
+                return RedirectToAction("Error", "Home");
+            }
+
+            if (query.IsDeleted == false)
+            {
+                query.IsDeleted = true;
+                TempData["delete"] = "Query Deleted";
+            }
+            else if (query.IsDeleted == true)
+            {
+                query.IsDeleted = false;
+                TempData["success"] = "Query Restored";
+            }
+            else
+            {
+                query.IsDeleted = true;
+                TempData["delete"] = "Query Deleted";
+            }
+
+            _db.QueryForms.Update(query);
+            _db.SaveChanges();
+            return RedirectToAction("QueryList", new { status = status });
+        }
+
 
         public IActionResult OrderList(string status)
         {
@@ -327,6 +611,19 @@ namespace Kheti.Controllers
             return View(bookings.ToList());
         }
 
+        public IActionResult BookingDetails(Guid bookingId)
+        {
+            var bookingDetails = _db.Bookings
+                 .Include(b => b.Product)
+                  .Include(r => r.Product.RentalEquipment)
+                  .Include(b => b.Product)
+                  .Include(r => r.Product.User)
+                 .Include(b => b.User)
+                 .FirstOrDefault(b => b.BookingId == bookingId);
+
+            return View(bookingDetails);
+        }
+
         public IActionResult ReportList(string status)
         {
             IQueryable<Report> reports = _db.Reports;
@@ -355,10 +652,10 @@ namespace Kheti.Controllers
         {
             var paymentList = _db.Payments
                 .Include(p => p.Order)
-                
+
                 .Include(p => p.Booking)
                 .Include(p => p.User)
-                
+
                 .ToList();
 
             if (!string.IsNullOrEmpty(searchInput))
@@ -417,11 +714,11 @@ namespace Kheti.Controllers
                      .Include(r => r.Product.User)
                     .Include(b => b.User)
                     .FirstOrDefault(b => b.BookingId == bookingId);
-                return View("BookingDetails", bookingDetails);  
+                return RedirectToAction("BookingDetails", bookingDetails);
             }
             else
             {
-                return BadRequest();
+                return RedirectToAction("Error", "Home");
             }
         }
 
@@ -561,9 +858,9 @@ namespace Kheti.Controllers
         private List<OrderItem> GetLastSoldProducts()
         {
             var lastSoldProducts = _db.OrderItems
-                .Include(oi => oi.Product) 
-                .OrderByDescending(oi => oi.Order.OrderCreatedDate) 
-                .Take(12) 
+                .Include(oi => oi.Product)
+                .OrderByDescending(oi => oi.Order.OrderCreatedDate)
+                .Take(12)
                 .ToList();
 
             return lastSoldProducts;

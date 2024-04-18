@@ -4,7 +4,7 @@
 }
 
 <style>
-    h6 {
+    .orderDiv  {
         color: royalblue;
     }
 </style>
@@ -21,134 +21,137 @@
         <a class="btn btn-sm btn-primary" asp-action="PaymentList"><i class="bi bi-arrow-90deg-left"></i></a>
     </div>
 </div>
-<hr class="text-secondary mt-0 pt-0" /> 
+<hr class="text-secondary mt-0 pt-0" />
 
-<div class="row justify-content-center bg-light p-2">
-    @{
-        int count = 0;
-    }
-    @foreach (var orderItem in Model.OrderItems)
-    {
-        count++;
-        @if (orderItem.OrderId != null)
-        {
-            <div class="col-md-4">
-                <h6>Item @count</h6>
-                <table class="table table-bordered table-hover bg-white">
-                    <tr>
-                        <td><strong>Email</strong></td>
-                        <td>@orderItem.Product.ProductName</td>
+<div class="orderDiv">
 
-                    </tr>
-                    <tr>
-                        <td><strong>Phone</strong></td>
-                        <td>@orderItem.Quantity</td>
-
-                    </tr>
-                    <tr>
-                        <td><strong>Address</strong></td>
-                        <td>@orderItem.Price</td>
-
-                    </tr>
-                    <tr>
-                        <td><strong>Total</strong></td>
-                        <td>@(orderItem.Quantity * @orderItem.Product.Price)</td>
-
-                    </tr>
-                    <tr>
-                        <td><strong>Image</strong></td>
-                        <td><img src="~/@orderItem.Product.ProductImageUrl" height="30px" width="30px" class="rounded-circle" /></td>
-
-                    </tr>
-
-                </table>
-            </div>
+    <div class="row justify-content-center bg-light p-2">
+        @{
+            int count = 0;
         }
+        @foreach (var orderItem in Model.OrderItems)
+        {
+            count++;
+            @if (orderItem.OrderId != null)
+            {
+                <div class="col-md-4">
+                    <h6>Item @count</h6>
+                    <table class="table table-bordered table-hover bg-white">
+                        <tr>
+                            <td><strong>Email</strong></td>
+                            <td>@orderItem.Product.ProductName</td>
 
-    }
-</div>
+                        </tr>
+                        <tr>
+                            <td><strong>Phone</strong></td>
+                            <td>@orderItem.Quantity</td>
 
-@* OrderDetails *@
-<div class="row mt-4 bg-light p-2">
-    <div class="col-md-6">
-        <h6>Order Details</h6>
-        <table class="table table-bordered table-hover bg-white">
-            <tr>
-                <td><strong>OrderId</strong></td>
-                <td>@Model.Order.OrderId</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Address</strong></td>
+                            <td>@orderItem.Price</td>
 
-            </tr>
-            <tr>
-                <td><strong>DateCreated</strong></td>
-                <td>@Model.Order.OrderCreatedDate</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Total</strong></td>
+                            <td>@(orderItem.Quantity * @orderItem.Product.Price)</td>
 
-            </tr>
-            <tr>
-                <td><strong>ShippedDate</strong></td>
-                <td>@Model.Order.ShippedDate</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Image</strong></td>
+                            <td><img src="~/@orderItem.Product.ProductImageUrl" height="30px" width="30px" class="rounded-circle" /></td>
 
-            </tr>
-            <tr>
-                <td><strong>Order Total</strong></td>
-                <td>@Model.Order.OrderTotal</td>
+                        </tr>
 
-            </tr>
-            <tr>
-                <td><strong>OrderStatus</strong></td>
-                <td>@Model.Order.OrderStatus</td>
-                @* <td><img src="~/@Model.User.ProfilePictureURL" height="30px" width="30px" class="rounded-circle" /></td> *@
-            </tr>
-            <tr>
-                <td><strong>Payment Status</strong></td>
-                <td>@Model.Order.PaymentStatus</td>
+                    </table>
+                </div>
+            }
 
-            </tr>
-            <tr>
-                <td><strong>PaymentDate</strong></td>
-                <td>@Model.Order.PaymentDate</td>
-
-            </tr>
-
-        </table>
+        }
     </div>
 
-    @* User Details*@
-    <div class="col-md-6">
-        <h6>User Information</h6>
-        <table class="table table-bordered table-hover bg-white">
-            <tr>
-                <td><strong>Name</strong></td>
-                <td>@Model.Order.CustomerName</td>
+    @* OrderDetails *@
+    <div class="row mt-4 bg-light p-2">
+        <div class="col-md-6">
+            <h6>Order Details</h6>
+            <table class="table table-bordered table-hover bg-white">
+                <tr>
+                    <td><strong>OrderId</strong></td>
+                    <td>@Model.Order.OrderId</td>
 
-            </tr>
-            <tr>
-                <td><strong>Email</strong></td>
-                <td>@Model.Order.User.Email</td>
+                </tr>
+                <tr>
+                    <td><strong>DateCreated</strong></td>
+                    <td>@Model.Order.OrderCreatedDate</td>
 
-            </tr>
-            <tr>
-                <td><strong>Phone</strong></td>
-                <td>@Model.Order.User.PhoneNumber</td>
+                </tr>
+                <tr>
+                    <td><strong>ShippedDate</strong></td>
+                    <td>@Model.Order.ShippedDate</td>
 
-            </tr>
-            <tr>
-                <td><strong>Address</strong></td>
-                <td>@Model.Order.User.Address</td>
+                </tr>
+                <tr>
+                    <td><strong>Order Total</strong></td>
+                    <td>@Model.Order.OrderTotal</td>
 
-            </tr>
-            <tr>
-                <td><strong>Image</strong></td>
-                @if (Model.Order.User.ProfilePictureURL != null)
-                {
-                    <td><img src="~/@Model.Order.User.ProfilePictureURL" height="30px" width="30px" class="rounded-circle" /></td>
-                }
-                else
-                {
-                    <td><img src="~/Images/DefaultImages/defaultUserImage.jpg" height="30px" width="30px" class="rounded-circle" /></td>
-                }
+                </tr>
+                <tr>
+                    <td><strong>OrderStatus</strong></td>
+                    <td>@Model.Order.OrderStatus</td>
+                    @* <td><img src="~/@Model.User.ProfilePictureURL" height="30px" width="30px" class="rounded-circle" /></td> *@
+                </tr>
+                <tr>
+                    <td><strong>Payment Status</strong></td>
+                    <td>@Model.Order.PaymentStatus</td>
 
-            </tr>
+                </tr>
+                <tr>
+                    <td><strong>PaymentDate</strong></td>
+                    <td>@Model.Order.PaymentDate</td>
 
-        </table>
+                </tr>
+
+            </table>
+        </div>
+
+        @* User Details*@
+        <div class="col-md-6">
+            <h6>User Information</h6>
+            <table class="table table-bordered table-hover bg-white">
+                <tr>
+                    <td><strong>Name</strong></td>
+                    <td>@Model.Order.CustomerName</td>
+
+                </tr>
+                <tr>
+                    <td><strong>Email</strong></td>
+                    <td>@Model.Order.User.Email</td>
+
+                </tr>
+                <tr>
+                    <td><strong>Phone</strong></td>
+                    <td>@Model.Order.User.PhoneNumber</td>
+
+                </tr>
+                <tr>
+                    <td><strong>Address</strong></td>
+                    <td>@Model.Order.User.Address</td>
+
+                </tr>
+                <tr>
+                    <td><strong>Image</strong></td>
+                    @if (Model.Order.User.ProfilePictureURL != null)
+                    {
+                        <td><img src="~/@Model.Order.User.ProfilePictureURL" height="30px" width="30px" class="rounded-circle" /></td>
+                    }
+                    else
+                    {
+                        <td><img src="~/Images/DefaultImages/defaultUserImage.jpg" height="30px" width="30px" class="rounded-circle" /></td>
+                    }
+
+                </tr>
+
+            </table>
+        </div>
     </div>
 </div>

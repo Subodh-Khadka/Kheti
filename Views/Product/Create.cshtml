@@ -6,9 +6,16 @@
 
 <link rel="stylesheet" href="~/css/create.css" asp-append-version="true" />
 
-<div class="row d-flex justify-content-center">
+<div class="row d-flex justify-content-center mb-4">
     <div class="col-md-7 bg-light create-form">
-        <h6 class="text-success">Add a new product</h6>
+        <div class="d-flex gap-2 align-items-center justify-content-between">
+            <div>
+                <h6 class="text-success">Add a new product</h6>
+            </div>
+            <div>
+                <div class="rounded-2 ms-3" id="imagePreview"></div>
+            </div>
+        </div>
         <hr />
         <form asp-action="Create" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -28,10 +35,6 @@
                 <span asp-validation-for="Price" class="text-danger"></span>
             </div>
 
-            @*  <div class="form-group mt-2">
-            <label asp-for="UserId" class="control-label"></label>
-            <select asp-for="UserId" class ="form-control" asp-items="ViewBag.UserId"></select>
-            </div> *@
             <input asp-for="CreatedDate" hidden />
             <input asp-for="UserId" type="hidden" />
 
@@ -43,9 +46,25 @@
             </div>
             <div class="form-group mt-2">
                 <label asp-for="ProductImageUrl" class="control-label"></label>
-                <input asp-for=ProductImageUrl type="file" name="imageFile" class="form-control" />
+                <input type="file" id="profilePicture" name="imageFile" class="form-control" onchange="ImagePreview(event)">
+                @* <input asp-for=ProductImageUrl type="file" name="imageFile" class="form-control" /> *@
                 <span asp-validation-for="ProductImageUrl" class="text-danger"></span>
             </div>
+            <div class="form-group">
+                <label asp-for="Unit" class="control-label"></label>
+                <input asp-for="Unit" class="form-control" />
+                <span asp-validation-for="Unit" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-2">
+                <label asp-for="IsInStock" class="control-label"></label>
+                <select id="stockId" title="InStock?" asp-for="IsInStock" class="form-select">
+                    <option disabled selected>Select stock availbility</option>
+                    <option>@StaticDetail.IsInStockStatus</option>
+                    <option>@StaticDetail.OutOfStockStatus</option>
+                    <option></option>
+                </select>
+            </div>
+
 
             @* Rental Information Section *@
             <div class="form-group mt-2" id="rentalFields" style="display: none;">
@@ -112,6 +131,19 @@
                 }
             });
         });
+
+        function ImagePreview(event) {
+            var image = URL.createObjectURL(event.target.files[0]);
+            var imagePreview = document.getElementById('imagePreview');
+
+            imagePreview.innerHTML = '';
+
+            var newImage = document.createElement('img');
+            newImage.src = image;
+            newImage.width = 100;
+            newImage.height = 100;
+            imagePreview.appendChild(newImage);
+        }
     </script>
 
     @{

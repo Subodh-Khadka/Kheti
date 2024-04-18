@@ -1,4 +1,5 @@
 ﻿using Kheti.Data;
+using Kheti.KhetiUtils;
 using Kheti.Models;
 using Kheti.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -89,6 +90,15 @@ namespace Kheti.Controllers
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
             shoppingCart.UserId = userId;
+
+            var product = _db.Products.FirstOrDefault(p => p.ProductId == shoppingCart.ProductId);
+
+            if(product.IsInStock == StaticDetail.OutOfStockStatus)
+            {
+                TempData["warning"] = "Product is out of stock";
+                return RedirectToAction("Details", new {id = product.ProductId});
+            }
+
 
             ShoppingCart existingCartInDb = _db.ShoppingCarts.
                 FirstOrDefault(u => u.UserId == userId && u.ProductId == shoppingCart.ProductId);

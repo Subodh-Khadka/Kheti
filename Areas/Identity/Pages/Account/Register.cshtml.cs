@@ -274,6 +274,7 @@ namespace Kheti.Areas.Identity.Pages.Account
                 }
                 foreach (var error in result.Errors)
                 {
+
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
             }

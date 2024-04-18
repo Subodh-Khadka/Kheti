@@ -13,12 +13,12 @@
         color: white;
     }
 
-    img {
+    .container img {
         height: 68px;
         width: 68px;
     }
 
-    h6 {
+    , container h6 {
         color: royalblue;
     }
 </style>
@@ -46,7 +46,16 @@
                         <strong>Rented Product Image:</strong><br />
                     </td>
                     <td>
-                        <img src="~/@Model.Product.ProductImageUrl" class="rounded-circle ms-md-5" />
+                        @if(Model.Product.ProductImageUrl != null)
+                        {
+                            <img src="~/@Model.Product.ProductImageUrl" class="rounded-circle ms-md-5" />
+
+                        }
+                        else
+                        {
+                            <img src="~/Images/DefaultImages/defaultUserImage.jpg" class="rounded-circle ms-md-5" />
+                            
+                        }
                     </td>
                 </tr>
                 <tr>

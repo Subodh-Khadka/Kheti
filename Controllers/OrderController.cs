@@ -65,6 +65,7 @@ namespace Kheti.Controllers
 
             var orderItems = _db.OrderItems
                 .Include(o => o.Order)
+                .ThenInclude(o => o.User)
                 .Include(oi => oi.Product)
                 .ThenInclude(oi => oi.User)
                 .Where(oi => oi.OrderId == orderId && oi.Order.UserId == userId).ToList();

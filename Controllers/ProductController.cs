@@ -37,6 +37,7 @@ namespace Kheti.Controllers
 
             //filtering the products based on the userId
             var products = _db.Products.Include(p => p.Category)
+                .OrderByDescending(p => p.CreatedDate)
                 .Where(p => p.UserId == userId && p.IsDeleted == false);
             return View(products);
         }
@@ -152,6 +153,8 @@ namespace Kheti.Controllers
             existingProduct.ProductDescription = product.ProductDescription;
             existingProduct.Price = product.Price;
             existingProduct.CategoryId = product.CategoryId;
+            existingProduct.Unit = product.Unit;
+            existingProduct.IsInStock = product.IsInStock;
 
             if (existingProduct.Category.Name == "Machinery")
             {
@@ -190,6 +193,7 @@ namespace Kheti.Controllers
             }
 
             _db.SaveChanges();
+            TempData["success"] = "Product edited";
             return RedirectToAction("Index");
         }
 
@@ -218,6 +222,7 @@ namespace Kheti.Controllers
 
             productToDelete.IsDeleted = true;
             _db.SaveChanges();
+            TempData["delete"] = "Product Deleted";
             return RedirectToAction("Index");
         }
     }

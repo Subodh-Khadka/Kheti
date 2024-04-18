@@ -12,47 +12,68 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
     <style>
-        .nav-icon{
-            margin-right:10px;
+        .nav-icon {
+            margin-right: 10px;
         }
+
     </style>
 </head>
-<body>
-  @*   <div class="header">
-        <button id="sidebarToggle" class="border-0 mt-2 mb-1">
-            <i class="bi bi-list icon"> </i>
-        </button>
-    </div> *@
-    <div class="sidebar" id="sidebar">
-        <ul class="nav flex-column h-100 mt-5">
-            <li class="nav-item">
+<body> 
+    <div class="d-flex justify-content-between align-content-center p-2 bg-light fixed-top">
+        <h6 class="align-self-center ms-4 text-center text-dark"> <i class="bi bi-person-workspace nav-icon fs-6"></i> Admin Panel</h6>
+        <img src="~/Images/KhetiLogo/khetiLogo.png" height="40px" width="180px" />
+        <hr />
+    </div>
+
+    <div class="sidebar " id="sidebar">
+        <ul class="nav flex-column h-100 mt-5 bg-light rounded-start rounded-end">
+            <li class="nav-item mt-1">
                 <a class="nav-link" asp-action="Index" asp-controller="Admin"><i class="bi bi-graph-down-arrow fs-6 nav-icon "></i> Dashboard</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link navs" asp-area="" asp-controller="Admin" asp-action="CategoryList"><i class="bi bi-diagram-3 fs-6 nav-icon"></i> Category</a>
-            </li>                  
-            <li class="nav-item">  
+            </li>
+            <li class="nav-item">
+                <a class="nav-link navs" asp-area="" asp-controller="Admin" asp-action="ProductList"><i class="bi bi-layers nav-icon"></i> Products</a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link navs" asp-area="" asp-controller="Admin" asp-action="UserList"><i class="bi bi-people fs-6 nav-icon"></i> Users</a>
-            </li>                  
-            <li class="nav-item">  
-                <a class="nav-link navs" asp-area="" asp-controller="Admin" asp-action="QueryList"><i class="bi bi-person-raised-hand nav-icon fs-6"></i> Queries</a>
-            </li>                  
-            <li class="nav-item">  
+            </li>
+            <li class="nav-item">
+                <a class="nav-link navs" asp-area="" asp-controller="Admin" asp-action="QueryList"><i class="bi bi-question-square nav-icon fs-6"></i> Queries</a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link navs" asp-area="" asp-controller="Admin" asp-action="OrderList"><i class="bi bi-postcard fs-6 nav-icon"></i> Orders</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link navs" asp-area="" asp-controller="Admin" asp-action="BookingList"><i class="bi bi-postcard fs-6 nav-icon"></i> Bookings</a>
+                <a class="nav-link navs" asp-area="" asp-controller="Admin" asp-action="BookingList"><i class="bi bi-journal nav-icon "></i> Bookings</a>
             </li>
-              <li class="nav-item">
-                <a class="nav-link navs" asp-area="" asp-controller="Admin" asp-action="PaymentList"><i class="bi bi-postcard fs-6 nav-icon"></i> Payments</a>
+            <li class="nav-item">
+                <a class="nav-link navs" asp-area="" asp-controller="Admin" asp-action="PaymentList"><i class="bi bi-wallet2 nav-icon"></i> Payments</a>
             </li>
-            <li class="nav-item">  
+            <li class="nav-item">
                 <a class="nav-link navs" asp-area="" asp-controller="Admin" asp-action="ReportList"><i class="bi bi-flag nav-icon fs-6"></i> Reports</a>
             </li>
+
+            @*  <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-gear fs-6 nav-icon"></i> More
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <li><a class="dropdown-item" asp-area="Identity" asp-page="/Account/Register"><i class="bi bi-person-add fs-6 nav-icon"></i> Register</a></li>
+            <li><a class="dropdown-item"  <a class="nav-link navs" asp-area="" asp-controller="Home" asp-action="Index"><i class="bi bi-house-door fs-6 nav-icon"></i> Home</a></li>
+            <li>
+            <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+            <button id="logout" type="submit" class="nav-link logout-btn border-0"><i class="bi bi-box-arrow-left"></i> Logout</button>
+            </form>
+            </li>
+            </ul>
+            </li> *@
+
             <li class="nav-item">
                 <a class="nav-link navs" id="register" asp-area="Identity" asp-page="/Account/Register"><i class="bi bi-person-add fs-6 nav-icon"></i> Register</a>
             </li>
-            <li class="nav-item">  
+            <li class="nav-item">
                 <a class="nav-link navs" asp-area="" asp-controller="Home" asp-action="Index"><i class="bi bi-house-door fs-6 nav-icon"></i> Home</a>
             </li>
             <li class="nav-item logout-li">
@@ -63,7 +84,7 @@
         </ul>
     </div>
 
-    <div class="main-content">
+    <div class="main-content mt-5">
         <div class="container-fluid">
             <partial name="_Notification" />
             @RenderBody()
@@ -105,3 +126,10 @@
     </script>
 </body>
 </html>
+
+
+@*   <div class="header">
+        <button id="sidebartoggle" class="border-0 mt-2 mb-1">
+            <i class="bi bi-list icon"> </i>
+        </button>
+    </div> *@  

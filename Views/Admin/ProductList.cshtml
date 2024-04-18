@@ -1,0 +1,116 @@
+﻿@model List<Kheti.Models.Product>
+@{
+    Layout = "_AdminLayout";
+}
+
+<style>
+    .table th {
+        background-color: royalblue;
+        color: white;
+    }
+
+    .table {
+        font-size: x-small;
+        border: 1px solid #dddddd;
+    }
+
+    td {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100px;
+    }
+</style>
+
+<div class="container mt-0 d-flex align-items-center justify-content-between mb-0 pb-0">
+    <div>
+        <h6>Product List</h6>
+    </div>
+
+    <div class="text-end gap-0 mb-1">
+        <div class="dropdown text-end">
+            <button class="btn btn-sm royalBlue dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                Filter
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                <li><a asp-action="ProductList" asp-route-status="all" class="dropdown-item">all</a></li>
+                <li><a asp-action="ProductList" asp-route-status="crop" class="dropdown-item">crop</a></li>
+                <li><a asp-action="ProductList" asp-route-status="fertilizer" class="dropdown-item">fertilizer</a></li>
+                <li><a asp-action="ProductList" asp-route-status="Machinery" class="dropdown-item">machinery</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="text-end gap-0 mb-1">
+        <form method="get" asp-action="ProductList" asp-controller="Admin" class="mb-2">
+            <input class="search-input" type="text" name="searchInput" placeholder="enter product name" />
+            <button style="background-color:royalblue" type="submit" class="btn btn-sm search-btn text-white"><i class="bi bi-search"></i></button>
+        </form>
+    </div>
+</div>
+<hr class="text-secondary mt-0 pt-0" />
+
+<div class="container">
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Category</th>
+                <th>IsInStock</th>
+                <th>IsDeleted</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var product in Model)
+            {
+                @if (product.ProductName != null)
+                {
+                    <tr>
+                        <td>
+                            @if (product.ProductImageUrl != null)
+                            {
+                                <img src="~/@product.ProductImageUrl" class="rounded-circle" height="30px" width="30px" />
+                            }
+                            else
+                            {
+                                <img src="~/images/defaultimages/defaultuserimage.jpg" class="rounded-circle" height="30px" width="30px" />
+                            }
+                            @product.ProductName
+                        </td>
+                        <td>@product.Price</td>
+                        <td>@product.Category.Name</td>
+                        <td>@product.IsInStock</td>
+                        <td>@product.IsDeleted</td>
+                        <td class="d-flex gap-1 w-100">
+                            <form asp-action="ProductDetails" asp-controller="Admin" method="get">
+                                <input type="hidden" name="productId" value="@product.ProductId" />
+                                <button class="btn btn-sm btn-primary" type="submit"><i class="bi bi-pencil"></i></button>
+                            </form>
+                            @if (product.IsDeleted == false)
+                            {
+                                <form method="post" action="@Url.Action("DeleteProduct", "Admin", new { status = ViewData["Status"] })">
+                                    <input type="hidden" name="id" value="@product.ProductId" />
+                                    <input type="hidden" name="status" value="@ViewData["Status"]" />
+                                    <button type="submit" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></button>
+                                </form>
+                                @*   <a class="btn btn-sm btn-danger " asp-action="DeleteProduct" asp-controller="Admin" asp-route-id="@product.ProductId"><i class="bi bi-trash"></i></a> *@
+                            }
+                            else
+                            {
+                                <form method="post" action="@Url.Action("DeleteProduct", "Admin", new { status = ViewData["Status"] })">
+                                    <input type="hidden" name="id" value="@product.ProductId" />
+                                    <input type="hidden" name="status" value="@ViewData["Status"]" />
+                                    <button type="submit" class="btn btn-sm btn-success"><i class="bi-arrow-counterclockwise"></i></button>
+                                </form>
+                                @*   <a class="btn btn-sm btn-success " asp-action="UndoDelete" asp-controller="Admin" asp-route-id="@product.ProductId"><i class="bi-arrow-counterclockwise"></i></a> *@
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>

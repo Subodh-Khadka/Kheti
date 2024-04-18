@@ -9,8 +9,8 @@
         public const string ExpertRole = "Expert";
 
         //product Availability
-        public const string IsInStockStatus = "InStock";
-        public const string OutOfStockStatus = "OutOfStock";
+        public const string IsInStockStatus = "In Stock";
+        public const string OutOfStockStatus = "Out Of Stock";
 
         //OrderStatus   
         public const string OrderStatusPending = "Pending";        

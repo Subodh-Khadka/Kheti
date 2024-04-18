@@ -38,14 +38,14 @@
                             <a class="nav-link" asp-area="" asp-controller="Rental" asp-action="Index">Machinery</a>
                         </li>
 
-                        @if (SignInManager.IsSignedIn(User) && (!User.IsInRole("Customer")))
+                        @if (SignInManager.IsSignedIn(User) && (User.IsInRole(StaticDetail.SellerRole)))
                         {
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Add
+                                    More
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    @if (User.IsInRole(StaticDetail.SellerRole) || User.IsInRole(StaticDetail.AdminRole))
+                                    @if (User.IsInRole(StaticDetail.SellerRole))
                                     {
                                         <li class="nav-item">
                                             <a class="nav-link" asp-area="" asp-controller="Product" asp-action="Index">AddProduct</a>
@@ -53,7 +53,6 @@
                                         <li class="nav-item">
                                             <a class="nav-link" asp-area="" asp-controller="Consultation" asp-action="CreateQuery">Submit Query</a>
                                         </li>
-
 
                                     }
                                     @if (User.IsInRole(StaticDetail.ExpertRole) || User.IsInRole(StaticDetail.SellerRole))
@@ -69,20 +68,31 @@
                             </li>
                         }
 
+
+                        @if (SignInManager.IsSignedIn(User) && (User.IsInRole(StaticDetail.ExpertRole)))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Consultation" asp-action="QueryList">Query</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="User" asp-action="CreateReport">Report</a>
+                            </li>
+                        }
+
                         @if (User.IsInRole("Customer"))
                         {
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="" asp-controller="User" asp-action="CreateReport">Report</a>
                             </li>
                         }
-                      @*   <li class="nav-item">
-                            <a class="nav-link" id="about-nav" href="#about">About Us</a>
+                        @*   <li class="nav-item">
+                        <a class="nav-link" id="about-nav" href="#about">About Us</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" id="about-nav" href="#service">Services</a>
+                        <a class="nav-link" id="about-nav" href="#service">Services</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" id="about-nav" href="#contactUs">Contact</a>
+                        <a class="nav-link" id="about-nav" href="#contactUs">Contact</a>
                         </li> *@
 
                     </ul>

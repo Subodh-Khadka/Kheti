@@ -1,44 +1,168 @@
-﻿@model Kheti.ViewModels.OrderVm
+﻿
 
 <link rel="stylesheet" href="~/css/orderDetails.css" asp-append-version="true" />
 <script src="~/js/productReview.js"></script>
 
+@model Kheti.ViewModels.OrderVm
 <style>
-    .rated{
-        color: #efd510;
+    h6 {
+        color: green;
     }
 </style>
-    
-<h5 class="text-center text-success">Order Details</h5>
-<div class="container order-container extra_small_grey_text_css">
-    @{
-        int count = 0;
-    }
-   
-    @foreach (var orderItem in Model.OrderItems)
-    {
-        count++;
-        <p class="text-success">Item @count</p>
-        <div class="order-item d-flex gap-3 justify-content-around align-items-center mb-3 bg-light text-secondary rounded-start rounded-end">
-            <img src="~/@orderItem.Product.ProductImageUrl" />
-            <div style="width: 100px; overflow: hidden;">
-                <p class="customer-Name" title="@orderItem.Product.ProductName">@orderItem.Product.ProductName</p>
-            </div>
-            <p>Rs @orderItem.Product.Price</p>
-            <p>Qty: @orderItem.Quantity</p>
-            <p>Total: @(orderItem.Price * @orderItem.Quantity)</p>
 
-            <section class="btn-group d-flex gap-2">
-                <button type="button" 
-                        class="btn btn-sm purple-background text-white review-btn"
-                        data-product-id="@orderItem.ProductId"
-                        data-bs-toggle="modal"                        
-                        data-bs-target="#reviewModal">
-                    Review
-                </button>                            
-                <input type="hidden" id="selectedRating" name="rating" value="0" />
-            </section>
+<link rel="stylesheet" href="~/css/orderDetails.css" asp-append-version="true" />
+<script src="~/js/productReview.js"></script>
+
+<div class="container">
+    <div class="ms-3 mt-0 d-flex align-items-center justify-content-between mb-0 pb-0">
+        <div>
+            <h6 class="">Order Details</h6>
         </div>
-    }
+
+        <div class="text-end gap-0 mb-2">
+            <a asp-action="OrderList" class="mt-4 mb-4 text-md-start small_grey_text_css text-decoration-none gap-3"><i class="bi bi-arrow-left pe-2 back-icon"></i>Back To Home</a>
+        </div>
+    </div>
+    <hr class="text-secondary mt-0 pt-0" />
+
+    <div class="row justify-content-center bg-light p-2">
+        @{
+            int count = 0;
+        }
+        @foreach (var orderItem in Model.OrderItems)
+        {
+            count++;
+            @if (orderItem.OrderId != null)
+            {
+                <div class="col-md-4">
+                    <h6>Item @count</h6>
+                    <table class="table table-bordered table-hover bg-white">
+                        <tr>
+                            <td><strong>Email</strong></td>
+                            <td>@orderItem.Product.ProductName</td>
+
+                        </tr>
+                        <tr>
+                            <td><strong>Phone</strong></td>
+                            <td>@orderItem.Quantity</td>
+
+                        </tr>
+                        <tr>
+                            <td><strong>Address</strong></td>
+                            <td>@orderItem.Price</td>
+
+                        </tr>
+                        <tr>
+                            <td><strong>Total</strong></td>
+                            <td>@(orderItem.Quantity * @orderItem.Product.Price)</td>
+
+                        </tr>
+                        <tr>
+                            <td><strong>Image</strong></td>
+                            <td><img src="~/@orderItem.Product.ProductImageUrl" height="30px" width="30px" class="rounded-circle" /></td>
+
+                        </tr>
+
+                    </table>
+                    <section class="btn-group d-flex gap-2">
+                        <button type="button"
+                                class="btn btn-sm purple-background text-white review-btn"
+                                data-product-id="@orderItem.ProductId"
+                                data-bs-toggle="modal"
+                                data-bs-target="#reviewModal">
+                            Review
+                        </button>
+                        <input type="hidden" id="selectedRating" name="rating" value="0" />
+                    </section>
+                </div>
+            }
+
+        }
+    </div>
+
+    @* OrderDetails *@
+    <div class="row mt-4 bg-light p-2">
+        <div class="col-md-6">
+            <h6>Order Details</h6>
+            <table class="table table-bordered table-hover bg-white">
+                <tr>
+                    <td><strong>OrderId</strong></td>
+                    <td>@Model.Order.OrderId</td>
+
+                </tr>
+                <tr>
+                    <td><strong>DateCreated</strong></td>
+                    <td>@Model.Order.OrderCreatedDate</td>
+
+                </tr>
+                <tr>
+                    <td><strong>ShippedDate</strong></td>
+                    <td>@Model.Order.ShippedDate</td>
+
+                </tr>
+                <tr>
+                    <td><strong>Order Total</strong></td>
+                    <td>@Model.Order.OrderTotal</td>
+
+                </tr>
+                <tr>
+                    <td><strong>OrderStatus</strong></td>
+                    <td>@Model.Order.OrderStatus</td>
+                    @* <td><img src="~/@Model.User.ProfilePictureURL" height="30px" width="30px" class="rounded-circle" /></td> *@
+                </tr>
+                <tr>
+                    <td><strong>Payment Status</strong></td>
+                    <td>@Model.Order.PaymentStatus</td>
+
+                </tr>
+                <tr>
+                    <td><strong>PaymentDate</strong></td>
+                    <td>@Model.Order.PaymentDate</td>
+
+                </tr>
+
+            </table>
+        </div>
+
+        @* User Details*@
+        <div class="col-md-6">
+            <h6>User Information</h6>
+            <table class="table table-bordered table-hover bg-white">
+                <tr>
+                    <td><strong>Name</strong></td>
+                    <td>@Model.Order.CustomerName</td>
+
+                </tr>
+                <tr>
+                    <td><strong>Email</strong></td>
+                    <td>@Model.Order.User.Email</td>
+
+                </tr>
+                <tr>
+                    <td><strong>Phone</strong></td>
+                    <td>@Model.Order.User.PhoneNumber</td>
+
+                </tr>
+                <tr>
+                    <td><strong>Address</strong></td>
+                    <td>@Model.Order.User.Address</td>
+
+                </tr>
+                <tr>
+                    <td><strong>Image</strong></td>
+                    @if (Model.Order.User.ProfilePictureURL != null)
+                    {
+                        <td><img src="~/@Model.Order.User.ProfilePictureURL" height="30px" width="30px" class="rounded-circle" /></td>
+                    }
+                    else
+                    {
+                        <td><img src="~/Images/DefaultImages/defaultUserImage.jpg" height="30px" width="30px" class="rounded-circle" /></td>
+                    }
+
+                </tr>
+
+            </table>
+        </div>
+    </div>
     @Html.Partial("_ReviewFormPartial.cshtml")
 </div>

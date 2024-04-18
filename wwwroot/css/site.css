@@ -136,6 +136,10 @@ form label {
     padding: 10px 0;
 }
 
+.royalBlue {
+    background-color: royalblue;
+    color: white;
+}
 
 /*white-space: nowrap;
 overflow: hidden;

@@ -1,4 +1,7 @@
 ﻿@model List<Kheti.Models.KhetiApplicationUser>
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
 @{
     Layout = "_AdminLayout";
 }
@@ -18,7 +21,7 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        max-width: 100px;
+        max-width: 200px;
     }
 </style>
 
@@ -26,6 +29,23 @@
     <div>
         <h6>User List</h6>
     </div>
+
+    <div class="text-end gap-0 mb-1">
+        <div class="dropdown text-end">
+            <button class="btn btn-sm royalBlue dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                Filter
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                <li><a asp-action="UserList" asp-route-status="all" class="dropdown-item">all</a></li>
+                <li><a asp-action="UserList" asp-route-status="customer" class="dropdown-item">customer</a></li>
+                <li><a asp-action="UserList" asp-route-status="seller" class="dropdown-item">seller</a></li>
+                <li><a asp-action="UserList" asp-route-status="expert" class="dropdown-item">expert</a></li>
+                <li><a asp-action="UserList" asp-route-status="admin" class="dropdown-item">admin</a></li>
+                <li><a asp-action="UserList" asp-route-status="deleted" class="dropdown-item">deleted</a></li>
+            </ul>
+        </div>
+    </div>
+
 
     <div class="text-end gap-0 mb-1">
         <form method="get" asp-action="UserList" asp-controller="Admin" class="mb-2">
@@ -37,17 +57,22 @@
 <hr class="text-secondary mt-0 pt-0" />
 
 <div class="container">
-    <table class="table table-bordered table-hover">
+    <table class="table table-bordered table-responsive table-hover">
         <thead>
             <tr>
                 <th>Name</th>
                 <th>Email</th>
+                <th>Role</th>
                 <th>PhoneNumber</th>
                 <th>Address</th>
-                <th>Date</th>
+                @* <th>Date</th> *@
                 <th>IsDeleted</th>
                 @* <th>ProfileImage</th> *@
                 <th>Actions</th>
+                @if (@ViewBag.RoleStatus == "seller")
+                {
+                    <th>Verification</th>
+                }
             </tr>
         </thead>
         <tbody>
@@ -67,11 +92,37 @@
                                 <img src="~/images/defaultimages/defaultuserimage.jpg" class="rounded-circle" height="30px" width="30px" />
                             }
                             @users.FirstName
+                            @if (users.SellerProfile != null)
+                            {
+                                @if (users.SellerProfile.IsVerified == false)
+                                {
+                                    <i class="bi bi-x-circle text-danger fs-6"></i>
+                                }
+                                else if (users.SellerProfile.IsVerified == true)
+                                {
+                                    <i class="bi bi-check-circle-fill text-primary fs-6"></i>
+                                }
+                            }
+
                         </td>
                         <td title="@users.Email">@users.Email</td>
+                        <td>
+                            @if (UserManager != null)
+                            {
+                                var roles = await UserManager.GetRolesAsync(users);
+                                if (roles.Any())
+                                {   
+                                    <span>@roles.First()</span>
+                                }
+                                else
+                                {
+                                    <span>No Role</span>
+                                }
+                            }
+                        </td>
                         <td>@users.PhoneNumber</td>
                         <td>@users.Address</td>
-                        <td>@users.RegistrationDate.ToString("yyyy-MM-dd")</td>
+                        @* <td>@users.RegistrationDate.ToString("yyyy-MM-dd")</td> *@
                         <td>@users.IsDeleted</td>
                         @* <td>
                 <img src="~/@users.ProfilePictureURL" height="30px" width="30px" />
@@ -80,14 +131,51 @@
                             <a class="btn ms-md-4 btn-sm btn-primary" asp-action="EditUserInformation" asp-controller="Admin" asp-route-id="@users.Id"><i class="bi bi-pencil"></i></a>
                             @if (users.LockoutEnd != null && users.LockoutEnd > DateTime.Now)
                             {
-                                <a class="btn btn-sm btn-success text-white" asp-action="UnlockUser" asp-controller="Admin" asp-route-id="@users.Id"><i class="bi bi-unlock-fill"></i></a>
+                                <a class="btn btn-sm btn-success" asp-action="UnlockUser" asp-controller="Admin" asp-route-id="@users.Id"><i class="bi bi-unlock-fill"></i></a>
                             }
                             else
                             {
-                                <a class="btn btn-sm btn-warning text-white" asp-action="LockUser" asp-controller="Admin" asp-route-id="@users.Id"><i class="bi bi-person-fill-lock"></i></a>
+                                <a class="btn btn-sm btn-warning text-white " asp-action="LockUser" asp-controller="Admin" asp-route-id="@users.Id"><i class="bi bi-person-fill-lock"></i></a>
                             }
-                            <a class="btn btn-sm btn-danger text-white" asp-action="DeleteUser" asp-controller="Admin" asp-route-id="@users.Id"><i class="bi bi-trash"></i></a>
+                            @if (users.IsDeleted == false)
+                            {
+                                <a class="btn btn-sm btn-danger " asp-action="DeleteUser" asp-controller="Admin" asp-route-id="@users.Id"><i class="bi bi-trash"></i></a>
+                            }
+                            else if (users.IsDeleted == true)
+                            {
+                                <a class="btn btn-sm btn-success " asp-action="DeleteUser" asp-controller="Admin" asp-route-id="@users.Id"><i class="bi-arrow-counterclockwise"></i></a>
+                            }
+                            else
+                            {
+                                <a class="btn btn-sm btn-danger " asp-action="DeleteUser" asp-controller="Admin" asp-route-id="@users.Id"><i class="bi bi-trash"></i></a>
+                            }
+
                         </td>
+                        @if (@ViewBag.RoleStatus == "seller")
+                        {
+                            <td>
+                                @if (users.SellerProfile != null)
+                                {
+                                    @if (users.SellerProfile.IsVerified == false)
+                                    {
+                                        <form method="post" action="@Url.Action("VerifySeller", "Admin", new { status = ViewData["Status"] })">
+                                            <input type="hidden" name="userId" value="@users.Id" />
+                                            <input type="hidden" name="status" value="@ViewData["Status"]" />
+                                            <button type="submit" class="btn btn-sm btn-success"><i class="bi bi-check-square"></i></button>
+                                        </form>
+                                        @*  <a asp-action="VerifySeller" asp-controller="Admin" asp-route-userId="@users.Id" class="btn btn-sm btn-success"><i class="bi bi-check-square"></i></a> *@
+                                    }
+                                    else if (users.SellerProfile.IsVerified == true)
+                                    {
+                                        <form method="post" action="@Url.Action("VerifySeller", "Admin", new { status = ViewData["Status"] })">
+                                            <input type="hidden" name="userId" value="@users.Id" />
+                                            <input type="hidden" name="status" value="@ViewData["Status"]" />
+                                            <button type="submit" class="btn btn-sm btn-warning text-white"><i class="bi-x-square-fill"></i></button>
+                                        </form>
+                                    }
+                                }
+                            </td>
+                        }
                     </tr>
                 }
 

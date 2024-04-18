@@ -112,26 +112,36 @@ namespace Kheti.Areas.Identity.Pages.Account
 
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
+            var Currentuser = await _userManager.FindByEmailAsync(Input.Email);
+
             if (ModelState.IsValid)
-            {               
+            {
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: true);
                 if (result.Succeeded)
                 {
-                     // Check if the user is an admin
-                var user = await _userManager.FindByEmailAsync(Input.Email);
-                var isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
+                    // Check if the user is an admin
+                    var user = await _userManager.FindByEmailAsync(Input.Email);
+                    var isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
 
-                if (isAdmin)
-                {
-                    // Redirect to admin layout page if user is an admin
-                    return LocalRedirect(adminUrl);
-                }
+                    if (isAdmin)
+                    {
+                        // Redirect to admin layout page if user is an admin
+                        return LocalRedirect(adminUrl);
+                    }
                     TempData["update"] = "Login Successfull!";
                     _logger.LogInformation("User logged in.");
                     return LocalRedirect(returnUrl);
                 }
+
+                if (Currentuser.EmailConfirmed == false)
+                {
+                    TempData["warning"] = "Email not verified";
+                    return LocalRedirect("/Identity/Account/Login");
+
+                }
+
                 if (result.RequiresTwoFactor)
                 {
                     return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });

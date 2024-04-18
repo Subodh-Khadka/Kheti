@@ -1,7 +1,7 @@
 ﻿
 @if (TempData["success"] != null)
 {
-    <div class="toast align-items-center text-white bg-success border-0 position-absolute top-0 end-0 mt-2" style="z-index:1050" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="2000">
+    <div class="toast align-items-center text-white bg-success border-0 position-absolute top-0 end-0 mt-2" style="z-index:1050" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="10000">
         <div class="d-flex">
             <div class="toast-body">
                 @TempData["success"]
@@ -13,7 +13,7 @@
 
 @if (TempData["delete"] != null)
 {
-    <div class="toast align-items-center text-white bg-danger border-0 position-absolute top-0 end-0 mt-2" style="z-index:1050" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="3000">
+    <div class="toast align-items-center text-white bg-danger border-0 position-absolute top-0 end-0 mt-2" style="z-index:1050" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="10000">
         <div class="d-flex">
             <div class="toast-body">
                 @TempData["delete"]
@@ -25,7 +25,7 @@
 
 @if (TempData["update"] != null)
 {
-    <div class="toast align-items-center text-white bg-primary border-0 position-absolute top-0 end-0 mt-2" style="z-index:1050" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="3000">
+    <div class="toast align-items-center text-white bg-primary border-0 position-absolute top-0 end-0 mt-2" style="z-index:1050" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="10000">
         <div class="d-flex">
             <div class="toast-body">
                 @TempData["update"]
@@ -35,15 +35,16 @@
     </div>
 }
 
-
-@if (TempData["error"] != null)
+@if (TempData["warning"] != null)
 {
-    <div class="toast align-items-center text-white bg-dangerborder-0 position-absolute top-0 end-0 mt-2" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="3000">
+    <div class="toast align-items-center text-white bg-warning border-0 position-absolute top-0 end-0 mt-2" style="z-index:1050" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="10000">
         <div class="d-flex">
             <div class="toast-body">
-                @TempData["error"]
+                @TempData["warning"]
             </div>
-            <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            <button type="button" class="btn-close me-2 m-auto text-success" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
     </div>
 }
+
+

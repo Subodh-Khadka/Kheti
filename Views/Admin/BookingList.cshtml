@@ -31,7 +31,7 @@
 <hr class="text-secondary mt-0 pt-0" />
 
 <div class="container-fluid">
-    <table class="table table-bordered table-hover">
+    <table class="table table-bordered table-hover bg-light">
         <thead>
             <tr>
                 <th>BookingId</th>
@@ -81,9 +81,9 @@
                         <td >@bookings.CreatedDate</td>
                       
                         <td>
-                            <form asp-action="PaymentDetails" asp-controller="Admin">
+                            <form asp-action="BookingDetails" asp-controller="Admin">
                                 <input type="hidden" name="bookingId" value="@bookings.BookingId" />
-                                <button class="btn btn-sm purple-background" type="submit"><i class="bi bi-eye-fill text-white"></i></button>
+                                <button class="btn btn-sm btn-primary" type="submit"><i class="bi bi-eye-fill text-white"></i></button>
                             </form>
                         </td>
                     </tr>

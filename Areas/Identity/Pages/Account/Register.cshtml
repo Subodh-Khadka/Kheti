@@ -9,7 +9,7 @@
 
     <h1>@ViewData["Title"]</h1>
         
-    <div class="row mb-3">
+    <div class="row justify-content-center mb-3 mt-md-5">
         <div class="container-fluid login_container d-flex gap-0">
             <div class="row justify-content-center login">
                 <div class="col-lg-6 col-md-12 col-sm-12 p-0 left_section">
@@ -25,12 +25,12 @@
                             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
                             <div class="form-group pb-3 col-lg-12 col-md-12 col-sm-6">
                                 <input asp-for="Input.FirstName" class="form-control" aria-required="true" id=""
-                                       aria-describedby="emailHelp" placeholder="Enter FirstName">
+                                       aria-describedby="emailHelp" placeholder="Enter First Name">
                                 <span asp-validation-for="Input.FirstName" class="text-danger"></span>
                             </div>
                             <div class="form-group pb-3 col-lg-12 col-md-12 col-sm-6">
                                 <input asp-for="Input.LastName" class="form-control" aria-required="true" id=""
-                                       aria-describedby="emailHelp" placeholder="Enter LastName">
+                                       aria-describedby="emailHelp" placeholder="Enter Last Name">
                                 <span asp-validation-for="Input.LastName" class="text-danger"></span>
                             </div>
                             <div class="form-group pb-3 col-lg-12 col-md-12 col-sm-6">

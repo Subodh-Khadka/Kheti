@@ -24,8 +24,8 @@
             </button>
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                 <li><a asp-action="QueryList" asp-route-status="all" class="dropdown-item">all</a></li>
-                <li><a asp-action="QueryList" asp-route-status="Pending" class="dropdown-item">pending</a></li>
-                <li><a asp-action="QueryList" asp-route-status="inProcess" class="dropdown-item">in process</a></li>
+                <li><a asp-action="QueryList" asp-route-status="pending" class="dropdown-item">pending</a></li>
+                <li><a asp-action="QueryList" asp-route-status="process" class="dropdown-item">in process</a></li>
                 <li><a asp-action="QueryList" asp-route-status="solved" class="dropdown-item">solved</a></li>
             </ul>
         </div>
@@ -44,7 +44,9 @@
                 <th>QueryStatus</th>
                 <th>Date</th>
                 <th>selectedStatus</th>
+                <th>IsDeleted</th>
                 <th>Image</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -58,8 +60,42 @@
                     <td title="@query.QueryStatus">@query.QueryStatus</td>
                     <td title="@query.DateCreated">@query.DateCreated</td>
                     <td title="@query.IsSelected">@query.IsSelected</td>
+                    <td title="@query.IsDeleted">@query.IsDeleted</td>
                     <td>
                         <img src="~/@query.ImageUrl" class="ms-md-4 rounded-circle" height="30px" width="30px" />
+                    </td>
+                    <td class="justify-content-center d-flex gap-1">
+                        <form asp-action="OrderDetails" asp-controller="Admin">
+                            <input type="hidden" name="orderId" value="@query.Id" />
+                            <input type="hidden" name="userId" value="@query.Id" />
+                            <button class="btn btn-sm btn-primary" type="submit"><i class="bi bi-eye-fill"></i></button>
+                        </form>
+
+                        @if (query.IsDeleted == false)
+                        {
+                            <form method="post" action="@Url.Action("DeleteQuery", "Admin", new { status = ViewData["Status"] })">
+                                <input type="hidden" name="id" value="@query.Id" />
+                                <input type="hidden" name="status" value="@ViewData["Status"]" />
+                                <button type="submit" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></button>
+                            </form>
+                         
+                        }
+                        else if (query.IsDeleted == true)
+                        {
+                            <form method="post" action="@Url.Action("DeleteQuery", "Admin", new { status = ViewData["Status"] })">
+                                <input type="hidden" name="id" value="@query.Id" />
+                                <input type="hidden" name="status" value="@ViewData["Status"]" />
+                                <button type="submit" class="btn btn-sm btn-success"><i class="bi-arrow-counterclockwise"></i></button>
+                            </form>
+                        }
+                        else
+                        {
+                            <form method="post" action="@Url.Action("DeleteQuery", "Admin", new { status = ViewData["Status"] })">
+                                <input type="hidden" name="id" value="@query.Id" />
+                                <input type="hidden" name="status" value="@ViewData["Status"]" />
+                                <button type="submit" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></button>
+                            </form>
+                        }
                     </td>
                 </tr>
             }

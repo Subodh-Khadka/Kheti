@@ -8,9 +8,12 @@
 
 <div class="row d-flex justify-content-center">
     <div class="col-md-10 bg-light create-form">
-        <div class="d-flex gap-md-3 align-items-center">
+        <div class="d-flex bgwhi gap-md-3 align-items-center justify-content-between">
             <h6 class="text-success">Edit product</h6>
-            <img src="~/@Model.ProductImageUrl" class="rounded-circle" height="50px" width="50px" />
+             <div>
+                <div class="rounded-2 ms-3" id="imagePreview"></div>
+            </div>
+            <img src="~/@Model.ProductImageUrl" height="70px" width="70px" class="rounded-start rounded-end"/>
         </div>
         <hr />
         <form asp-action="Edit" enctype="multipart/form-data">
@@ -44,8 +47,24 @@
                     <div class="form-group">
                         @* <label asp-for="PrdouctImageUrl" class="control-label"></label> *@
                         <label asp-for="ProductImageUrl"></label>
-                        <input type="file" name="imageFile" class="form-control" />
+                        <input type="file" id="profilePicture" name="imageFile" class="form-control" onchange="ImagePreview(event)">
+                        @* <input type="file" name="imageFile" class="form-control" /> *@
                     </div>
+                    <div class="form-group">
+                        <label asp-for="Unit" class="control-label"></label>
+                        <input asp-for="Unit" class="form-control" />
+                        <span asp-validation-for="Unit" class="text-danger"></span>
+                    </div>
+                    <div class="form-group mt-2">
+                        <label asp-for="IsInStock" class="control-label"></label>
+                        <select id="stockId" title="InStock?" asp-for="IsInStock" class="form-select">
+                            <option disabled selected>Select stock availbility</option>
+                            <option>@StaticDetail.IsInStockStatus</option>
+                            <option>@StaticDetail.OutOfStockStatus</option>
+                            <option></option>
+                        </select>
+                    </div>
+
 
                 </div>
 
@@ -57,10 +76,16 @@
                             <input asp-for="RentalEquipment.RentalPricePerDay" class="form-control" />
                             <span asp-validation-for="RentalEquipment.RentalPricePerDay" class="text-danger"></span>
                         </div>
+                       
                         <div class="form-group">
-                            <label asp-for="RentalEquipment.TermsAndCondition" class="control-label"></label>
-                            <input asp-for="RentalEquipment.TermsAndCondition" class="form-control" />
-                            <span asp-validation-for="RentalEquipment.TermsAndCondition" class="text-danger"></span>
+                            <label asp-for="RentalEquipment.Location" class="control-label"></label>
+                            <input asp-for="RentalEquipment.Location" class="form-control" />
+                            <span asp-validation-for="RentalEquipment.Location" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="RentalEquipment.DepositAmount" class="control-label"></label>
+                            <input asp-for="RentalEquipment.DepositAmount" class="form-control" />
+                            <span asp-validation-for="RentalEquipment.DepositAmount" class="text-danger"></span>
                         </div>
                         <div class="form-group">
                             <label asp-for="RentalEquipment.AvailabilityStartDate" class="control-label"></label>
@@ -72,15 +97,10 @@
                             <input asp-for="RentalEquipment.AvailabilityEndDate" class="form-control" />
                             <span asp-validation-for="RentalEquipment.AvailabilityEndDate" class="text-danger"></span>
                         </div>
-                        <div class="form-group">
-                            <label asp-for="RentalEquipment.Location" class="control-label"></label>
-                            <input asp-for="RentalEquipment.Location" class="form-control" />
-                            <span asp-validation-for="RentalEquipment.Location" class="text-danger"></span>
-                        </div>
-                        <div class="form-group">
-                            <label asp-for="RentalEquipment.DepositAmount" class="control-label"></label>
-                            <input asp-for="RentalEquipment.DepositAmount" class="form-control" />
-                            <span asp-validation-for="RentalEquipment.DepositAmount" class="text-danger"></span>
+                         <div class="form-group">
+                            <label asp-for="RentalEquipment.TermsAndCondition" class="control-label"></label>
+                            <input  asp-for="RentalEquipment.TermsAndCondition" class="form-control" />
+                            <span asp-validation-for="RentalEquipment.TermsAndCondition" class="text-danger"></span>
                         </div>
                     }
                 </div>
@@ -100,4 +120,18 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script>
+        function ImagePreview(event) {
+            var image = URL.createObjectURL(event.target.files[0]);
+            var imagePreview = document.getElementById('imagePreview');
+
+            imagePreview.innerHTML = '';
+
+            var newImage = document.createElement('img');
+            newImage.src = image;
+            newImage.width = 100;
+            newImage.height = 100;
+            imagePreview.appendChild(newImage);
+        }
+    </script>
 }
