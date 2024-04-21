@@ -24,11 +24,18 @@ namespace Kheti.Areas.Identity.Pages.Account
         private readonly UserManager<IdentityUser> _userManager;
         private readonly ILogger<LoginModel> _logger;
 
-        public LoginModel(SignInManager<IdentityUser> signInManager, ILogger<LoginModel> logger, UserManager<IdentityUser> userManager)
+        private readonly KhetiApplicationUser _user;
+
+
+        public LoginModel(SignInManager<IdentityUser> signInManager, ILogger<LoginModel> logger, UserManager<IdentityUser> userManager, KhetiApplicationUser user)
         {
             _signInManager = signInManager;
             _logger = logger;
             _userManager = userManager;
+            _user = _user;
+
+
+
         }
 
         /// <summary>
@@ -112,7 +119,7 @@ namespace Kheti.Areas.Identity.Pages.Account
 
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
-            var Currentuser = await _userManager.FindByEmailAsync(Input.Email);
+            var currentuser = await _userManager.FindByEmailAsync(Input.Email);
 
             if (ModelState.IsValid)
             {
@@ -121,6 +128,7 @@ namespace Kheti.Areas.Identity.Pages.Account
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: true);
                 if (result.Succeeded)
                 {
+
                     // Check if the user is an admin
                     var user = await _userManager.FindByEmailAsync(Input.Email);
                     var isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
@@ -132,14 +140,28 @@ namespace Kheti.Areas.Identity.Pages.Account
                     }
                     TempData["update"] = "Login Successfull!";
                     _logger.LogInformation("User logged in.");
+
+                    currentuser = await _userManager.FindByEmailAsync(Input.Email);
+                    var khetiUser = currentuser as KhetiApplicationUser;
+                    if (khetiUser != null)
+                    {
+                        string profilePictureUrl = khetiUser.ProfilePictureURL;
+                        ViewData["profile"] = profilePictureUrl;
+
+                    }
+
+
                     return LocalRedirect(returnUrl);
                 }
 
-                if (Currentuser.EmailConfirmed == false)
+                if (currentuser != null)
                 {
-                    TempData["warning"] = "Email not verified";
-                    return LocalRedirect("/Identity/Account/Login");
+                    if (currentuser.EmailConfirmed == false)
+                    {
+                        TempData["warning"] = "Email not verified";
+                        return LocalRedirect("/Identity/Account/Login");
 
+                    }
                 }
 
                 if (result.RequiresTwoFactor)

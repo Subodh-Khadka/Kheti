@@ -140,8 +140,22 @@ form label {
     background-color: royalblue;
     color: white;
 }
+    .royalBlue:hover {
+        background-color: dodgerblue;
+        color: white;
+    }
 
-/*white-space: nowrap;
+@media only screen and (max-width: 600px) {
+    .search-filter{
+        display:flex;
+        flex-direction:column;
+    }
+    .product-filter{
+        margin-right:10px;
+    }
+}
+
+    /*white-space: nowrap;
 overflow: hidden;
 text-overflow: ellipsis;*/
 

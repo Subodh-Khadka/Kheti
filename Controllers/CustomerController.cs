@@ -20,38 +20,64 @@ namespace Kheti.Controllers
             _db = db;
         }
 
-        
-        public IActionResult Index(string searchInput)  
+        public IActionResult Index(string searchInput, int? categoryId)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var userRole = User.FindFirstValue(ClaimTypes.Role);
 
-            IEnumerable<Product> products;
+            // Get all categories from the database
+            var categories = _db.Categories.ToList();
 
+            // fetch all products
+            IQueryable<Product> productsQuery = _db.Products
+                .Include(p => p.Category)
+                .Include(p => p.User)
+                .Where(p => p.IsDeleted == false);
+
+            // Apply user role filter
             if (userRole == "Seller")
-            {                
-                products = _db.Products
-                    .Include(p => p.Category)
-                    .Include(p => p.User)
-                    .Where(p => p.UserId == userId && p.IsDeleted == false);
+            {
+                productsQuery = productsQuery.Where(p => p.UserId == userId);
             }
-            else 
-            {   
-                products = _db.Products
-                    .Include(p => p.Category)
-                    .Include(p => p.User)
-                    .Where(p => p.IsDeleted == false && p.Category.Name != "machinery");
+            else
+            {
+                productsQuery = productsQuery.Where(p => p.Category.Name != "machinery");
             }
 
+            // Apply category filter if a category ID is provided
+            if (categoryId.HasValue && categoryId != 0)
+            {
+                productsQuery = productsQuery.Where(p => p.CategoryId == categoryId);
+            }
+
+
+
+            // search if provided
             if (!string.IsNullOrEmpty(searchInput))
             {
                 var lowerCaseSearchInput = searchInput.ToLower();
-                products = products.Where(p => p.ProductName.ToLower().Contains(lowerCaseSearchInput));
+                productsQuery = productsQuery.Where(p => p.ProductName.ToLower().Contains(lowerCaseSearchInput));
             }
 
-            var sortedProducts = products.OrderByDescending(p => p.CreatedDate).ToList();
-            return View(sortedProducts);
+            // pass the query to ProductViewModel
+            var productViewModels = productsQuery
+                .OrderByDescending(p => p.CreatedDate)
+                .Select(p => new ProductViewModel
+                {
+                    Product = p,
+                    AverageRating = p.Reviews != null && p.Reviews.Any() ? p.Reviews.Average(r => r.Rating) : 0,
+                    Categories = categories
+                })
+                .ToList();
+
+            // Pass categories to ViewBag for dropdown population
+            ViewBag.Categories = categories;
+            ViewData["category"] = categoryId.HasValue ? _db.Categories.FirstOrDefault(c => c.Id == categoryId)?.Name : "Select category";
+
+
+            return View(productViewModels);
         }
+
 
         [Authorize(Roles = "Seller,Customer,Expert")]
         public IActionResult Details(Guid id)

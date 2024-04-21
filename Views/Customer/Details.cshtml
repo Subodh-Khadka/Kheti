@@ -15,12 +15,12 @@
 
     <input hidden asp-for="ProductId" />
 
-    <div class="container mt-4 mb-4  justify-content-center align-items-center position-relative">
+    <div class="container mt-4 mb-4 justify-content-center align-items-center position-relative">
         <div class="fs-6">
             <a asp-action="Index" class="mt-4 mb-4 text-md-start small_grey_text_css text-decoration-none gap-3"><i class="bi bi-arrow-left pe-2 back-icon"></i>Back To Home</a>
         </div>
 
-        <div class="row d-flex gap-5">
+        <div class="row d-flex gap-5 mt-3">
             <div class="col-md-5">
                 <img src="~/@Model.Product.ProductImageUrl" alt="@Model.Product.ProductName" height="375px" width="100%">
             </div>
@@ -28,8 +28,8 @@
                 <h3 class="text-success mb-4 mt-md-2">@Model.Product.ProductName</h3>
                 <p class="small_grey_text_css mb-1">Category: @Model.Product.Category.Name</p>
                 <p class="small_grey_text_css mb-1">Price: Rs @Model.Product.Price</p>
-                <p class="small_grey_text_css mb-2">Unit: @Model.Product.Unit</p>
-                <p class="small_grey_text_css mb-2">Stock: @Model.Product.IsInStock</p>
+                <p class="small_grey_text_css mb-1">Unit: @Model.Product.Unit</p>
+                <p class="small_grey_text_css mb-1">Stock: @Model.Product.IsInStock</p>
                 <p class="small_grey_text_css mb-1">@Model.Product.ProductDescription</p>
                 <p class="small_grey_text_css mb-1">Average Rating:<span class="fs-6 ms-2 text-success">@ViewData["AverageRating"] / @ViewData["TotalRating"]</span></p>
                 @* <p class="small_grey_text_css mb-1">Total Rating:<span class="fs-6 ms-2 text-success">@ViewData["TotalRating"]</span></p> *@

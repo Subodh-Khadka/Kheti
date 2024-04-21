@@ -104,7 +104,7 @@
     </div>
 
     <div class="row bg-light rounded-start rounded-end p-2 mt-4">
-        <!-- Revenue Chart Section -->
+        
         <div class="col-md-9 mt-2">
             <div class="card">
                 <div class="card-header text-white" style="background-color:royalblue">
@@ -116,7 +116,6 @@
             </div>
         </div>
         <div class="col-md-3">
-            <!-- Last 10 Sold Products Section -->
             <table class="table table-bordered bg-white mt-2">
                 <thead>
                  <th>Recently Ordered Products</th>
@@ -140,7 +139,6 @@
                     User Distribution
                 </div>
                 <div class="card-body">
-                    <!-- Render the pie chart with reduced height -->
                     <canvas id="userCategoryChart" width="400" height="20"></canvas>
 
                 </div>
@@ -153,7 +151,6 @@
                     Product Distribution
                 </div>
                 <div class="card-body">
-                    <!-- Render the pie chart with reduced height -->
                     <canvas id="productCategoryChart" width="400" height="20"></canvas>
 
                 </div>
@@ -230,10 +227,3 @@
         });
     </script>
 }
-
-<!-- Now you can access properties of the ViewModel like this -->
-@* <div>Total Users: @Model.TotalUsers</div>
-<div>Total Orders: @Model.TotalOrders</div>
-<div>Total Queries: @Model.TotalQueries</div>
-<div>Total Queries: @Model.TotalRevenue</div> *@
-

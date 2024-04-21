@@ -35,7 +35,7 @@
                 <span asp-validation-for="Price" class="text-danger"></span>
             </div>
 
-            <input asp-for="CreatedDate" hidden />
+            @* <input asp-for="CreatedDate" type="hidden" /> *@
             <input asp-for="UserId" type="hidden" />
 
             <div class="form-group mt-2">
@@ -63,6 +63,11 @@
                     <option>@StaticDetail.OutOfStockStatus</option>
                     <option></option>
                 </select>
+            </div>
+            <div class="form-group">
+                <label asp-for="CreatedDate" class="control-label"></label>
+                <input asp-for="CreatedDate" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")" disabled />
+                <span asp-validation-for="CreatedDate" class="text-danger"></span>
             </div>
 
 

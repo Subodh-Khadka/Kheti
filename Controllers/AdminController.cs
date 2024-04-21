@@ -828,10 +828,14 @@ namespace Kheti.Controllers
             return popularCategories;
         }
 
+
+        //for line chart
         private List<DateTime> GetRevenueDates()
         {
+            var thirtyDaysAgo = DateTime.Today.AddDays(-31);
+
             return _db.Orders
-                .Where(o => o.PaymentStatus == StaticDetail.PaymentStatusCompleted)
+                .Where(o => o.PaymentStatus == StaticDetail.PaymentStatusCompleted && o.OrderCreatedDate >= thirtyDaysAgo)
                 .OrderBy(o => o.OrderCreatedDate)
                 .Select(o => o.OrderCreatedDate.Date)
                 .Distinct()
@@ -841,6 +845,7 @@ namespace Kheti.Controllers
         private List<decimal> GetRevenueAmounts()
         {
             var revenueAmounts = new List<decimal>();
+            var thirtyDaysAgo = DateTime.Today.AddDays(-30);
             var dates = GetRevenueDates();
 
             foreach (var date in dates)
@@ -886,7 +891,5 @@ namespace Kheti.Controllers
 
             return totalRevenue;
         }
-
-
     }
 }

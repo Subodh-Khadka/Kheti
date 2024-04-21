@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
     var currentPageUrl = window.location.pathname;
     console.log(currentPageUrl);
 
-    var navLinks = document.querySelectorAll('.navs')
+    var navLinks = document.querySelectorAll('.nav-link')
     console.log(navLinks);
 
     navLinks.forEach(function (navLink) {
@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
         console.log(navLinkUrl);
 
         if (currentPageUrl == navLinkUrl) {
-            navLink.classList.add('.admin-actives')
+            navLink.classList.add('actives')
         }
     });
 });

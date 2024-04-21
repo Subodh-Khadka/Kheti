@@ -15,3 +15,18 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
+
+
+
+function ImagePreview(event) {
+    var image = URL.createObjectURL(event.target.files[0]);
+    var imagePreview = document.getElementById('imagePreview');
+
+    imagePreview.innerHTML = '';
+
+    var newImage = document.createElement('img');
+    newImage.src = image;
+    newImage.width = 100;
+    newImage.height = 100;
+    imagePreview.appendChild(newImage);
+}

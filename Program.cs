@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Kheti.KhetiUtils;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Kheti.Hubs;
+using Kheti.Models;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +15,8 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+
+builder.Services.AddScoped<Kheti.Models.KhetiApplicationUser>();
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = false).AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 

@@ -17,13 +17,13 @@
 
     .seller-message {
         font-weight: 600;
-        width: 50%;
+        width: 40%;
         padding: 10px 10px;
         margin: 5px 0px;
         background-color: rgb(110, 148, 212);
         color: white;
         border-radius: 10px;
-        justify-content: end;
+        justify-content:flex-start;
         margin-left: auto;
     }
 
@@ -41,11 +41,13 @@
 
 <div class="container mb-4">
     <form class="container d-flex gap-4 ms-0 markAsSolved" method="post" asp-action="MarkAsSolved" asp-route-queryFormId="@Model.Id">
-        @if (Model.QueryStatus != StaticDetail.QueryStatusSolved && User.IsInRole("Expert"))
-        {
-            <button type="submit" class="btn  btn-sm btn-secondary"><i class="bi bi-check2"></i> Mark As Solved</button>
-        }
-        <p class="card-title ms-2 mt-2 text-secondary">Query Status: @Model.QueryStatus</p>
+        <div class="d-flex">
+            @if (Model.QueryStatus != StaticDetail.QueryStatusSolved && User.IsInRole("Expert"))
+            {
+                <button type="submit" class="btn btn-sm btn-secondary"><i class="bi bi-check2 ms-0 ps-0"></i> Mark As Solved</button>
+            }
+            <p class="card-title ms-2 mt-2 text-secondary">Query Status: @Model.QueryStatus</p>
+        </div>
     </form>
     <div class="row mt-2">
         @*  <!-- left side query section --> *@
@@ -96,14 +98,15 @@
                     {
                         @if (comment.IsExpert)
                         {
-                            <section class="expert-message">
-                                <p>@comment.CommentText</p>
+                            <section class="expert-message d-flex gap-md-2">
+                                <p>Expert:</p>  <p>@comment.CommentText</p>
+                               
                             </section>
                         }
                         else
                         {
-                            <section class="seller-message">
-                                <p>@comment.CommentText</p>
+                            <section class="seller-message d-flex gap-md-2">
+                                <p>User:</p> <p>@comment.CommentText</p>
                             </section>
                         }
                     }

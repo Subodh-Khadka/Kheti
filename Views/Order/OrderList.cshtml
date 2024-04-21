@@ -10,8 +10,8 @@
         border-radius: 10px;
     }
 
-    .table tr{
-        font-size:smaller;
+    .table tr {
+        font-size: small;
     }
 </style>
 
@@ -63,36 +63,41 @@
                                 <td class="btn-group d-flex justify-content-center gap-1 align-items-center">
                                     <form id="OrderDetails" method="get" action="@Url.Action("OrderDetails", "Order")">
                                         <input type="hidden" name="orderId" value="@order.OrderId" />
-                                        <button type="submit" class="btn btn-sm btn-primary w-100"><i class="bi bi-eye"></i></button>
+                                        <button type="submit" class="btn btn-sm btn-primary w-100 "><i class="bi bi-eye fs-6"></i></button>
                                     </form>
-                                    <form method="post" action="@Url.Action("OrderInvoice", "Order")">
-                                        <input type="hidden" name="orderId" value="@order.OrderId" />
-                                        <button type="submit" class="btn btn-sm btn-info text-white"><i class="bi bi-file-earmark-arrow-down"></i></button>
-                                    </form>
-                                    @if (order.PaymentStatus != StaticDetail.PaymentStatusCompleted)
+                                    @if (order.PaymentStatus == StaticDetail.PaymentStatusCompleted)
+                                    {
+                                        <form method="post" action="@Url.Action("OrderInvoice", "Order")">
+                                            <input type="hidden" name="orderId" value="@order.OrderId" />
+                                            <button type="submit" class="btn btn-sm btn-info text-white"><i class="bi bi-file-earmark-arrow-down fs-6"></i></button>
+                                        </form>
+                                    }
+                                    @if (order.PaymentStatus != StaticDetail.PaymentStatusCompleted && order.OrderStatus != StaticDetail.OrderStatusCanceled)
                                     {
                                         <form id="paymentForm" method="post" action="@Url.Action("CancelOrder", "Order", new { status = ViewData["Status"] })">
                                             <input type="hidden" name="orderId" value="@order.OrderId" />
                                             <input type="hidden" name="status" value="@ViewData["Status"]" />
-                                            <button type="submit" class="btn btn-sm btn-danger w-100"><i class="bi bi-x-lg"></i></button>
+                                            <button type="submit" class="btn btn-sm btn-danger w-100"><i class="bi bi-x-lg fs-6"></i></button>
                                         </form>
                                         @*  <a asp-action="CancelOrder" class="cancel rounded-2 btn btn-sm btn-danger" asp-route-orderId="@order.OrderId" >Cancel</a> *@
                                     }
                                 </td>
                                 <td>
-                                        @if (order.PaymentStatus == StaticDetail.PaymentStatusPending)
-                                        {
-                                            <form id="paymentForm" method="post" action="@Url.Action("Pay", "Order")">
-                                                <input type="hidden" name="orderId" value="@order.OrderId" />
-                                                <button type="submit" class="btn btn-sm btn-success w-100">Pay</button>
+                                    @if (order.PaymentStatus == StaticDetail.PaymentStatusPending && order.OrderStatus != StaticDetail.OrderStatusCanceled)
+                                    {
+                                        <form id="paymentForm" method="post" action="@Url.Action("Pay", "Order")">
+                                            <input type="hidden" name="orderId" value="@order.OrderId" />
+                                            <button type="submit" class="btn btn-sm btn-success w-100">Pay</button>
                                         </form>
                                     }
-                                    else
+                                    else if (order.PaymentStatus == "Completed")
                                     {
-                                        @if (order.PaymentStatus == "Completed")
-                                        {
-                                            <i class="bi bi-check2-all text-success"></i>
-                                        }
+                                        <i class="bi bi-check2-all text-success"></i>
+                                    }
+                                    else if (order.OrderStatus == StaticDetail.OrderStatusCanceled)
+                                    {
+
+                                        <i class="bi bi-x-circle text-danger fs-6"></i>
                                     }
                                 </td>
 

@@ -10,7 +10,7 @@
     }
 
     .table {
-        font-size: x-small;
+        font-size: 12px;
         border: 1px solid #dddddd;
     }
 
@@ -46,8 +46,8 @@
                 <th>Payment</th>
                 <th>Amount</th>
                 <th>Date</th>
-                <th>OrderId</th>
-                <th>BookingId</th>
+               @*  <th>OrderId</th>
+                <th>BookingId</th> *@
                 <th>Action</th>
 
             </tr>
@@ -79,8 +79,8 @@
                         <td>@payment.PaymentMethod </td>
                         <td>@payment.Amount</td>
                         <td>@payment.PaymentDate </td>
-                        <td>@payment.OrderId </td>
-                        <td>@payment.BookingId </td>
+                      @*   <td>@payment.OrderId </td>
+                        <td>@payment.BookingId </td> *@
                         <td class="d-flex gap-1 justify-content-center">
                             @*  <a class="btn btn-sm btn-primary" asp-action="EditInformation" asp-controller="User" asp-route-id="@orders.OrderId"><i class="bi bi-pencil"></i></a> *@
                             <form asp-action="PaymentDetails" asp-controller="Admin">

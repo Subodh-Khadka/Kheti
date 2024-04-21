@@ -3,12 +3,24 @@
 @inject SignInManager<IdentityUser> SignInManager
 @inject UserManager<IdentityUser> UserManager
 
+@{
+    var currentUser = await UserManager.GetUserAsync(User);
+    var khetiUser = currentUser as KhetiApplicationUser;
+    if (khetiUser != null)
+    {
+        string profilePictureUrl = khetiUser.ProfilePictureURL;
+        string firstName = khetiUser.FirstName;
+        ViewData["ProfilePictureUrl"] = profilePictureUrl;
+        ViewData["FirstName"] = firstName;
+    }
+}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Kheti</title>
+    @* <title>@ViewData["Title"] - Kheti</title> *@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

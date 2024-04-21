@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Kheti.Models.Product>
+﻿@model IEnumerable<Kheti.ViewModels.ProductViewModel>
 
 @{
     ViewData["Title"] = "Index";
@@ -15,34 +15,59 @@
 </style>
 
 <body>
-    @* Search Section *@
-    <div class="text-end gap-0 me-md-4">
-        <form method="get" asp-action="Index" asp-controller="Customer" class="mb-2">
-            <input class="search-input" type="text" name="searchInput" placeholder="Search products...." />
-            <button style="background-color:#0D9276" type="submit" class="btn btn-sm search-btn text-white"><i class="bi bi-search"></i></button>
-        </form>
+    <div class="search-filter container d-flex justify-content-end align-items-center gap-2">
+        <div class="product-filter pb-3">
+            <form method="get" asp-action="Index" asp-controller="Customer" class="form-group mt-2 ms-5">
+                <select id="CategoryId" name="CategoryId" class="form-select border-success" onchange="this.form.submit()">
+                    <option value="0">@ViewData["category"]</option>
+                    <option value="all">All</option>
+                    @foreach (var category in ViewBag.Categories)
+                    {
+                        <option value="@category.Id">@category.Name</option>
+                    }
+                </select>
+            </form>
+        </div>
+
+        @* Search Section *@
+        <div class="text-end gap-0 me-md-4">
+            <form method="get" asp-action="Index" asp-controller="Customer" class="mb-2">
+                <input class="search-input" type="text" name="searchInput" placeholder="Search products...." />
+                <button style="background-color:#0D9276" type="submit" class="btn btn-sm search-btn text-white"> <i class="bi bi-search"></i> </button>
+            </form>
+        </div>
     </div>
 
     <!-- product section -->
     <div class="container">
         <div class="row mt-4">
-                @foreach (var product in Model)
-                {
-                    <div class="col-md-3 pb-4 mb-0">
-                        <div class="card border-0 pb-0 mb-0">
-                            <div class="">
-                                <img class="pimage" src="@product.ProductImageUrl" alt="@product.ProductId" />
-                            </div>
+            @foreach (var productViewModel in Model)
+            {
+                var product = productViewModel.Product;
+                <div class="col-md-3 pb-4 mb-0">
+                    <div class="card border-0 pb-0 mb-0">
+                        <div class="">
+                            <img class="pimage" src="@product.ProductImageUrl" alt="@product.ProductId" />
+                        </div>
 
-                            <div class="card-body text-center pb-0 mb-0">
-                                <p class="mb-0 small_grey_text_css">@product.ProductName</p>
-                                @* <p class="card-text mb-0"> @product.ProductDescription</p> *@
-                                <p class="small_grey_text_css mb-2">Rs: @product.Price</p>
-                                <a class="btn btn-sm btn-success mb-2 w-100" asp-controller="Customer" asp-action="Details" asp-route-id="@product.ProductId">View Details</a>
-                            </div>
+                        <div class="card-body text-center pb-0 mb-1">
+                            <p class="mb-0 small_grey_text_css">@product.ProductName</p>
+                            <p class="small_grey_text_css mb-2">Rs: @product.Price</p>
+                            <p class="mb-1">
+                                @for (int i = 0; i < productViewModel.AverageRating; i++)
+                                {
+                                    <i class="bi bi-star-fill fs-6 m-0 p-0 rated" data-rating="1"></i>
+                                }
+                                @for (int i = (int)productViewModel.AverageRating; i < 5; i++)
+                                {
+                                    <i class="bi bi-star-fill fs-6 m-0 p-0" data-rating="1"></i>
+                                }
+                            </p>
+                            <a class="btn btn-sm btn-success mb-2 w-100" asp-controller="Customer" asp-action="Details" asp-route-id="@product.ProductId">View Details</a>
                         </div>
                     </div>
-                }
+                </div>
+            }
         </div>
     </div>
 </body>

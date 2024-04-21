@@ -173,12 +173,19 @@ namespace Kheti.Controllers
             //for seller
             if (userRole == StaticDetail.SellerRole)
             {
+                
+
                 var query = _db.QueryForms
                 .OrderByDescending(q => q.DateCreated)
                 .Include(q => q.QueryComments)
                 .ThenInclude(c => c.User)
                 .Include(q => q.User)
                 .FirstOrDefault(x => x.Id == queryId && x.UserId == userId);
+
+                var seller = _db.KhetiApplicationUsers.FirstOrDefault(s => s.Id == query.UserId);
+                var sellerProfile = seller.ProfilePictureURL;
+                ViewData["SellerProfile"] =  sellerProfile;
+
 
                 if (query == null)
                 {
@@ -192,12 +199,17 @@ namespace Kheti.Controllers
             //for expert
             else
             {
+
                 var query = _db.QueryForms
                 .OrderByDescending(q => q.DateCreated)
                 .Include(q => q.QueryComments)
                 .ThenInclude(c => c.User)
                 .Include(q => q.User)
                 .FirstOrDefault(x => x.Id == queryId);
+
+                var expert = _db.KhetiApplicationUsers.FirstOrDefault(s => s.Id == query.SelectedExpertId);
+                var expertProfile = expert.ProfilePictureURL;
+                ViewData["ExpertProfile"] = expertProfile;
 
                 if (query == null)
                 {

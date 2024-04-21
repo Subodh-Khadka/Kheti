@@ -44,12 +44,18 @@
 <ul class="navbar-nav">
     @if (SignInManager.IsSignedIn(User))
     {
-
         @* Dropdown Section *@
         <li class="nav-item dropdown me-4">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="bi bi-person-circle fs-5"></i>
-                Hello user!
+                @if (@ViewData["ProfilePictureUrl"] != null)
+                {
+                    <img src="~/@ViewData["ProfilePictureUrl"]" height="40px" width="40px" class="rounded-circle" />
+                }
+                else
+                {
+                    <img src="~/Images/DefaultImages/defaultUserImage.jpg" height="50px" width="50px" class="rounded-circle" />
+                }
+                Hi @ViewData["FirstName"] 
             </a>
             <ul style="font-size:small" class="dropdown-menu dropdown-menu-success" aria-labelledby="navbarDarkDropdownMenuLink">
 
@@ -57,7 +63,7 @@
                     @* <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @UserManager.GetUserName(User)!</a> *@
                     <a id="manage" class="nav-link text-secondary" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage"><i class="bi bi-person fs-5 ms-2 me-2"></i> Manage! </a>
                 </li>
-                @if (User.IsInRole(StaticDetail.CustomerRole) || User.IsInRole(StaticDetail.AdminRole))
+                @if (User.IsInRole(StaticDetail.CustomerRole))
                 {
                     <li class="nav-item">
                         <a class="nav-link text-secondary" asp-area="" asp-controller="Order" asp-action="OrderList"><i class="bi bi-postcard ms-2 me-2"></i>My Orders</a>
@@ -66,6 +72,18 @@
                         <a class="nav-link text-secondary" asp-area="" asp-controller="Order" asp-action="ReviewList"><i class="bi bi-star ms-2 me-2"></i>My Review</a>
                     </li>
                 }
+
+                @if (User.IsInRole(StaticDetail.SellerRole))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link text-secondary" asp-area="" asp-controller="Order" asp-action="SellerOrderList"><i class="bi bi-postcard ms-2 me-2"></i>Order History</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-secondary" asp-area="" asp-controller="Order" asp-action="ReviewList"><i class="bi bi-star ms-2 me-2"></i>My Review</a>
+                    </li>
+                }
+
+
                 @if (User.IsInRole(StaticDetail.CustomerRole) || (User.IsInRole(StaticDetail.SellerRole) || User.IsInRole(StaticDetail.AdminRole)))
                 {
                     <li class="nav-item">

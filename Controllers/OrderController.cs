@@ -26,6 +26,7 @@ namespace Kheti.Controllers
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var userRole = User.FindFirstValue(ClaimTypes.Role);
 
             IQueryable<Order> orders = _db.Orders.Where(u => u.UserId == userId);
 
@@ -48,6 +49,7 @@ namespace Kheti.Controllers
             {
                 OrderList = orders.Where(u => u.UserId == userId)
                 .OrderByDescending(u => u.PaymentStatus)
+                .ThenByDescending(u => u.OrderStatus)
                 .ThenByDescending(u => u.OrderCreatedDate)
                 .ToList(),
                 OrderItems = _db.OrderItems.Include(o => o.Product).ThenInclude(oi => oi.User).ToList(),
@@ -56,6 +58,52 @@ namespace Kheti.Controllers
             ViewData["Status"] = status;
             return View(OrderVm);
         }
+
+        // Seller order history
+        public IActionResult SellerOrderList(string status)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            // Get orders where the seller's products are included
+            IQueryable<Order> orders = _db.OrderItems
+                .Include(oi => oi.Order)
+                .ThenInclude(o => o.User)
+                .Where(oi => oi.Product.UserId == userId)
+                .Select(oi => oi.Order)
+                .Distinct();
+
+            if (!string.IsNullOrEmpty(status))
+            {
+                switch (status.ToLower())
+                {
+                    case "pending":
+                        orders = orders.Where(o => o.PaymentStatus == StaticDetail.PaymentStatusPending);
+                        break;
+                    case "completed":
+                        orders = orders.Where(o => o.PaymentStatus == StaticDetail.PaymentStatusCompleted);
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            OrderVm = new OrderVm
+            {
+                OrderList = orders
+                    .OrderByDescending(o => o.PaymentStatus)
+                    .ThenByDescending(o => o.OrderCreatedDate)
+                    .ToList(),
+                OrderItems = _db.OrderItems
+                .Include(oi => oi.Order)
+                    .Include(oi => oi.Product)
+                    .Where(oi => oi.Product.UserId == userId)
+                    .ToList(),
+            };
+
+            ViewData["Status"] = status;
+            return View(OrderVm);
+        }
+
 
 
         public IActionResult OrderDetails(int orderId)
@@ -139,7 +187,7 @@ namespace Kheti.Controllers
         {
             var order = _db.Orders.FirstOrDefault(o => o.OrderId == purchase_order_id);
 
-            if (order.PaymentStatus == StaticDetail.PaymentStatusCompleted) 
+            if (order.PaymentStatus == StaticDetail.PaymentStatusCompleted)
             {
                 TempData["success"] = "Payment has been completed already!";
                 return RedirectToAction("OrderList");
@@ -187,7 +235,6 @@ namespace Kheti.Controllers
             var order = _db.Orders.FirstOrDefault(o => o.OrderId == orderId);
 
 
-
             if (order != null)
             {
                 order.OrderStatus = StaticDetail.OrderStatusCanceled;
@@ -200,7 +247,7 @@ namespace Kheti.Controllers
             _db.SaveChanges();
 
 
-            TempData["success"] = "Order Canceled";
+            TempData["warning"] = "Order cancelled";
             return RedirectToAction("OrderList", new { status = status });
         }
 
@@ -263,6 +310,7 @@ namespace Kheti.Controllers
        
                     <div class=""table table-bordered p-4"">
                       <h5 class=""text-success text-center"">Order Invoice</h5>
+                    <hr/>
                       <p class=""fw-bold"">Order Id: {orderVm.Order.OrderId}</p>
                       <p class=""fw-bold"">Order Total: Rs: {orderVm.Order.OrderTotal}</p>
                       <p class=""fw-bold"">Address: {orderVm.Order.Address}</p>
@@ -271,8 +319,9 @@ namespace Kheti.Controllers
                          <table class=""table table-bordered"">
                        <tr>
                         <th>Product Name</th>
-                        <th>Quantity</th>
                         <th>Price (Rs)</th>
+                        <th>Quantity</th>
+                        <th>Unit</th>
                         <th>Payment Status</th>
                        </tr>";
 
@@ -281,8 +330,9 @@ namespace Kheti.Controllers
                 html_order += $@"
                         <tr>
                         <td>{item.Product.ProductName}</td>
-                        <td>{item.Quantity}</td>
                         <td>{item.Price:R}</td>
+                        <td>{item.Quantity}</td>
+                        <td>{item.Product.Unit}</td>
                         <td>{item.Order.PaymentStatus:C}</td>
                        </tr>";
             }

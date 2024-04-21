@@ -49,6 +49,7 @@ namespace Kheti.Models
         public RentalEquipment RentalEquipment { get; set; }
         public string? IsInStock { get; set; }
         public string? Unit { get; set; }
+
     }
 
 }

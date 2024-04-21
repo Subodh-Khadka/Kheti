@@ -17,7 +17,7 @@
 </style>
 
 <div class="container">
-    <div class="row">
+    <div class="container row">
         <div class="card p-0">
             <div class="card-header purple-background text-white">
                 <h6 class="text-center mb-0">Cart Summary </h6>
@@ -73,10 +73,11 @@
                                 <h6 class="text-success">Order Details</h6>
                                 <table class="table table-bordered table-hover table-responsive-sm">
                                     <thead>
-                                        <tr class="text-success">
+                                        <tr class="text-success bg-li">
                                             <th>Product</th>
                                             <th>Quantity</th>
                                             <th>Price</th>
+                                            <th>Unit</th>
                                             <th>Total</th>
                                         </tr>
                                     </thead>
@@ -84,9 +85,22 @@
                                         @foreach (var item in Model.ShoppingCartList)
                                         {
                                             <tr class="text-secondary">
-                                                <td class="truncate " data-toggle="tooltip" data-placement="top" title="@item.Product.ProductName">@item.Product.ProductName</td>
+                                                <td>
+
+                                                    @if (item.Product.ProductImageUrl != null)
+                                                    {
+                                                        <img src="~/@item.Product.ProductImageUrl" class="rounded-circle" height="30px" width="30px" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <img src="~/images/defaultimages/defaultuserimage.jpg" class="rounded-circle" height="30px" width="30px" />
+                                                    }
+                                                    @item.Product.ProductName
+                                                </td>
+                                               @*  <td class="truncate " data-toggle="tooltip" data-placement="top" title="@item.Product.ProductName">@item.Product.ProductName</td> *@
                                                 <td>@item.Quantity</td>
                                                 <td>@item.Product.Price</td>
+                                                <td>@item.Product.Unit</td>
                                                 <td>@(item.Quantity * item.Product.Price)</td>
                                             </tr>
 
@@ -94,7 +108,7 @@
                                     </tbody>
                                 </table>
                                 <div class="text-end">
-                                    <p class="text-success">Total: Rs @Model.Orders.OrderTotal</p>
+                                    <h6 class="text-success">Total: Rs @Model.Orders.OrderTotal</h6>
 
                                     @if (Model.ShoppingCartList.Any())
                                     {
