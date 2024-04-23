@@ -247,9 +247,6 @@ namespace Kheti.Areas.Identity.Pages.Account
                         await _db.SaveChangesAsync();
                     }
 
-                    //for seller    
-
-
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));

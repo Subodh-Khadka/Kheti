@@ -17,8 +17,33 @@ namespace Kheti.Controllers
             _db = db;
             _webHostEnvironment = webHostEnvironment;
         }
-        
-        public IActionResult EditInformation(string id)
+
+        [HttpPost]
+        [AllowAnonymous]
+        public IActionResult Feedback(Feedback model)
+        {
+            var feedback = new Feedback()
+            {
+                Name = model.Name,
+                Email = model.Email,
+                Message = model.Message,
+                Phone = model.Phone,
+            };
+
+            _db.Feedbacks.Add(feedback);
+            _db.SaveChanges();
+
+            TempData["success"] = "Feedback Received";
+            return RedirectToAction("FeedbackConformation");
+        }
+
+        public IActionResult FeedbackConformation()
+        {
+            return View();
+        }
+
+
+        public IActionResult EditInformation(string id) //display the edit information page
         {
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
@@ -35,7 +60,8 @@ namespace Kheti.Controllers
             }
         }
 
-        [HttpPost]
+
+        [HttpPost] // POST action to handle user information update
         [ValidateAntiForgeryToken]
         public IActionResult Edit(string id, KhetiApplicationUser updatedUser)
         {
@@ -46,8 +72,8 @@ namespace Kheti.Controllers
             var currentUser = _db.KhetiApplicationUsers.FirstOrDefault(u => u.Id == id);
 
             if (currentUser != null)
-            {
-                currentUser.FirstName = updatedUser.FirstName;
+            {  
+                currentUser.FirstName = updatedUser.FirstName; // Update user information
                 currentUser.LastName = updatedUser.LastName;
                 currentUser.District = updatedUser.District;
                 currentUser.Address = updatedUser.Address;
@@ -73,6 +99,7 @@ namespace Kheti.Controllers
             return RedirectToAction("Index");
         }
 
+        // Action to handle profile picture upload
         public IActionResult uploadProfile(string id, IFormFile profilePicture)
         {
             var currentUser = _db.KhetiApplicationUsers.FirstOrDefault(u => u.Id == id);
@@ -103,6 +130,7 @@ namespace Kheti.Controllers
             }
         }
 
+        // Action to handle profile picture update
         public IActionResult updateProfilePicture(string id, IFormFile profilePicture)
         {
             var currentUser = _db.KhetiApplicationUsers.FirstOrDefault(u => u.Id == id);
@@ -139,7 +167,7 @@ namespace Kheti.Controllers
         }
 
 
-        [HttpPost]
+        [HttpPost] // POST action to handle report submission
         public IActionResult SubmitReport(Report report, IFormFile imageFile)
         {
             if (!ModelState.IsValid)

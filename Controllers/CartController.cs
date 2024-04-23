@@ -31,7 +31,7 @@ namespace Kheti.Controllers
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
 
-
+            // Retrieve shopping cart items for the current user
             ShoppingCartVm = new()
             {
                 ShoppingCartList = _db.ShoppingCarts.Where(u => u.UserId == userId).Include(p => p.Product).ToList(),
@@ -41,24 +41,14 @@ namespace Kheti.Controllers
 
             foreach (var item in ShoppingCartVm.ShoppingCartList)
             {
+                // Calculate total price for each item in the shopping cart
                 ShoppingCartVm.Orders.OrderTotal += (decimal)item.Product.Price * item.Quantity;
             }
 
             return View(ShoppingCartVm);
         }
 
-        private decimal CalculateOrderTotal(IEnumerable<ShoppingCart> shoppingCartItems)
-        {
-            decimal total = 0;
-
-            foreach (var item in shoppingCartItems)
-            {
-                total += (decimal)item.Product.Price * item.Quantity;
-            }
-
-            return total;
-        }
-
+        // Increase quantity of a shopping cart item
         public IActionResult AddCount(int itemId)
         {
             var existingCartFromDb = _db.ShoppingCarts.FirstOrDefault(u => u.ShoppingCartId == itemId);
@@ -69,6 +59,7 @@ namespace Kheti.Controllers
             return RedirectToAction("Index");
         }
 
+        // Decrease quantity of a shopping cart item
         public IActionResult DecreaseCount(int itemId)
         {
             var existingCartFromDb = _db.ShoppingCarts.FirstOrDefault(u => u.ShoppingCartId == itemId);
@@ -83,6 +74,7 @@ namespace Kheti.Controllers
             return RedirectToAction("Index");
         }
 
+        // Remove item from the shopping cart
         public IActionResult RemoveCart(int cartId)
         {
             var existingCartFromDb = _db.ShoppingCarts.FirstOrDefault(u => u.ShoppingCartId == cartId);
@@ -94,11 +86,13 @@ namespace Kheti.Controllers
 
         }
 
+        // Display summary of the shopping cart
         public IActionResult CartSummary()
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
 
+            // Retrieve shopping cart items and user details for the current user
             ShoppingCartVm = new()
             {
                 ShoppingCartList = _db.ShoppingCarts
@@ -124,6 +118,7 @@ namespace Kheti.Controllers
 
         }
 
+        //for submitting the order from the shopping cart
         [HttpPost]
         [ActionName("CartSummary")]
         public IActionResult CartSummaryPost(ShoppingCartVM shoppingCartVM)
@@ -186,9 +181,7 @@ namespace Kheti.Controllers
                 _db.ShoppingCarts.RemoveRange(ShoppingCartVm.ShoppingCartList);
                 _db.SaveChanges();
 
-                //send email of order placed 
-                //_emailSender.SendEmailAsync(userEmail, $"Order Placed Successfully", $"Your order with ID {ShoppingCartVm.Orders.OrderId} has " +
-                //    $"been placed successfully. Thank you for shopping with us!");
+                // Send email notification of order placement
                 _emailSender.SendEmailAsync(userEmail, "Order Placed Successfully",
       $@"<html>
         <head>
@@ -236,7 +229,6 @@ namespace Kheti.Controllers
         </body>
     </html>");
 
-
                 //clear shoppingCartVm
                 ShoppingCartVm = new ShoppingCartVM
                 {
@@ -257,6 +249,7 @@ namespace Kheti.Controllers
             return View(shoppingCartVM);
         }
 
+        //display order conformation page
         public IActionResult OrderConformation(int orderId)
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;

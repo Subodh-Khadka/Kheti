@@ -27,7 +27,8 @@ namespace Kheti.Controllers
             _hubContext = hubContext;
         }
 
-        public IActionResult QueryList(string status)
+        // display the list of queries
+        public IActionResult QueryList(string status) 
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
@@ -37,7 +38,7 @@ namespace Kheti.Controllers
             IEnumerable<QueryForm> queries;
 
             //for user with role 'Expert'
-            if (userRole == "Expert")
+            if (userRole == "Expert") 
             {
                 var expertProfile = _db.ExpertProfiles.FirstOrDefault(u => u.UserId == userId);
 
@@ -45,8 +46,9 @@ namespace Kheti.Controllers
                 {
                     var expertise = expertProfile.FieldOfExpertise;
 
-                    queries = _db.QueryForms
+                    queries = _db.QueryForms    
                         .OrderByDescending(q => q.UrgencyLevel == "High")
+                        .ThenByDescending(q => q.DateCreated)
 
                         .Where(q => q.ProblemCategory == expertise).ToList();
                 }
@@ -133,6 +135,7 @@ namespace Kheti.Controllers
                 var claimsIdentity = (ClaimsIdentity)User.Identity;
                 var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
 
+                //handle image file upload
                 if (imageFile != null && imageFile.Length > 0)
                 {
                     var imagePath = Path.Combine(_webHostEnvironment.WebRootPath, "Images", "QueryImages");

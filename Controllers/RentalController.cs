@@ -12,12 +12,14 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Kheti.Controllers
 {
-    [Authorize]
+    [Authorize] // Requires authorization for accessing this controller
     public class RentalController : Controller
     {
         private readonly ApplicationDbContext _db;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IEmailSender _emailSender;
+
+        // Constructor injection of required services
         public RentalController(ApplicationDbContext db, IWebHostEnvironment webHostEnvironment, IEmailSender emailSender)
         {
             _db = db;
@@ -32,14 +34,15 @@ namespace Kheti.Controllers
 
             IEnumerable<Product> products;
 
+            // Filter rental products based on user role
             if (userRole == "Seller")
             {
-                products = _db.Products
+                products = _db.Products // Retrieve rental products for sellers
                     .Include(p => p.Category)
                     .Include(p => p.User)
                     .Where(p => p.UserId == userId && p.IsDeleted == false && p.Category.Name == "machinery" && p.RentalEquipment.RentalPricePerDay != null);
             }
-            else
+            else // Retrieve rental products for other users
             {
                 products = _db.Products
                     .Include(p => p.Category)
@@ -52,15 +55,17 @@ namespace Kheti.Controllers
                 var lowerCaseSearchInput = searchInput.ToLower();
                 products = products.Where(p => p.ProductName.ToLower().Contains(lowerCaseSearchInput));
             }
-
+            // Order products by created date and return the sorted list
             var sortedProducts = products.OrderByDescending(p => p.CreatedDate).ToList();
             return View(sortedProducts);
         }
 
 
+        // Action method to display details of a rental product
         [Authorize(Roles = "Seller,Customer,Expert")]
         public IActionResult Details(Guid id)
         {
+            // Retrieve detailed information about the rental product
             var product = _db.Products
                 .Include(p => p.Category)
                 .Include(p => p.User)
@@ -74,6 +79,7 @@ namespace Kheti.Controllers
                 .Include(p => p.RentalEquipment)
                 .FirstOrDefault(p => p.ProductId == id);
 
+            // Create a new booking object for the view
             Booking booking = new()
             {
                 Product = product,
@@ -82,6 +88,7 @@ namespace Kheti.Controllers
             return View(booking);
         }
 
+        // Action method to handle booking requests
         [HttpPost]
         public IActionResult Details(Booking booking, Guid productId)
         {
@@ -100,8 +107,7 @@ namespace Kheti.Controllers
                 var sellerOwner = _db.KhetiApplicationUsers.FirstOrDefault(u => u.Id == product.UserId);
                 var sellerOwnerEmail = sellerOwner.Email;
 
-                
-
+                // Populate booking object with necessary details
                 booking.UserId = userId;
                 booking.BookingStatus = StaticDetail.BookingStatusPending;
                 booking.PaymentStatus = StaticDetail.PaymentStatusPending;
@@ -112,6 +118,7 @@ namespace Kheti.Controllers
                 _db.Add(booking);
                 _db.SaveChanges();
 
+                // Send email notification to seller/owner
                 _emailSender.SendEmailAsync(sellerOwnerEmail, "Rental Request Recieved",
  $@"<html>
         <head>
@@ -419,8 +426,6 @@ namespace Kheti.Controllers
 
         }
 
-
-
         public IActionResult MarkAsRentStarted(Guid bookingId)
         {
             var booking = _db.Bookings.FirstOrDefault(o => o.BookingId == bookingId);
@@ -470,11 +475,11 @@ namespace Kheti.Controllers
                 existingBooking.ActualRequestEndDate = updateBooking.ActualRequestEndDate;
                 existingBooking.DamageDescription = updateBooking.DamageDescription;
 
-                ////calculate the initial Total Amount
-                //TimeSpan initialRentalPeriod = existingBooking.RequestEndDate - existingBooking.RequestStartDate;
-                //decimal initialTotalAmount = initialRentalPeriod.Days * existingBooking.Product.RentalEquipment.RentalPricePerDay;
-                //existingBooking.InitialTotalAmount = initialTotalAmount;
-
+                if (updateBooking.DamageAmount > 0)
+                {
+                    // Calculate damage amount
+                    existingBooking.DamageAmount = updateBooking.DamageAmount;
+                }
 
                 //calculate the Final Total Amount
                 TimeSpan actualRentalPeriod = existingBooking.ActualRequestEndDate.Value - existingBooking.ActualRequestStartDate.Value;
@@ -497,11 +502,6 @@ namespace Kheti.Controllers
                     existingBooking.TotalAmountAfterFine = totalAmount;
 
                 }
-                //else
-                //{
-                //    existingBooking.ActualTotalAmountWithoutFine = initialTotalAmount;
-                //}
-                //existingBooking.TotalAmountAfterFine = totalAmount;
 
                 if (imageFile != null && imageFile.Length > 0)
                 {
@@ -552,6 +552,10 @@ namespace Kheti.Controllers
                 // Calculate remaining amount to pay if there's a fine
                 remainingAmountToPay = booking.TotalAmountAfterFine - booking.InitialAmountPaid ?? 0;
             }
+            if (booking.DamageAmount != null && booking.DamageAmount != 0)  
+            {
+                remainingAmountToPay += (decimal)booking.DamageAmount;
+            }
 
             ViewData["remainingAmount"] = remainingAmountToPay;
             booking.RemainingAmountToPayAfterFine = remainingAmountToPay;
@@ -565,7 +569,6 @@ namespace Kheti.Controllers
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var userRole = User.FindFirstValue(ClaimTypes.Role);
 
-
             var booking = _db.Bookings
                 .Include(b => b.Product)
                 .ThenInclude(b => b.User)
@@ -574,18 +577,7 @@ namespace Kheti.Controllers
 
                 .FirstOrDefault(o => o.BookingId == bookingId);
 
-            //decimal remainingAmountToPay = 0;
-
-            //if (booking.FineAmount != null && booking.FineAmount != 0)
-            //{
-            //    // Calculate remaining amount to pay if there's a fine
-            //    remainingAmountToPay = booking.TotalAmountAfterFine - booking.InitialAmountPaid ?? 0;
-            //}
-
-            //ViewData["remainingAmount"] = remainingAmountToPay;
-            //booking.RemainingAmountToPayAfterFine = remainingAmountToPay;
-            //_db.Bookings.Update(booking);
-            //_db.SaveChanges();
+    
             return View(booking);
         }
 
@@ -621,13 +613,10 @@ namespace Kheti.Controllers
             {
                 booking.RentStatus = StaticDetail.RentStatusCompleted;
                 booking.BookingStatus = StaticDetail.BookingStatusCompleted;
-                //booking.Product.RentalEquipment.IsAvailable = StaticDetail.stausAvailable;
-                //booking.ActualRequestStartDate = DateTime.Now;
                 _db.SaveChanges();
             }
 
             TempData["success"] = "Rental Completed";
-            //return RedirectToAction("RequestDetail", new { BookingId = bookingId });
             return RedirectToAction("RequestList");
         }
 

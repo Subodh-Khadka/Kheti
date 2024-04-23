@@ -24,6 +24,7 @@ namespace Kheti.Models
         public string RentStatus { get; set; }
         public string? DamageDescription { get; set; }
         public string? DamagedImageUrl { get; set; }
+        public decimal? DamageAmount { get; set; }
         public decimal? PricePerDay { get; set; }
         public DateTime? CreatedDate { get; set; }
         public decimal? InitialAmountPaid { get; set; }

@@ -1,4 +1,6 @@
-﻿@{
+﻿@model Feedback;
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -219,23 +221,23 @@
                     <img src="~/images/defaultimages/smart.jpg" class="rounded-start rounded-end" height="180px" width="100%px" />
                 </div>
                 <div class="col-md-5">
-                    <form asp-action="Contact" asp-controller="User">
+                    <form asp-action="Feedback" asp-controller="User">
                         <div class="form-group">
                             <label for="">Name:</label>
-                            <input type="text" class="form-control" id="" placeholder="e.g. john doe">
+                            <input asp-for="Name" class="form-control" id="" placeholder="e.g. john doe">
                         </div>
                         <div class="form-group">
                             <label for="">Email:</label>
-                            <input type="email" class="form-control" id="" placeholder="yourmail@gmail.com">
+                            <input asp-for="Email" type="email" class="form-control" id="" placeholder="yourmail@gmail.com">
                         </div>
                         <div class="form-group">
                             <label for="">Phone:</label>
-                            <input type="text" class="form-control" id="" placeholder="+977 9898787665">
+                            <input asp-for=Phone type="text" class="form-control" id="" placeholder="+977 9898787665">
                         </div>
 
                         <div class="form-group">
                             <label for="">Messsage:</label>
-                            <textarea class="form-control" id="" rows="3"></textarea>
+                            <textarea asp-for="Message" class="form-control" id="" rows="3"></textarea>
                         </div>
                         <button style="border-radius:0;" type="submit" class="btn btn-secondary text- w-100"><i class="bi bi-send"></i> Send Message </button>
                     </form>

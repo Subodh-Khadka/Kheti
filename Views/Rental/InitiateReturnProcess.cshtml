@@ -51,6 +51,10 @@
                             </div>
                         </div>
                         <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="@Model.DamageAmount">Damage Fine:</label>
+                                <input class="form-control" asp-for="@Model.DamageAmount" required />
+                            </div>
                             <h6>Damaged Parts Image</h6>
                             <div class="form-group">
                                 <label asp-for="DamagedImageUrl" class="control-label">Damaged Image:</label><br />

@@ -39,17 +39,11 @@
                 <th>BookingId</th>
                 <th>Customer</th>
                 <th>Product</th>
-               @*  <th>RStartDate</th>
-                <th>REndDate</th> *@
                 <th>Start Date</th>
                 <th>End Date</th>
                 <th>BookingStatus</th>
                 <th>PaymentStatus</th>
                 <th>RentStatus</th>
-                @* <th>InitialAmount</th>
-                <th>InitialPaid</th>
-                <th>RemainPay</th> *@
-                @* <th>TotalAmount</th> *@
                 <th>TotalPaid</th>
                 <th>Fine</th>
                 <th>Date</th>
@@ -67,21 +61,14 @@
                         <td>@bookings.BookingId</td>
                         <td title="@bookings.User.FirstName">@bookings.User.FirstName</td>
                         <td title="@bookings.Product.ProductName">@bookings.Product.ProductName</td>
-                      @*   <td title="@bookings.RequestStartDate">@bookings.RequestStartDate</td>
-                        <td title="@bookings.RequestEndDate">@bookings.RequestEndDate</td> *@
                         <td title="@bookings.ActualRequestStartDate">@bookings.ActualRequestStartDate   </td>
                         <td title="@bookings.ActualRequestEndDate">@bookings.ActualRequestEndDate</td>
                         <td >@bookings.BookingStatus</td>
                         <td >@bookings.PaymentStatus</td>
                         <td >@bookings.RentStatus</td>
-                      @*   <td >@bookings.InitialTotalAmount</td>
-                        <td >@bookings.InitialAmountPaid</td>
-                        <td >@bookings.RemainingAmountToPayAfterFine</td> *@
-                        @* <td >@bookings.TotalAmountAfterFine</td> *@
                         <td >@bookings.TotalAmountPaid</td>
                         <td >@bookings.FineAmount</td>
                         <td >@bookings.CreatedDate</td>
-                      
                         <td>
                             <form asp-action="BookingDetails" asp-controller="Admin">
                                 <input type="hidden" name="bookingId" value="@bookings.BookingId" />

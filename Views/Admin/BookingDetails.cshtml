@@ -18,7 +18,7 @@
         width: 68px;
     }
 
-    , container h6 {
+    .container h6 {
         color: royalblue;
     }
 </style>
@@ -74,19 +74,12 @@
                         <img src="~/@Model.User.ProfilePictureURL" class="rounded-circle ms-md-5" />
                     </td>
                 </tr>
-
-
-
             </table>
         </div>
 
         <div class="col-md-6">
             <h6>Booking Details</h6>
             <table class="table table-bordered bg-white">
-                @*    <tr>
-                <td><strong>Booking ID:</strong></td>
-                <td>@Model.BookingId</td>
-                </tr> *@
                 <tr>
                     <td><strong>PredictedStartDate:</strong></td>
                     <td>@Model.RequestStartDate</td>
@@ -222,8 +215,6 @@
 </div>
 
 @* user details *@
-
-
     <div class="row bg-light p-2">
         <div class="col-md-6">
             <h6>Booking User Details</h6>

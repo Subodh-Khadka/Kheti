@@ -80,7 +80,6 @@
                             </li>
                         }
 
-
                         @if (SignInManager.IsSignedIn(User) && (User.IsInRole(StaticDetail.ExpertRole)))
                         {
                             <li class="nav-item">
@@ -97,16 +96,6 @@
                                 <a class="nav-link" asp-area="" asp-controller="User" asp-action="CreateReport">Report</a>
                             </li>
                         }
-                        @*   <li class="nav-item">
-                        <a class="nav-link" id="about-nav" href="#about">About Us</a>
-                        </li>
-                        <li class="nav-item">
-                        <a class="nav-link" id="about-nav" href="#service">Services</a>
-                        </li>
-                        <li class="nav-item">
-                        <a class="nav-link" id="about-nav" href="#contactUs">Contact</a>
-                        </li> *@
-
                     </ul>
                     <partial name="_loginPartial" />
                 </div>

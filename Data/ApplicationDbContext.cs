@@ -27,8 +27,8 @@ namespace Kheti.Data
         public DbSet<Report> Reports { get; set; }
         public DbSet<Invoice> Invoices { get; set; }
         public DbSet<SellerProfile> SellerProfiles { get; set; }
-
         public DbSet<Payment> Payments { get; set; }
+        public DbSet<Feedback> Feedbacks { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -11,16 +11,21 @@ using System.Security.Claims;
 
 namespace Kheti.Controllers
 {
-    [Authorize(Roles = "Seller,Admin")]
+    //controller for managing products
+    [Authorize(Roles = "Seller")]
     public class ProductController : Controller
     {
         private readonly ApplicationDbContext _db;
         private readonly IWebHostEnvironment _webHostEnvironment;
+
+        // Constructor to inject ApplicationDbContext and IWebHostEnvironment
         public ProductController(ApplicationDbContext db, IWebHostEnvironment webHostEnvironment)
         {
             _db = db;
             _webHostEnvironment = webHostEnvironment;
         }
+
+        // Action method to display a list of products
         public IActionResult Index()
         {
             //Retrieving the userId from the current user's claims
@@ -35,13 +40,15 @@ namespace Kheti.Controllers
             //    return RedirectToAction("Index", "Home");
             //}
 
-            //filtering the products based on the userId
+            //filtering the products based on the userId(seller)
             var products = _db.Products.Include(p => p.Category)
                 .OrderByDescending(p => p.CreatedDate)
                 .Where(p => p.UserId == userId && p.IsDeleted == false);
             return View(products);
         }
 
+
+        //action method to display the product creation form
         public IActionResult Create()
         {
             // Retrieve the userId from the current user's Claims
@@ -60,6 +67,8 @@ namespace Kheti.Controllers
             return View();
         }
 
+
+        // POST method to handle product creation
         [HttpPost]
         public IActionResult Create(Product product, IFormFile? imageFile)
         {
@@ -69,6 +78,7 @@ namespace Kheti.Controllers
                 var claimsIdentity = (ClaimsIdentity)User.Identity;
                 product.UserId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
+                // Handling image file upload
                 if (imageFile != null && imageFile.Length > 0)
                 {
                     //Save the image to wwwroot/Images/ProductImages
@@ -82,11 +92,14 @@ namespace Kheti.Controllers
                     }
 
                     product.CreatedDate = DateTime.Now;
+                    //set product image url
                     product.ProductImageUrl = Path.Combine("Images", "ProductImages", uniqueFileName);
                 }
 
+                // Check if the product belongs to the 'Machinery' category
                 if (product.CategoryId == 3)
                 {
+                    // Create rental equipment object
                     RentalEquipment rentalEquipment = new RentalEquipment
                     {
                         RentalDuration = product.RentalEquipment.RentalDuration,
@@ -108,6 +121,7 @@ namespace Kheti.Controllers
                     product.RentalEquipment = null;
                 }
 
+                // Add the product to the database
                 _db.Products.Add(product);
                 _db.SaveChanges();
                 TempData["success"] = "Product added successfully!";
@@ -119,6 +133,7 @@ namespace Kheti.Controllers
             return View();
         }
 
+        // Action method to display the product edit form
         public IActionResult Edit(Guid id)
         {
             var product = _db.Products
@@ -133,22 +148,26 @@ namespace Kheti.Controllers
         }
 
 
+        // POST action method to handle product editing
         [HttpPost]
         public IActionResult Edit(Guid id, Product product, RentalEquipment rentalEquipment, IFormFile? imageFile)
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             product.UserId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
 
+            // Retrieve the existing product from the database
             var existingProduct = _db.Products
                 .Include(p => p.RentalEquipment)
                 .Include(p => p.Category)
                 .FirstOrDefault(p => p.ProductId == id);
 
+            // Check if the existing product exists
             if (existingProduct == null)
             {
                 return NotFound();
             }
 
+            // Update product properties
             existingProduct.ProductName = product.ProductName;
             existingProduct.ProductDescription = product.ProductDescription;
             existingProduct.Price = product.Price;
@@ -191,12 +210,12 @@ namespace Kheti.Controllers
                     product.ProductImageUrl = existingProduct.ProductImageUrl;
                 }
             }
-
             _db.SaveChanges();
             TempData["success"] = "Product edited";
             return RedirectToAction("Index");
         }
 
+        //method for deleting the product
         public IActionResult Delete(Guid id)
         {
             var productToDelete = _db.Products.FirstOrDefault(x => x.ProductId == id);
@@ -204,6 +223,7 @@ namespace Kheti.Controllers
             var existingProductInCart = _db.ShoppingCarts.Where(x => x.ProductId == id).ToList();
             var existingProductInFavorite = _db.Favorites.Where(x => x.ProductId == id).ToList();
 
+            //checking if the product exists in any cart or favorites and remove if it does
             if (existingProductInCart.Any() || existingProductInFavorite.Any())
             {
                 foreach (var shoppingCart in existingProductInCart)
@@ -220,6 +240,7 @@ namespace Kheti.Controllers
                 _db.SaveChanges();
             }
 
+            //soft delete the product
             productToDelete.IsDeleted = true;
             _db.SaveChanges();
             TempData["delete"] = "Product Deleted";

@@ -77,6 +77,10 @@
                                 <input class="form-control bg-white disabled" asp-for="RemainingAmountToPayAfterFine" disabled />
                                 @* value="@ViewData["remainingAmount"]" *@
                             </div>
+                            <div class="form-group">
+                                <label asp-for="@Model.DamageAmount">Damage Amount:</label>
+                                <input class="form-control bg-white disabled" asp-for="@Model.DamageAmount" disabled />
+                            </div>
                             <div class="form-group" hidden>
                                 <label asp-for="DamagedImageUrl" class="control-label">Damaged Image:</label><br />
                                 <input asp-for="DamagedImageUrl" type="file" name="imageFile" class="form-control" />

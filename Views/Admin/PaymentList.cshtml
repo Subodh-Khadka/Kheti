@@ -46,8 +46,6 @@
                 <th>Payment</th>
                 <th>Amount</th>
                 <th>Date</th>
-               @*  <th>OrderId</th>
-                <th>BookingId</th> *@
                 <th>Action</th>
 
             </tr>
@@ -55,7 +53,7 @@
         <tbody>
 
             @foreach (var payment in Model)
-            {
+            {   
                 @if (payment.Id != null)
                 {
                     <tr>
@@ -79,10 +77,7 @@
                         <td>@payment.PaymentMethod </td>
                         <td>@payment.Amount</td>
                         <td>@payment.PaymentDate </td>
-                      @*   <td>@payment.OrderId </td>
-                        <td>@payment.BookingId </td> *@
                         <td class="d-flex gap-1 justify-content-center">
-                            @*  <a class="btn btn-sm btn-primary" asp-action="EditInformation" asp-controller="User" asp-route-id="@orders.OrderId"><i class="bi bi-pencil"></i></a> *@
                             <form asp-action="PaymentDetails" asp-controller="Admin">
                                 <input type="hidden" name="bookingId" value="@payment.BookingId" />
                                 <input type="hidden" name="orderId" value="@payment.OrderId" />

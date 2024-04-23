@@ -1,0 +1,23 @@
+﻿@model int
+<style>
+    p {
+        margin: 5px 0px;
+    }
+</style>
+
+<div class="d-flex container justify-content-center">
+    <div class="card text-center w-50">
+        <div class="card-header purple-background text-white">
+            User Feedback
+        </div>
+        <div class="card-body">
+            <i class="bi bi-check2-circle text-success fs-4"></i>
+            <h5 class="card-title text-success">Feedback Received</h5>
+            <p>Your feedback has been recoreded successfully!</p>
+            <a style="font-size:10px;" asp-action="Index" asp-controller="Home" class="btn btn-sm btn-success">Back To Home</a>
+        </div>
+        <div class="card-footer text-body-secondary purple-background text-white">
+            Thank you!
+        </div>
+    </div>
+</div>

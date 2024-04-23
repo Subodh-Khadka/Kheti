@@ -70,7 +70,6 @@
                         <td>@orders.PaymentStatus</td>
                         <td>@orders.OrderCreatedDate</td>
                         <td class="d-flex gap-1 justify-content-center">
-                           @*  <a class="btn btn-sm btn-primary" asp-action="EditInformation" asp-controller="User" asp-route-id="@orders.OrderId"><i class="bi bi-pencil"></i></a> *@
                             <form asp-action="OrderDetails" asp-controller="Admin">
                                 <input type="hidden" name="orderId" value="@orders.OrderId" />
                                 <input type="hidden" name="userId" value="@orders.UserId" />

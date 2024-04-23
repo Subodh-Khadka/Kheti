@@ -60,7 +60,6 @@
             <ul style="font-size:small" class="dropdown-menu dropdown-menu-success" aria-labelledby="navbarDarkDropdownMenuLink">
 
                 <li class="nav-item">
-                    @* <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @UserManager.GetUserName(User)!</a> *@
                     <a id="manage" class="nav-link text-secondary" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage"><i class="bi bi-person fs-5 ms-2 me-2"></i> Manage! </a>
                 </li>
                 @if (User.IsInRole(StaticDetail.CustomerRole))

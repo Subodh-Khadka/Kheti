@@ -9,9 +9,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 using System.Linq;
 using System.Security.Claims;
 
+// Controller for administrative tasks, requires 'Admin' role for access
 namespace Kheti.Controllers
 {
     [Authorize(Roles = "Admin")]
@@ -33,7 +35,7 @@ namespace Kheti.Controllers
             _roleManager = roleManager;
         }
 
-        public IActionResult CategoryList()
+        public IActionResult CategoryList()  // Action method for displaying the list of categories
         {
             var categories = _db.Categories.ToList();
             return View(categories);
@@ -49,9 +51,6 @@ namespace Kheti.Controllers
         {
             if (ModelState.IsValid)
             {
-                /* if(_db.Categories.Any(c => c.Name == category.Name){
-
-                 }*/
                 _db.Categories.Add(category);
                 _db.SaveChanges();
                 TempData["success"] = "Category Added!";
@@ -69,6 +68,7 @@ namespace Kheti.Controllers
             return View(category);
         }
 
+        //method for displaying the form to edit a category
         [HttpPost]
         public IActionResult EditCategory(Category category)
         {
@@ -101,11 +101,12 @@ namespace Kheti.Controllers
             return NotFound();
         }
 
+        // Action method for displaying the list of products with search and filtering options
         public IActionResult ProductList(string searchInput, string status)
         {
             IQueryable<Product> products = _db.Products.Include(p => p.Category);
 
-
+            // Apply search filter
             if (!string.IsNullOrEmpty(searchInput))
             {
                 var lowerCaseSearchInput = searchInput.ToLower();
@@ -113,6 +114,7 @@ namespace Kheti.Controllers
                     .Include(p => p.Category);
             }
 
+            // Apply status filter
             if (!string.IsNullOrEmpty(status))
             {
                 switch (status.ToLower())
@@ -135,10 +137,9 @@ namespace Kheti.Controllers
             return View(products.ToList());
         }
 
+        //retreive order detiails of specific order
         public IActionResult ProductDetails(Guid productId)
         {
-            //var userId = _db.KhetiApplicationUsers.FirstOrDefault(u => u.Id == id);
-
             if (productId != null)
             {
                 var product = _db.Products
@@ -157,6 +158,7 @@ namespace Kheti.Controllers
             }
         }
 
+        //edit product details
         [HttpPost]
         public IActionResult EditProductDetails(Guid productId, Product product, RentalEquipment rentalEquipment, IFormFile? imageFile)
         {
@@ -180,6 +182,7 @@ namespace Kheti.Controllers
             existingProduct.Unit = product.Unit;
             existingProduct.IsInStock = product.IsInStock;
 
+            // Update rental equipment details if the product category is "Machinery"
             if (existingProduct.Category.Name == "Machinery")
             {
                 existingProduct.RentalEquipment.RentalDuration = rentalEquipment.RentalDuration;
@@ -191,9 +194,10 @@ namespace Kheti.Controllers
                 existingProduct.RentalEquipment.DepositAmount = rentalEquipment.DepositAmount;
             }
 
+
+            // Handle product image upload
             if (imageFile != null && imageFile.Length > 0)
             {
-
                 //Save the image to wwwroot/Images/ProductImages
                 var imagePath = Path.Combine(_webHostEnvironment.WebRootPath, "Images", "ProductImages");
                 var uniqueFileName = Guid.NewGuid().ToString() + "_" + imageFile.FileName;
@@ -221,7 +225,7 @@ namespace Kheti.Controllers
             return RedirectToAction("ProductDetails", new { productId = product.ProductId });
         }
 
-        public IActionResult DeleteProduct(Guid id, string status)
+        public IActionResult DeleteProduct(Guid id, string status) // delete product method
         {
             var productToDelete = _db.Products.FirstOrDefault(x => x.ProductId == id);
 
@@ -265,7 +269,7 @@ namespace Kheti.Controllers
             return RedirectToAction("ProductList", new { status = status });
         }
 
-
+        //retrieve all users
         public async Task<IActionResult> UserList(string searchInput, string status)
         {
             IQueryable<KhetiApplicationUser> users = _db.KhetiApplicationUsers
@@ -279,6 +283,7 @@ namespace Kheti.Controllers
                 users = _db.KhetiApplicationUsers.Where(u => u.FirstName.ToLower().Contains(lowerCaseSearchInput) || u.Email.ToLower().Contains(lowerCaseSearchInput));
             }
 
+            //filter based on status
             if (!string.IsNullOrEmpty(status))
             {
                 switch (status.ToLower())
@@ -309,11 +314,9 @@ namespace Kheti.Controllers
             return View(users.ToList());
         }
 
-
-
+        //edit user information
         public IActionResult EditUserInformation(string id)
         {
-            //var userId = _db.KhetiApplicationUsers.FirstOrDefault(u => u.Id == id);
 
             if (id != null)
             {
@@ -330,6 +333,7 @@ namespace Kheti.Controllers
             }
         }
 
+        //edit user details
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult EditUserInformation(string id, KhetiApplicationUser updatedUser)
@@ -340,7 +344,7 @@ namespace Kheti.Controllers
             }
             var currentUser = _db.KhetiApplicationUsers.FirstOrDefault(u => u.Id == id);
 
-            if (currentUser != null)
+            if (currentUser != null) //update user details
             {
                 currentUser.FirstName = updatedUser.FirstName;
                 currentUser.LastName = updatedUser.LastName;
@@ -368,11 +372,8 @@ namespace Kheti.Controllers
             return RedirectToAction("Index");
         }
 
-
-
         public IActionResult DeleteUser(string id)
         {
-            //var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             var user = _db.KhetiApplicationUsers.FirstOrDefault(u => u.Id == id);
             if (user == null)
@@ -397,11 +398,9 @@ namespace Kheti.Controllers
             return RedirectToAction("Userlist");
         }
 
-
+        //lock user 
         public IActionResult LockUser(string id)
         {
-            //var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
             var user = _db.KhetiApplicationUsers.FirstOrDefault(u => u.Id == id);
             if (user != null)
             {
@@ -414,9 +413,9 @@ namespace Kheti.Controllers
             return RedirectToAction("Userlist");
         }
 
+        //unlock user
         public IActionResult UnlockUser(string id)
         {
-            //var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             var user = _db.KhetiApplicationUsers.FirstOrDefault(u => u.Id == id);
             if (user != null)
@@ -430,6 +429,7 @@ namespace Kheti.Controllers
             return RedirectToAction("Userlist");
         }
 
+        //seller verification method
         public IActionResult VerifySeller(string userId, string status)
         {
             var user = _db.KhetiApplicationUsers
@@ -459,7 +459,7 @@ namespace Kheti.Controllers
         }
 
 
-
+        //retrieve all the queries of user
         public IActionResult QueryList(string status)
         {
 
@@ -520,7 +520,7 @@ namespace Kheti.Controllers
             return RedirectToAction("QueryList", new { status = status });
         }
 
-
+        // Action method for displaying the list of orders
         public IActionResult OrderList(string status)
         {
             IQueryable<Order> orders = _db.Orders.Include(o => o.User);
@@ -555,7 +555,7 @@ namespace Kheti.Controllers
             return View(OrderVm);
         }
 
-
+        //method for viewing details of an order
         public IActionResult OrderDetails(int orderId, string userId)
         {
 
@@ -574,7 +574,7 @@ namespace Kheti.Controllers
             return View(orderVm);
         }
 
-
+        // Action method for displaying the list of booking
         public IActionResult BookingList(string status)
         {
             IQueryable<Booking> bookings = _db.Bookings.
@@ -611,6 +611,7 @@ namespace Kheti.Controllers
             return View(bookings.ToList());
         }
 
+        // Action method for displaying the specififed booking details
         public IActionResult BookingDetails(Guid bookingId)
         {
             var bookingDetails = _db.Bookings
@@ -648,6 +649,7 @@ namespace Kheti.Controllers
             return View(reports.ToList());
         }
 
+        //retrieve all the payments of users
         public IActionResult PaymentList(string searchInput)
         {
             var paymentList = _db.Payments
@@ -666,6 +668,7 @@ namespace Kheti.Controllers
 
             return View(paymentList);
         }
+
 
         public IActionResult MarkReportAsSolved(Guid id)
         {
@@ -732,21 +735,24 @@ namespace Kheti.Controllers
                 TotalOrders = getTotalOrders(),
                 TotalQueries = getTotalQueries(),
                 RecentOrders = GetRecentOrders(5).Result,
-                TotalRevenue = CalculateTotalRevenueOfOrder(),
+                TotalRevenue = CalculateTotalRevenueOfOrder(), // Calculate total revenue of orders
                 RecentQueries = GetRecentQueries(5).Result,
-                PopularCategories = GetMostPopularCategories(3).Result,
-                RevenueDates = GetRevenueDates(),
+                PopularCategories = GetMostPopularCategories(3).Result,  // Get most popular categories
+                RevenueDates = GetRevenueDates(), // Get revenue data for line chart
                 RevenueAmounts = GetRevenueAmounts(),
-                LastSoldProducts = GetLastSoldProducts(),
-                TotalBookings = getTotalRentalBookings(),
+                LastSoldProducts = GetLastSoldProducts(),  // Get last sold products
+                TotalBookings = getTotalRentalBookings(), // Get total rental bookings and payments, and calculate total rental revenue
                 TotalPayments = getTotalPayments(),
                 TotalRentalRevenue = CalculateTotalRevenueOfRental(),
             };
+            // Get total customers, sellers, and experts
             GetTotalUserCategories(out int totalCustomers, out int totalSellers, out int totalExperts);
             adminDashboardViewModel.TotalCustomers = totalCustomers;
             adminDashboardViewModel.TotalSellers = totalSellers;
             adminDashboardViewModel.TotalExperts = totalExperts;
 
+
+            // Get total products in different categories
             GetTotalProductsCategories(out int totalCrops, out int totalFertilizer, out int totalMachinery);
             adminDashboardViewModel.TotalCropProduct = totalCrops;
             adminDashboardViewModel.TotalFertilizer = totalFertilizer;
@@ -761,11 +767,12 @@ namespace Kheti.Controllers
             return _db.KhetiApplicationUsers.Count();
         }
 
-        public int getTotalProducts()
+        public int getTotalProducts() // Method to get total products
         {
             return _db.Products.Count();
         }
 
+        // Method to get total users in different categories (customers, sellers, experts)
         private void GetTotalUserCategories(out int totalCustomers, out int totalSellers, out int totalExperts)
         {
             totalCustomers = _db.KhetiApplicationUsers.Count(u => u.ExpertProfile == null && u.SellerProfile == null);
@@ -773,6 +780,7 @@ namespace Kheti.Controllers
             totalExperts = _db.KhetiApplicationUsers.Count(u => u.ExpertProfile != null);
         }
 
+        // Method to get total products in different categories (crop, fertilizer, machinery)
         private void GetTotalProductsCategories(out int totalCrops, out int totalFertilizer, out int totalMachinery)
         {
             totalCrops = _db.Products.Count(u => u.Category.Name == "Crop");
@@ -780,17 +788,17 @@ namespace Kheti.Controllers
             totalMachinery = _db.Products.Count(u => u.Category.Name == "Machinery");
         }
 
-        public int getTotalOrders()
+        public int getTotalOrders()   // Method to get total orders
         {
             return _db.Orders.Count();
         }
 
-        public int getTotalQueries()
+        public int getTotalQueries() // Method to get total queries
         {
             return _db.QueryForms.Count();
         }
 
-        public Task<List<Order>> GetRecentOrders(int count)
+        public Task<List<Order>> GetRecentOrders(int count)  // Method to get recent orders
         {
             var recentOrders = _db.Orders
                 .Include(o => o.User)
@@ -810,7 +818,7 @@ namespace Kheti.Controllers
             return recentQueries;
         }
 
-        public decimal CalculateTotalRevenueOfOrder()
+        public decimal CalculateTotalRevenueOfOrder() // Method to calculate total revenue of orders
         {
             return _db.Orders
                 .Where(o => o.PaymentStatus == StaticDetail.PaymentStatusCompleted)
@@ -830,7 +838,7 @@ namespace Kheti.Controllers
 
 
         //for line chart
-        private List<DateTime> GetRevenueDates()
+        private List<DateTime> GetRevenueDates()   // Method to get revenue dates for line chart
         {
             var thirtyDaysAgo = DateTime.Today.AddDays(-31);
 
@@ -842,7 +850,7 @@ namespace Kheti.Controllers
                 .ToList();
         }
 
-        private List<decimal> GetRevenueAmounts()
+        private List<decimal> GetRevenueAmounts()  // Method to get revenue amounts for line chart
         {
             var revenueAmounts = new List<decimal>();
             var thirtyDaysAgo = DateTime.Today.AddDays(-30);
@@ -860,7 +868,7 @@ namespace Kheti.Controllers
             return revenueAmounts;
         }
 
-        private List<OrderItem> GetLastSoldProducts()
+        private List<OrderItem> GetLastSoldProducts()  // Method to get last sold products
         {
             var lastSoldProducts = _db.OrderItems
                 .Include(oi => oi.Product)
@@ -882,7 +890,7 @@ namespace Kheti.Controllers
             return _db.Payments.Count();
         }
 
-        public decimal CalculateTotalRevenueOfRental()
+        public decimal CalculateTotalRevenueOfRental() // Method to calculate total revenue of rental bookings
         {
             var amount = _db.Bookings
                 .Where(o => o.PaymentStatus == StaticDetail.PaymentStatusCompleted)

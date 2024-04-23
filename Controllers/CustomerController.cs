@@ -51,7 +51,6 @@ namespace Kheti.Controllers
             }
 
 
-
             // search if provided
             if (!string.IsNullOrEmpty(searchInput))
             {
@@ -78,8 +77,8 @@ namespace Kheti.Controllers
             return View(productViewModels);
         }
 
-
-        [Authorize(Roles = "Seller,Customer,Expert")]
+        //method to display product details
+        [Authorize]
         public IActionResult Details(Guid id)
         {
             var product = _db.Products
@@ -94,6 +93,7 @@ namespace Kheti.Controllers
                 .ThenInclude(p => p.User)
                 .FirstOrDefault(p => p.ProductId == id);
 
+            //calculate average rating and rating count
             double averageProductRating = product.Reviews.Any() ? Math.Round(product.Reviews.Average(r => r.Rating), 2) : 0;
             double totalRating = product.Reviews.Count();
 
@@ -124,7 +124,6 @@ namespace Kheti.Controllers
                 TempData["warning"] = "Product is out of stock";
                 return RedirectToAction("Details", new {id = product.ProductId});
             }
-
 
             ShoppingCart existingCartInDb = _db.ShoppingCarts.
                 FirstOrDefault(u => u.UserId == userId && u.ProductId == shoppingCart.ProductId);

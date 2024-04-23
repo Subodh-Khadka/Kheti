@@ -1,9 +1,5 @@
 ﻿@page
 @model LoginModel
-@*
-@{
-    ViewData["Title"] = "Log in";
-} *@
 
 <link rel="stylesheet" href="~/css/login.css" asp-append-version="true" />
 
@@ -30,10 +26,7 @@
                                aria-describedby="" placeholder="Enter password">
                         <span asp-validation-for="Input.Password" class="text-danger"></span>
                     </div>
-                   @*  <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                        <label class="form-check-label mb-3" for="exampleCheck1">Keep Me Logged In</label>
-                    </div> *@
+
                     <button type="submit" class="btn btn-success w-100 mb-sm-2 mb-md-3">LOGIN</button>
                     <div class="d-flex justify-content-center mb-2">
                         <a class="text-success text-decoration-none">Forgot your password?</a>
